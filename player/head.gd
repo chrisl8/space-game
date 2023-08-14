@@ -18,6 +18,14 @@ func _ready() -> void:
 	# Only process for the local player
 	set_physics_process(get_multiplayer_authority() == multiplayer.get_unique_id())
 
+	if User.is_server:
+		# Ensure server has no camera
+		$Camera3D.clear_current()
+	elif get_multiplayer_authority() == multiplayer.get_unique_id():
+			# This doesn't seem to be required, as the curren player always ends up with their own
+			# camear, but just to be clear
+			$Camera3D.make_current()
+
 	mouse_sensitivity = mouse_sensitivity / 1000
 	y_limit = deg_to_rad(y_limit)
 
