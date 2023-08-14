@@ -118,11 +118,13 @@ func _peer_connected(peer_id: int):
 		print("Peer connected with id %d" %connection_list.find_key(connection))
 
 
-func _peer_disconnected(id: int):
-	print("Peer disconnected with id %d" %id)
-	connection_list.erase(id)
+func _peer_disconnected(peer_id: int):
+	print("Peer disconnected with peer_id %d" %peer_id)
+	connection_list.erase(peer_id)
 
-	get_node("../game_scene/%s" %id).queue_free()
+	var other_player = get_node_or_null("../game_scene/%s" %peer_id)
+	if other_player:
+		other_player.queue_free()
 
 
 func _game_start_received(peer_ids: String):
