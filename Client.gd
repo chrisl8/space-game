@@ -1,6 +1,8 @@
 extends Node
 class_name Client
 
+# TODO: LOBBY_MESSAGE is not used
+# TODO: NEW_LOBBY is not used
 enum Message {USER_INFO, LOBBY_LIST , NEW_LOBBY, JOIN_LOBBY, LEFT_LOBBY, LOBBY_MESSAGE, \
 START_GAME, OFFER, ANSWER, ICE, GAME_STARTING, HOST, PING, PONG, SERVER}
 
@@ -18,20 +20,13 @@ var client_connected : bool = false
 
 var websocket_close_reason : String = ""
 
-signal invalid_new_lobby_name
-signal invalid_join_lobby_name
 signal join_lobby(lobby_name : String)
-signal new_lobby(lobby_name : String)
 signal lobby_list_received(lobby_list : PackedStringArray)
-signal lobby_messsage_received(message : String, user_name : String)
 signal other_user_joined_lobby(user_name : String)
-signal host_name_received(host_name : String)
-signal some_one_left_lobby(player_name : String)
 signal offer_received(type: String, sdp: String)
 signal answer_received(type: String, sdp: String)
 signal ice_received(media: String, index: int, _name: String)
 signal game_start_received(arr : String)
-signal server_changed_host()
 signal user_name_feedback_received
 signal reset_connection
 
@@ -115,7 +110,6 @@ func parse_msg():
 			print("I ", User.server_name ," am host id ", User.server_id)
 		else:
 			User.is_host = false # TODO: Is this necesary/required/useful?
-		server_changed_host.emit()
 		return
 
 	if type == Message.ICE:
@@ -145,18 +139,7 @@ func parse_msg():
 		offer_received.emit(_type, sdp, sender_id)
 		return
 
-	if type == Message.NEW_LOBBY:
-		if data == "INVALID":
-			invalid_new_lobby_name.emit()
-			return
-		else:
-			new_lobby.emit(data)
-			return
-
 	if type == Message.JOIN_LOBBY:
-		if data.contains("INVALID"):
-			invalid_join_lobby_name.emit()
-			return
 		if data.contains("LOBBY_NAME"):
 			join_lobby.emit(data.right(-10))
 			return
@@ -181,33 +164,16 @@ func parse_msg():
 			var e : PackedStringArray = []
 			print("Lobby list is empty!")
 			lobby_list_received.emit(e)
-			return
 		else:
 			var lobby_list_arr = data.split(" ", false)
 			print("Lobby list received:", lobby_list_arr)
 			lobby_list_received.emit(lobby_list_arr)
-
-			# Hack to join new lobby automatically if it exists
-			# TODO: Check that this lobby exists first.
-			#User.client.request_join_lobby("Default")
-
-			return
-
-	if type == Message.LEFT_LOBBY:
-
-		if User.peers.has(id):
-			User.peers.erase(id)
-			some_one_left_lobby.emit(data)
-			print("Peer name: %s with ID # %s erased from the list" %[data, id])
-
 		return
 
-	if type == Message.LOBBY_MESSAGE:
-		print("Lobby message received!")
-		var arr = data.split("***", true, 1)
-		var user_name = arr[0]
-		var message = arr[1]
-		lobby_messsage_received.emit(message, user_name)
+	if type == Message.LEFT_LOBBY:
+		if User.peers.has(id):
+			User.peers.erase(id)
+			print("Peer name: %s with ID # %s erased from the list" %[data, id])
 		return
 
 	if type == Message.GAME_STARTING:
@@ -216,24 +182,10 @@ func parse_msg():
 		if not string == "":
 			game_start_received.emit(string)
 		return
-
-
-
-
 	return false
 
 func is_client_connected() -> bool:
 	return client_connected
-
-
-
-
-
-
-
-
-
-
 
 func send_user_name(_name : String):
 	send_msg(Message.USER_INFO, 0, _name)
@@ -243,13 +195,6 @@ func request_lobby_list():
 
 func request_join_lobby(lobby_id : String):
 	send_msg(Message.JOIN_LOBBY, 0, lobby_id)
-
-func request_new_lobby(_name : String):
-	send_msg(Message.NEW_LOBBY, 0, _name)
-
-func send_chat_msg(message : String, user_name : String):
-	var _message : String = user_name + "***" + message
-	send_msg(Message.LOBBY_MESSAGE, 0 , _message)
 
 func send_server_msg(server_password):
 	send_msg(Message.SERVER, 0, server_password)
