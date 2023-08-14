@@ -1,8 +1,7 @@
 extends Control
 
-var lobby_menu_template = preload("res://Scenes/lobby_menu/lobby_menu.tscn")
 var pop_up_template = preload("res://Scenes/pop_up/pop_up.tscn")
-#var player_character_template = preload("res://Scenes/player_character/player_character.tscn")
+
 @onready var host_template = $Host_template
 @onready var player_template = $Player_template
 @onready var player_list_container = $"Player List/Players/ScrollContainer/VBoxContainer"
@@ -88,22 +87,6 @@ func _lobby_message_received(message : String, _user_name : String):
 	msg_node.show()
 	msg_node.text = _user_name + ": " + message
 	container.add_child(msg_node)
-
-func _on_return_pressed():
-	var pop_up = pop_up_template.instantiate()
-	pop_up.set_msg("   Returning Lobby Menu...")
-	pop_up.is_button_visible(false)
-	add_child(pop_up)
-	User.is_host = false
-	User.host_name = ""
-	User.peers.clear()
-	User.connection_list.clear()
-	User.client.send_left_info(User.current_lobby_name)
-	await get_tree().create_timer(1).timeout
-	User.client.request_lobby_list()
-	get_parent().add_child(lobby_menu_template.instantiate())
-	pop_up.queue_free()
-	queue_free()
 
 func _on_message_text_submitted(_new_text):
 	_on_submit_msg_pressed()

@@ -5,7 +5,6 @@ extends Node
 var local_server_password := ""
 
 var pop_up_template = preload("res://Scenes/pop_up/pop_up.tscn")
-#var intro_template = preload("res://Scenes/intro/intro.tscn")
 var main_menu = preload("res://Scenes/main menu/main_menu.tscn")
 
 # Check if this is the first instance of a debug run, so only one attempts to be the server
@@ -58,7 +57,6 @@ func _process(_delta):
 func connection_reset():
 	for i in get_children():
 		i.queue_free()
-
 
 	add_child(main_menu.instantiate())
 

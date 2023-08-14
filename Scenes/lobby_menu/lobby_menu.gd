@@ -2,7 +2,6 @@ extends Control
 
 
 var pop_up_template = preload("res://Scenes/pop_up/pop_up.tscn")
-var main_menu_template = preload("res://Scenes/main menu/main_menu.tscn")
 var in_lobby_menu_template = preload("res://Scenes/in_lobby_menu/in_lobby_menu.tscn")
 
 
@@ -99,12 +98,6 @@ func _on_new_lobby_pressed():
 		add_child(pop_up)
 	else:
 		User.client.request_new_lobby(lobby_name)
-
-func _on_return_pressed():
-	print('_on_return_pressed')
-	get_parent().add_child(main_menu_template.instantiate())
-	User.reset_connection()
-	queue_free()
 
 func _on_refresh_pressed():
 	User.client.request_lobby_list()

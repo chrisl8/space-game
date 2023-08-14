@@ -83,8 +83,6 @@ func _answer_received(type: String, sdp: String, sender_id):
 func _peer_connected(peer_id: int):
 	delete_in_lobby_menu.emit()
 
-	print(peers)
-
 	var game_scene_node = get_node_or_null("../game_scene")
 	if not game_scene_node:
 		var game_scene = game_scene_template.instantiate()
