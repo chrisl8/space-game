@@ -1,4 +1,5 @@
 /* eslint-disable max-classes-per-file */
+/* eslint-disable no-param-reassign */
 import crypto from 'crypto';
 import { WebSocketServer } from 'ws';
 
@@ -142,8 +143,9 @@ class Lobby {
     peer.lobby = this.name;
     // const assigned = this.getPeerId(peer);
     // Tell them who the host is
-    // TODO: Include the host ID and save that on the server too.
-    peer.ws.send(ProtoMessage(CMD.HOST, this.host, serverPeerInfo.user_name));
+    peer.ws.send(
+      ProtoMessage(CMD.HOST, serverPeerInfo.id, serverPeerInfo.user_name),
+    );
     // peer.ws.send(ProtoMessage(CMD.ID, assigned, this.mesh ? 'true' : ''));
     peer.ws.send(ProtoMessage(CMD.JOIN_LOBBY, 0, 'LOBBY_NAME' + this.name));
     // TODO: Loop over lobby users and send them all to each other like so:
