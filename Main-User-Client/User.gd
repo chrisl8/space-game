@@ -9,13 +9,13 @@ var host_name: String          =  ""
 var current_lobby_name: String =  ""
 var current_lobby_list: String =  ""
 var is_host: bool              =  false
-var ID                         =  -1
+var ID                         :=  -1
 var peers: Dictionary
-var game_scene_template        =  preload("res://spaceship.tscn")
-var player_character_template  =  preload("res://player/player.tscn")
+var game_scene_template        :=  preload("res://spaceship.tscn")
+var player_character_template  :=  preload("res://player/player.tscn")
 var is_server: bool            =  false
 var server_name: String = ""
-var server_id: = -1
+var server_id := -1
 var server_password: String    =  ""
 # TODO: I THINK is_host and is_server is the same, and one is better direved than the other, so replace it, and also do that in other places?
 
@@ -127,9 +127,7 @@ func _peer_disconnected(peer_id: int):
 func _game_start_received(peer_ids: String):
 	var arr = peer_ids.split("***", false)
 	for id_string in arr:
-		print("_game_start_received ", id_string.to_int())
 		var connection = User.connection_list.get(id_string.to_int())
-		print("_game_start_received ", connection)
 		User.connection_list.get(id_string.to_int()).create_offer()
 
 
