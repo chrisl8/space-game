@@ -12,10 +12,10 @@ START_GAME, OFFER, ANSWER, ICE, GAME_STARTING, HOST, PING, PONG, SERVER}
 #enum Message {JOIN, ID, PEER_CONNECT, PEER_DISCONNECT, OFFER, ANSWER, CANDIDATE, SEAL}
 
 
-var rtc_mp = WebRTCMultiplayerPeer.new()
-var ws = WebSocketPeer.new()
-var url = "ws://127.0.0.1:9080"
-#var url = "wss://godot-test.voidshipephemeral.space/server/"
+var rtc_mp := WebRTCMultiplayerPeer.new()
+var ws := WebSocketPeer.new()
+var url := "ws://127.0.0.1:9080"
+#var url := "wss://godot-test.voidshipephemeral.space/server/"
 var client_connected : bool = false
 
 var websocket_close_reason : String = ""
