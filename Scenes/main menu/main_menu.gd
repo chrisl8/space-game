@@ -1,6 +1,6 @@
 extends Control
 
-var lobby_menu_template = preload("res://Scenes/lobby_menu/lobby_menu.tscn")
+#var lobby_menu_template = preload("res://Scenes/lobby_menu/lobby_menu.tscn")
 var pop_up_template = preload("res://Scenes/pop_up/pop_up.tscn")
 var control_flag : bool = false
 var user_text: String = ""
@@ -68,15 +68,43 @@ func check_if_connected():
 		$"Cannot Connect/Label".text = "Failed to Connect!.."
 	$Loading.hide()
 
+# Change function name
 func go_to_lobby_menu():
 	$VBoxContainer/Title.text = "Stand by, projecting your essence into the void..."
-	lobby_menu = lobby_menu_template.instantiate()
+#	lobby_menu = lobby_menu_template.instantiate()
 	User.after_main_menu_init()
 	#$Loading.hide()
 	#$Connected.show()
-	await get_tree().create_timer(1).timeout
-	get_parent().add_child(lobby_menu)
+#	await get_tree().create_timer(1).timeout
+#	get_parent().add_child(lobby_menu)
+#	queue_free()
+	User.client.lobby_list_received.connect(lobby_list_received)
+	User.client.join_lobby.connect(_join_lobby)
+	if User.server_password != "" and User.is_server:
+		User.client.send_server_msg(User.server_password)
+	else:
+		User.client.request_lobby_list()
+
+func _join_lobby(lobby_name : String):
+	User.current_lobby_name = lobby_name
+	print("joined lobby %s !" %lobby_name)
+	User.client.other_user_joined_lobby.connect(_other_user_joined_lobby)
+	User.delete_in_lobby_menu.connect(_delete_in_lobby_menu)
+	User.init_connection()
+
+func lobby_list_received(lobby_list : PackedStringArray):
+	for i in lobby_list:
+		# Hack to just join the first lobby we receive
+		if User.current_lobby_name == "" and not User.is_server:
+			# This sends a message to the Websocket server asking to JOIN this lobby.
+			User.client.request_join_lobby(i)
+
+func _delete_in_lobby_menu():
 	queue_free()
+
+func _other_user_joined_lobby():
+	if User.is_server:
+		User.client.send_game_starting()
 
 func _update_title_message(text):
 	$VBoxContainer/Title.text = text
