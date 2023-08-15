@@ -29,6 +29,9 @@ signal ice_received(media: String, index: int, _name: String)
 signal game_start_received(arr : String)
 signal user_name_feedback_received
 signal reset_connection
+signal client_just_connected
+signal update_title_message
+signal overlay_message
 
 func _init():
 	if not OS.is_debug_build():
@@ -56,6 +59,9 @@ func _process(_delta):
 		websocket_close_reason = ""
 		while ws.get_available_packet_count():
 			parse_msg()
+		if not client_connected:
+			client_just_connected.emit()
+		client_connected = true
 	elif state == WebSocketPeer.STATE_CLOSING:
 			# Keep polling to achieve proper close.
 		pass
@@ -63,6 +69,8 @@ func _process(_delta):
 		var code = ws.get_close_code()
 		var reason = ws.get_close_reason()
 		print("WebSocket closed with code: %d, reason %s. Clean: %s" % [code, reason, code != -1])
+		update_title_message.emit("Server Socket Connection failed. Wait a bit and refresh the browser to try again")
+		overlay_message.emit("Connection Failed", "e6223c", 2)
 		websocket_close_reason = reason
 		set_process(false) # Stop processing.
 		client_connected = false
@@ -96,7 +104,6 @@ func parse_msg():
 		User.ID = id
 		print("Received User name = %s ID# %s" %[data, id])
 		user_name_feedback_received.emit()
-		client_connected = true
 		return
 
 	if type == Message.HOST:
@@ -146,14 +153,14 @@ func parse_msg():
 		if data.contains("NEW_JOINED_USER_NAME"):
 			if id != User.ID and id not in User.peers:
 				User.peers[id] = data.right(-20)
-				other_user_joined_lobby.emit(data.right(-20))
+				other_user_joined_lobby.emit()
 				print("Peer name: %s with ID # %s added to the list by NEW_JOINED_USER_NAME." %[data.right(-20), id])
 				User.init_connection()
 			return
 		if data.contains("EXISTING_USER_NAME"):
 			if id != User.ID and id not in User.peers:
 				User.peers[id] = data.right(-18)
-				other_user_joined_lobby.emit(data.right(-18))
+				other_user_joined_lobby.emit()
 				print("Peer name: %s with ID # %s added to the list by EXISTING_USER_NAME." %[data.right(-18), id])
 				User.init_connection()
 			return

@@ -56,11 +56,12 @@ theme_override_constants/separation = 10
 
 [node name="Title" type="Label" parent="VBoxContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_color = Color(0.384314, 0.72549, 0.901961, 1)
 theme_override_font_sizes/font_size = 35
 text = "Please stand by, things will soon begin..."
 horizontal_alignment = 1
 vertical_alignment = 1
+autowrap_mode = 3
 
 [node name="Username" type="LineEdit" parent="VBoxContainer"]
 visible = false
@@ -185,6 +186,43 @@ grow_vertical = 2
 color = Color(0.105882, 0.105882, 0.105882, 0.858824)
 
 [node name="Label" type="Label" parent="Cannot Connect"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -505.0
+offset_top = -59.5
+offset_right = 505.0
+offset_bottom = 59.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.901961, 0.133333, 0.235294, 1)
+theme_override_font_sizes/font_size = 62
+text = "   Failed to Connect!.."
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Overlay Message" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColorRect" type="ColorRect" parent="Overlay Message"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.105882, 0.105882, 0.105882, 0.858824)
+
+[node name="Label" type="Label" parent="Overlay Message"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5

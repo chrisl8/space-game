@@ -3,45 +3,49 @@ extends Control
 var lobby_menu_template = preload("res://Scenes/lobby_menu/lobby_menu.tscn")
 var pop_up_template = preload("res://Scenes/pop_up/pop_up.tscn")
 var control_flag : bool = false
+var user_text: String = ""
 var lobby_menu
 
+func _ready():
+	if OS.is_debug_build() and not User.is_server:
+		var debug_delay = randi_range(1, 4)
+		while debug_delay > 0:
+			$VBoxContainer/Title.text = "Debug delay " + str(debug_delay)
+			debug_delay = debug_delay - 1
+			await get_tree().create_timer(1).timeout
+	_on_play_pressed()
 
 func _on_play_pressed():
-	if get_child_count() > 5:
+	if control_flag: # Prevents prssing button repeatedly
 		return
-	if control_flag:
-		return
-
-	var user_text = $VBoxContainer/Username.text
+	user_text = $VBoxContainer/Username.text
 	if User.is_server:
 		user_text = "Metatron"
-
 	if user_text == "" or user_text.contains(" "):
 		var pop_up = pop_up_template.instantiate()
-		pop_up.set_msg("You must enter a name!\nSpaces are not allowed!")
+		pop_up.set_msg("You must enter a name.\nSpaces are not allowed.")
 		add_child(pop_up)
 		return
-
 	else:
+		$VBoxContainer/Title.text = "Reaching out into the void..."
 		if User.client:
 			User.client.queue_free()
 		User.client = Client.new()
 		get_parent().add_child(User.client)
 		control_flag = true
-		User.client.user_name_feedback_received.connect(go_to_lobby_menu)
-		$Loading.show()
-		await get_tree().create_timer(2).timeout
+		User.client.client_just_connected.connect(_send_user_name)
+		User.client.update_title_message.connect(_update_title_message)
+		User.client.overlay_message.connect(_overlay_message)
 
-		if User.client.is_connection_valid():
-			User.client.send_user_name(user_text)
-			lobby_menu = lobby_menu_template.instantiate()
+func _send_user_name():
+	$VBoxContainer/Title.text = "2"
+	User.client.user_name_feedback_received.connect(go_to_lobby_menu)
+	if User.client.is_connection_valid():
+		User.client.send_user_name(user_text)
 
-
-	check_if_connected()
-
+# TODO: What shoudl we do with this?
 func check_if_connected():
 	await get_tree().create_timer(2).timeout
-
 	if User.client.is_client_connected():
 		$Loading.hide()
 		return
@@ -62,26 +66,30 @@ func check_if_connected():
 		await get_tree().create_timer(1).timeout
 		$"Cannot Connect".hide()
 		$"Cannot Connect/Label".text = "Failed to Connect!.."
-
 	$Loading.hide()
 
 func go_to_lobby_menu():
+	$VBoxContainer/Title.text = "Stand by, projecting your essence into the void..."
+	lobby_menu = lobby_menu_template.instantiate()
 	User.after_main_menu_init()
-	$Loading.hide()
-	$Connected.show()
+	#$Loading.hide()
+	#$Connected.show()
 	await get_tree().create_timer(1).timeout
 	get_parent().add_child(lobby_menu)
 	queue_free()
+
+func _update_title_message(text):
+	$VBoxContainer/Title.text = text
+
+func _overlay_message(text, color, timeout):
+	$"Overlay Message/Label".set("text", text)
+	$"Overlay Message/Label".set("theme_override_colors/font_color", color)
+	$"Overlay Message".show()
+	await get_tree().create_timer(timeout).timeout
+	$"Overlay Message".hide()
 
 func _on_username_text_submitted(_new_text):
 	_on_play_pressed()
 
 func _on_quit_pressed():
 	get_tree().quit(0)
-
-# Hack to bypass waiting on input for testing
-# Note that you must put a default text in the Main Menu->VBoxContainer->Username->Text field for this to work.
-func _ready():
-	if not User.is_server:
-		await get_tree().create_timer(randi_range(1, 4)).timeout
-	_on_play_pressed()

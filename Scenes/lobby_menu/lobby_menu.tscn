@@ -32,6 +32,6 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(0.384314, 0.72549, 0.901961, 1)
 theme_override_font_sizes/font_size = 35
-text = "Stand by, projecting your essence into the void..."
+text = "Any moment now, and you will be nowhere!"
 horizontal_alignment = 1
 vertical_alignment = 1
