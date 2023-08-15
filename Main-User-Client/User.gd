@@ -119,7 +119,6 @@ func _peer_connected(peer_id: int):
 func _peer_disconnected(peer_id: int):
 	print("Peer disconnected with peer_id %d" %peer_id)
 	connection_list.erase(peer_id)
-
 	var other_player = get_node_or_null("../game_scene/%s" %peer_id)
 	if other_player:
 		other_player.queue_free()
@@ -139,7 +138,7 @@ func reset_connection():
 		connection.close()
 
 	client.queue_free()
-	client = Client.new()
+	#client = Client.new()
 	user_name = ""
 	is_host = false
 	current_lobby_list = ""
@@ -148,5 +147,8 @@ func reset_connection():
 	print("User reset!")
 	ID = -1
 	peers.clear()
+	var game_scene_node = get_node_or_null("../game_scene")
+	if game_scene_node and is_instance_valid(game_scene_node):
+		game_scene_node.queue_free()
 	reset.emit()
 

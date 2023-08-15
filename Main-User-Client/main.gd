@@ -21,10 +21,10 @@ func _init():
 			if _instance_socket.listen(5000 + n) == OK:
 				_instance_num = n
 				break
-
-		assert(_instance_num >= 0, "Unable to determine instance number. Seems like all TCP ports are in use")
-
-		print("We are instance number ", _instance_num)
+		if _instance_num < 0:
+			print("Unable to determine instance number. Seems like all TCP ports are in use")
+		else:
+			print("We are instance number ", _instance_num)
 
 	# https://docs.godotengine.org/en/stable/tutorials/export/exporting_for_dedicated_servers.html
 	if OS.has_feature("server"):
@@ -61,7 +61,8 @@ func connection_reset():
 	add_child(main_menu.instantiate())
 
 	var pop_up = pop_up_template.instantiate()
-	pop_up.set_msg("Connection lost!", Color(0.79215687513351, 0.26274511218071, 0.56470590829849))
+	pop_up.set_msg("Connection Interrupted!", Color(0.79215687513351, 0.26274511218071, 0.56470590829849))
 	add_child(pop_up)
 	await get_tree().create_timer(3).timeout
-	pop_up.queue_free()
+	if is_instance_valid(pop_up):
+		pop_up.queue_free()

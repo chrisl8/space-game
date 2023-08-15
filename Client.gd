@@ -32,6 +32,7 @@ signal reset_connection
 signal client_just_connected
 signal update_title_message
 signal overlay_message
+signal retry_connection
 
 func _init():
 	if not OS.is_debug_build():
@@ -69,12 +70,14 @@ func _process(_delta):
 		var code = ws.get_close_code()
 		var reason = ws.get_close_reason()
 		print("WebSocket closed with code: %d, reason %s. Clean: %s" % [code, reason, code != -1])
-		update_title_message.emit("Server Socket Connection failed. Wait a bit and refresh the browser to try again")
+		update_title_message.emit("Server Socket Connection failed.")
 		overlay_message.emit("Connection Failed", "e6223c", 2)
 		websocket_close_reason = reason
 		set_process(false) # Stop processing.
 		client_connected = false
 		reset_connection.emit()
+		await get_tree().create_timer(3).timeout
+		retry_connection.emit()
 
 func parse_msg():
 	var parsed = JSON.parse_string(ws.get_packet().get_string_from_utf8())

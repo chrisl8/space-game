@@ -26,7 +26,7 @@ func _on_play_pressed():
 		return
 	else:
 		$VBoxContainer/Title.text = "Reaching out into the void..."
-		if User.client:
+		if User.client and is_instance_valid(User.client):
 			User.client.queue_free()
 		User.client = Client.new()
 		get_parent().add_child(User.client)
@@ -34,35 +34,13 @@ func _on_play_pressed():
 		User.client.client_just_connected.connect(_send_user_name)
 		User.client.update_title_message.connect(_update_title_message)
 		User.client.overlay_message.connect(_overlay_message)
+		User.client.retry_connection.connect(retry_connection)
 
 func _send_user_name():
 	$VBoxContainer/Title.text = "2"
 	User.client.user_name_feedback_received.connect(start_connetion_listening)
 	if User.client.is_connection_valid():
 		User.client.send_user_name(user_text)
-
-# TODO: What shoudl we do with this?
-func check_if_connected():
-	await get_tree().create_timer(2).timeout
-	if User.client.is_client_connected():
-		$Loading.hide()
-		return
-	else:
-		var reason = User.client.websocket_close_reason
-		User.client.queue_free()
-		User.client = null # So that we do not try to free it again.
-		control_flag = false
-		$Loading.hide()
-		# TODO: Display this message on the menu screen so we can see it
-		# rather than it dissearing right away,
-		# and so it works better with long messages.
-		if (reason != ""):
-			$"Cannot Connect/Label".text = reason
-		$"Cannot Connect".show()
-		await get_tree().create_timer(1).timeout
-		$"Cannot Connect".hide()
-		$"Cannot Connect/Label".text = "Failed to Connect!.."
-	$Loading.hide()
 
 func start_connetion_listening():
 	$VBoxContainer/Title.text = "Stand by, projecting your essence into the void..."
@@ -87,6 +65,14 @@ func lobby_list_received(lobby_list : PackedStringArray):
 		if User.current_lobby_name == "" and not User.is_server:
 			# This sends a message to the Websocket server asking to JOIN this lobby.
 			User.client.request_join_lobby(i)
+
+func retry_connection():
+	var retry_in = 10
+	while retry_in > 0:
+		$VBoxContainer/Title.text = "Retrying in " + str(retry_in)
+		retry_in = retry_in - 1
+		await get_tree().create_timer(1).timeout
+	User.reset_connection()
 
 func _delete_main_menu():
 	queue_free()
