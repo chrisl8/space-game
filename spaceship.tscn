@@ -1,0 +1,22 @@
+[gd_scene load_steps=6 format=3 uid="uid://cbs4s4ea2n473"]
+
+[ext_resource type="Script" path="res://spaceship.gd" id="1_00g2k"]
+[ext_resource type="PackedScene" uid="uid://dtapn20fi2ley" path="res://rooms/godot_test_room_1.tscn" id="2_0sr0a"]
+[ext_resource type="PackedScene" uid="uid://dnvj1iaml6w00" path="res://rooms/godot_test_room_2.tscn" id="3_ltyav"]
+[ext_resource type="PackedScene" uid="uid://c58icecs1atwu" path="res://rooms/room_3.tscn" id="4_2iu56"]
+[ext_resource type="PackedScene" uid="uid://df11aw1aclv6d" path="res://rooms/room_4.tscn" id="5_mx4ek"]
+
+[node name="Main" type="Node3D"]
+script = ExtResource("1_00g2k")
+
+[node name="Godot Test Room 1" parent="." instance=ExtResource("2_0sr0a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.28414, -2.04223, 5.93824)
+
+[node name="Godot Test Room 2" parent="." instance=ExtResource("3_ltyav")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.28414, -2.04223, -4.56176)
+
+[node name="Room 3" parent="." instance=ExtResource("4_2iu56")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.71586, -2.04223, 5.93824)
+
+[node name="Room 4" parent="." instance=ExtResource("5_mx4ek")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.71586, -2.04223, -4.56176)

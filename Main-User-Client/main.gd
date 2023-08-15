@@ -4,8 +4,8 @@ extends Node
 @export var server_password := ""
 var local_server_password := ""
 
-var pop_up_template = preload("res://Scenes/pop_up/pop_up.tscn")
-var main_menu = preload("res://Scenes/main menu/main_menu.tscn")
+var pop_up_template = preload("res://menus/pop_up/pop_up.tscn")
+var main_menu = preload("res://menus/main menu/main_menu.tscn")
 
 # Check if this is the first instance of a debug run, so only one attempts to be the server
 # https://gist.github.com/CrankyBunny/71316e7af809d7d4cf5ec6e2369a30b9
@@ -63,3 +63,5 @@ func connection_reset():
 	var pop_up = pop_up_template.instantiate()
 	pop_up.set_msg("Connection lost!", Color(0.79215687513351, 0.26274511218071, 0.56470590829849))
 	add_child(pop_up)
+	await get_tree().create_timer(3).timeout
+	pop_up.queue_free()

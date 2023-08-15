@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://blyfftisaoxrn"]
 
-[ext_resource type="Script" path="res://Scenes/pop_up/pop_up.gd" id="1_0mfg2"]
+[ext_resource type="Script" path="res://menus/pop_up/pop_up.gd" id="1_0mfg2"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_uh0pm"]
 bg_color = Color(0.596078, 0.560784, 0.882353, 1)
@@ -49,14 +49,6 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.596078, 0.560784, 0.882353, 1)
 theme_override_font_sizes/font_size = 30
 text = "Detail about error."
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="Detail2" type="Label" parent="VBoxContainer"]
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 30
-text = "Refresh the browser tab to try again."
 horizontal_alignment = 1
 vertical_alignment = 1
 

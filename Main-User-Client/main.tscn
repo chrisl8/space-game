@@ -1,8 +1,8 @@
 [gd_scene load_steps=2 format=3 uid="uid://bemt6dotly4k3"]
 
-[ext_resource type="Script" path="res://Main-User-Client/main.gd" id="1_nc8xw"]
+[ext_resource type="Script" path="res://main-user-client/main.gd" id="1_rnv84"]
 
 [node name="main" type="Node"]
-script = ExtResource("1_nc8xw")
+script = ExtResource("1_rnv84")
 run_server_in_debug = true
 server_password = "CCppcqEB8qyv4CF8osuftzpCISuovk6R"

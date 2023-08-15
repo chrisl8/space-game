@@ -11,7 +11,7 @@ var current_lobby_list: String =  ""
 var is_host: bool              =  false
 var ID                         =  -1
 var peers: Dictionary
-var game_scene_template        =  preload("res://main.tscn")
+var game_scene_template        =  preload("res://spaceship.tscn")
 var player_character_template  =  preload("res://player/player.tscn")
 var is_server: bool            =  false
 var server_name: String = ""
@@ -22,10 +22,10 @@ var server_password: String    =  ""
 var connection_list: Dictionary = {}
 var rtc_peer: WebRTCMultiplayerPeer
 signal reset
-signal delete_in_lobby_menu
+signal delete_main_menu
 
 
-func after_main_menu_init():
+func client_listener_init():
 	client.offer_received.connect(_offer_received)
 	client.answer_received.connect(_answer_received)
 	client.ice_received.connect(_ice_received)
@@ -81,7 +81,7 @@ func _answer_received(type: String, sdp: String, sender_id):
 
 
 func _peer_connected(peer_id: int):
-	delete_in_lobby_menu.emit()
+	delete_main_menu.emit()
 
 	var game_scene_node = get_node_or_null("../game_scene")
 	if not game_scene_node:
@@ -128,6 +128,9 @@ func _peer_disconnected(peer_id: int):
 func _game_start_received(peer_ids: String):
 	var arr = peer_ids.split("***", false)
 	for id_string in arr:
+		print("_game_start_received ", id_string.to_int())
+		var connection = User.connection_list.get(id_string.to_int())
+		print("_game_start_received ", connection)
 		User.connection_list.get(id_string.to_int()).create_offer()
 
 

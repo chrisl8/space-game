@@ -1,10 +1,8 @@
 extends Control
 
-#var lobby_menu_template = preload("res://Scenes/lobby_menu/lobby_menu.tscn")
-var pop_up_template = preload("res://Scenes/pop_up/pop_up.tscn")
+var pop_up_template = preload("res://menus/pop_up/pop_up.tscn")
 var control_flag : bool = false
 var user_text: String = ""
-var lobby_menu
 
 func _ready():
 	if OS.is_debug_build() and not User.is_server:
@@ -39,7 +37,7 @@ func _on_play_pressed():
 
 func _send_user_name():
 	$VBoxContainer/Title.text = "2"
-	User.client.user_name_feedback_received.connect(go_to_lobby_menu)
+	User.client.user_name_feedback_received.connect(start_connetion_listening)
 	if User.client.is_connection_valid():
 		User.client.send_user_name(user_text)
 
@@ -51,8 +49,6 @@ func check_if_connected():
 		return
 	else:
 		var reason = User.client.websocket_close_reason
-		if lobby_menu:
-			lobby_menu.queue_free()
 		User.client.queue_free()
 		User.client = null # So that we do not try to free it again.
 		control_flag = false
@@ -68,18 +64,11 @@ func check_if_connected():
 		$"Cannot Connect/Label".text = "Failed to Connect!.."
 	$Loading.hide()
 
-# Change function name
-func go_to_lobby_menu():
+func start_connetion_listening():
 	$VBoxContainer/Title.text = "Stand by, projecting your essence into the void..."
-#	lobby_menu = lobby_menu_template.instantiate()
-	User.after_main_menu_init()
-	#$Loading.hide()
-	#$Connected.show()
-#	await get_tree().create_timer(1).timeout
-#	get_parent().add_child(lobby_menu)
-#	queue_free()
 	User.client.lobby_list_received.connect(lobby_list_received)
 	User.client.join_lobby.connect(_join_lobby)
+	User.client_listener_init()
 	if User.server_password != "" and User.is_server:
 		User.client.send_server_msg(User.server_password)
 	else:
@@ -89,7 +78,7 @@ func _join_lobby(lobby_name : String):
 	User.current_lobby_name = lobby_name
 	print("joined lobby %s !" %lobby_name)
 	User.client.other_user_joined_lobby.connect(_other_user_joined_lobby)
-	User.delete_in_lobby_menu.connect(_delete_in_lobby_menu)
+	User.delete_main_menu.connect(_delete_main_menu)
 	User.init_connection()
 
 func lobby_list_received(lobby_list : PackedStringArray):
@@ -99,7 +88,7 @@ func lobby_list_received(lobby_list : PackedStringArray):
 			# This sends a message to the Websocket server asking to JOIN this lobby.
 			User.client.request_join_lobby(i)
 
-func _delete_in_lobby_menu():
+func _delete_main_menu():
 	queue_free()
 
 func _other_user_joined_lobby():

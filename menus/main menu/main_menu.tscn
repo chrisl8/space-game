@@ -1,6 +1,6 @@
 [gd_scene load_steps=9 format=3 uid="uid://31ktsjhg7516"]
 
-[ext_resource type="Script" path="res://Scenes/main menu/main_menu.gd" id="1_883sy"]
+[ext_resource type="Script" path="res://menus/main menu/main_menu.gd" id="1_163lf"]
 
 [sub_resource type="Theme" id="Theme_j7gqp"]
 default_font_size = 30
@@ -30,7 +30,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_883sy")
+script = ExtResource("1_163lf")
 
 [node name="Background" type="ColorRect" parent="."]
 layout_mode = 1
