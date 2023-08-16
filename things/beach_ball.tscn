@@ -1,4 +1,6 @@
-[gd_scene load_steps=4 format=3 uid="uid://ceod3svxuy34r"]
+[gd_scene load_steps=5 format=3 uid="uid://ceod3svxuy34r"]
+
+[ext_resource type="Script" path="res://things/beach_ball_rigid_body.gd" id="1_3ymr1"]
 
 [sub_resource type="SphereMesh" id="SphereMesh_te1ch"]
 
@@ -28,6 +30,8 @@ properties/3/watch = false
 collision_layer = 8
 collision_mask = 11
 mass = 0.02
+continuous_cd = true
+script = ExtResource("1_3ymr1")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="RigidBody3D"]
 mesh = SubResource("SphereMesh_te1ch")
