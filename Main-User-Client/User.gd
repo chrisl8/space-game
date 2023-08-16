@@ -11,6 +11,8 @@ var current_lobby_list: String =  ""
 var is_host: bool              =  false
 var ID                         :=  -1
 var peers: Dictionary
+var peer_count := -1
+var game_scene_initialized: bool = false
 var game_scene_template        :=  preload("res://spaceship.tscn")
 var player_character_template  :=  preload("res://player/player.tscn")
 var is_server: bool            =  false
@@ -24,6 +26,15 @@ var connection_list: Dictionary = {}
 var rtc_peer: WebRTCMultiplayerPeer
 signal reset
 signal delete_main_menu
+
+
+func _process(_delta):
+	if peers.size() != peer_count:
+		peer_count = peers.size()
+		print("New peer count is: ", peer_count)
+
+	if peer_count > 0 and game_scene_initialized:
+		spawn_things()
 
 
 func client_listener_init():
@@ -113,7 +124,7 @@ func _peer_connected(peer_id: int):
 			player_character.name = str(peer_id)
 			game_scene_node.add_child(player_character)
 
-	spawn_things()
+	game_scene_initialized = true
 
 	for connection in connection_list.values():
 		print("Peer connected with id %d" %connection_list.find_key(connection))
