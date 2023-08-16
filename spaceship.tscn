@@ -6,7 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://c58icecs1atwu" path="res://rooms/room_3.tscn" id="4_2iu56"]
 [ext_resource type="PackedScene" uid="uid://df11aw1aclv6d" path="res://rooms/room_4.tscn" id="5_mx4ek"]
 
-[node name="Main" type="Node3D"]
+[node name="Spaceship" type="Node3D"]
 script = ExtResource("1_00g2k")
 
 [node name="Godot Test Room 1" parent="." instance=ExtResource("2_0sr0a")]

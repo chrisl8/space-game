@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://main-user-client/main.gd" id="1_rnv84"]
 
-[node name="main" type="Node"]
+[node name="Main" type="Node"]
 script = ExtResource("1_rnv84")
 run_server_in_debug = true
 server_password = "CCppcqEB8qyv4CF8osuftzpCISuovk6R"
