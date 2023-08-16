@@ -19,7 +19,7 @@ func _ready() -> void:
 
 	if fast_close:
 		print("** Fast Close enabled in the Main scene **")
-		print("** 'Esc' to close 'Shift + F1' to release mouse **")
+		print("** 'Esc' to close 'F1' to release mouse **")
 
 	set_process_input(fast_close)
 
@@ -43,3 +43,4 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 			if event.button_index == MOUSE_BUTTON_LEFT && event.pressed:
 				Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+
