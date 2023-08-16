@@ -113,8 +113,22 @@ func _peer_connected(peer_id: int):
 			player_character.name = str(peer_id)
 			game_scene_node.add_child(player_character)
 
+	spawn_things()
+
 	for connection in connection_list.values():
 		print("Peer connected with id %d" %connection_list.find_key(connection))
+
+
+func spawn_things():
+	var thing_name_to_spawn = "b0rp"
+	var game_scene_node = get_node("../game_scene")
+	var beach_ball = preload("res://things/beach_ball.tscn")
+	var existing_thing = game_scene_node.get_node_or_null(thing_name_to_spawn)
+	if not existing_thing:
+		var new_thing = beach_ball.instantiate()
+		new_thing.set_multiplayer_authority(User.server_id)
+		new_thing.name = str(thing_name_to_spawn)
+		game_scene_node.add_child(new_thing)
 
 
 func _peer_disconnected(peer_id: int):
