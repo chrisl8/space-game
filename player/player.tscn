@@ -38,6 +38,8 @@ albedo_color = Color(0, 0, 0, 1)
 material = SubResource("StandardMaterial3D_hvpxl")
 
 [node name="Player" instance=ExtResource("2_4d6m2")]
+collision_layer = 2
+collision_mask = 3
 
 [node name="ServerSynchronizer" type="MultiplayerSynchronizer" parent="." index="0"]
 replication_config = SubResource("SceneReplicationConfig_ir062")
