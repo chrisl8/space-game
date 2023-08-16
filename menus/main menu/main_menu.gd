@@ -5,8 +5,8 @@ var control_flag : bool = false
 var user_text: String = ""
 
 func _ready():
-	if OS.is_debug_build() and not User.is_server:
-		var debug_delay = randi_range(1, 4)
+	if OS.is_debug_build() and User.local_debug_instance_number > 0 and not User.is_server:
+		var debug_delay = User.local_debug_instance_number
 		while debug_delay > 0:
 			$VBoxContainer/Title.text = "Debug delay " + str(debug_delay)
 			debug_delay = debug_delay - 1

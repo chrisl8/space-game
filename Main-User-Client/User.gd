@@ -17,6 +17,7 @@ var is_server: bool            =  false
 var server_name: String = ""
 var server_id := -1
 var server_password: String    =  ""
+var local_debug_instance_number := -1
 # TODO: I THINK is_host and is_server is the same, and one is better direved than the other, so replace it, and also do that in other places?
 
 var connection_list: Dictionary = {}
@@ -127,7 +128,6 @@ func _peer_disconnected(peer_id: int):
 func _game_start_received(peer_ids: String):
 	var arr = peer_ids.split("***", false)
 	for id_string in arr:
-		var connection = User.connection_list.get(id_string.to_int())
 		User.connection_list.get(id_string.to_int()).create_offer()
 
 
