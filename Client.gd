@@ -136,7 +136,7 @@ func parse_msg():
 		var _type : String = str_arr[0]
 		var sdp : String = str_arr[1]
 		var sender_id = id
-		print("ANSER from ", id)
+		#print("ANSWER from ", id)
 		answer_received.emit(_type, sdp, sender_id)
 		return
 
@@ -145,7 +145,7 @@ func parse_msg():
 		var _type : String = str_arr[0]
 		var sdp : String = str_arr[1]
 		var sender_id = id
-		print("OFFER from ", id)
+		#print("OFFER from ", id)
 		offer_received.emit(_type, sdp, sender_id)
 		return
 

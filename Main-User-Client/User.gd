@@ -107,7 +107,6 @@ func _peer_connected(peer_id: int):
 	if not User.is_server:
 		# Add ME if I don't exist already
 		var my_player = game_scene_node.get_node_or_null("%s" %ID)
-		# (Note case of ID variable.)
 		if not my_player:
 			var player_character = player_character_template.instantiate()
 			player_character.set_multiplayer_authority(User.ID)
@@ -126,8 +125,8 @@ func _peer_connected(peer_id: int):
 
 	game_scene_initialized = true
 
-	for connection in connection_list.values():
-		print("Peer connected with id %d" %connection_list.find_key(connection))
+#	for connection in connection_list.values():
+#		print("Peer connected with id %d" %connection_list.find_key(connection))
 
 
 func spawn_things():
@@ -136,6 +135,7 @@ func spawn_things():
 	var beach_ball = preload("res://things/beach_ball.tscn")
 	var existing_thing = game_scene_node.get_node_or_null(thing_name_to_spawn)
 	if not existing_thing:
+		print("BALL!")
 		var new_thing = beach_ball.instantiate()
 		new_thing.set_multiplayer_authority(User.server_id)
 		new_thing.name = str(thing_name_to_spawn)
@@ -153,6 +153,8 @@ func _peer_disconnected(peer_id: int):
 func _game_start_received(peer_ids: String):
 	var arr = peer_ids.split("***", false)
 	for id_string in arr:
+		# NOTE: This errors sometimtes, I'm not sure why.
+		# My guess is it is just trying to connect.
 		User.connection_list.get(id_string.to_int()).create_offer()
 
 
