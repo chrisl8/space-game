@@ -1,4 +1,6 @@
-[gd_scene load_steps=4 format=3 uid="uid://ceod3svxuy34r"]
+[gd_scene load_steps=5 format=3 uid="uid://ceod3svxuy34r"]
+
+[ext_resource type="Material" uid="uid://dhg3oi0ha82e6" path="res://things/beach_ball/beach_ball_material.tres" id="1_7jvyi"]
 
 [sub_resource type="SphereMesh" id="SphereMesh_te1ch"]
 
@@ -30,6 +32,7 @@ collision_mask = 11
 mass = 0.02
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="RigidBody3D"]
+material_override = ExtResource("1_7jvyi")
 mesh = SubResource("SphereMesh_te1ch")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBody3D"]
