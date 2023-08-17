@@ -3,6 +3,12 @@ class_name MovementController
 
 # Source: https://github.com/Whimfoome/godot-FirstPersonStarter
 
+# Note: This does not seem to do anything. Maybe it will if we fix the Spawner?
+@export var owner_id := -1 :
+	set(_own):
+		owner_id = _own
+		$ServerSynchronizer.set_multiplayer_authority(owner_id)
+
 @export var gravity_multiplier := 3.0
 @export var speed := 10
 @export var acceleration := 8
@@ -20,10 +26,9 @@ class_name MovementController
 
 
 func _ready():
-	if get_multiplayer_authority() == (User.ID):
-		# Bump player over a bit so they don't land in each other.
-		global_position = Vector3(randf_range(-1.0, 1.0), randf_range(-1.0, 1.0), 0.0)
-
+	if not User.is_server:
+		print(User.ID)
+		get_tree().root.print_tree_pretty()
 
 # Called every physics tick. 'delta' is constant
 func _physics_process(delta: float) -> void:

@@ -6,3 +6,9 @@
 script = ExtResource("1_rnv84")
 run_server_in_debug = true
 server_password = "CCppcqEB8qyv4CF8osuftzpCISuovk6R"
+
+[node name="Players" type="Node3D" parent="."]
+
+[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="Players"]
+_spawnable_scenes = PackedStringArray("res://player/player.tscn", "res://player/movement_controller.tscn", "res://player/head.tscn")
+spawn_path = NodePath("..")
