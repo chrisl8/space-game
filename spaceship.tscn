@@ -21,3 +21,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.71586, -2.04223, 5.93824)
 
 [node name="Room 4" parent="." instance=ExtResource("5_mx4ek")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.71586, -2.04223, -4.56176)
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(0.723762, 0, -0.690049, 0, 1, 0, 0.690049, 0, 0.723762, -4.6958, 0, 5.24083)
+current = true
+fov = 56.8
