@@ -8,10 +8,11 @@ extends Node3D
 # Source: https://github.com/Whimfoome/godot-FirstPersonStarter
 
 @export var fast_close := true
+@export var capture_mouse := true
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	if not User.is_server:
+	if capture_mouse and not User.is_server:
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 	if !OS.is_debug_build():
