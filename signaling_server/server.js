@@ -1,4 +1,4 @@
-/* eslint-disable max-classes-per-file */
+/* eslint-disable max-classes-per-file,camelcase */
 /* eslint-disable no-param-reassign */
 import crypto from 'crypto';
 import { WebSocketServer } from 'ws';
@@ -9,22 +9,15 @@ const PORT = process.env.PORT || 9080;
 
 const ALFNUM = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
-const NO_LOBBY_TIMEOUT = 1000;
-const SEAL_CLOSE_TIMEOUT = 10000;
 const PING_INTERVAL = 10000;
 
-const STR_NO_LOBBY = 'Have not joined lobby yet';
 const STR_HOST_DISCONNECTED = 'Room host has disconnected';
-const STR_ONLY_HOST_CAN_SEAL = 'Only host can seal the lobby';
-const STR_SEAL_COMPLETE = 'Seal complete';
 const STR_TOO_MANY_LOBBIES = 'Too many lobbies open, disconnecting';
-const STR_ALREADY_IN_LOBBY = 'Already in a lobby';
 const STR_LOBBY_DOES_NOT_EXISTS = 'Lobby does not exists';
 const STR_LOBBY_IS_SEALED = 'Lobby is sealed';
 const STR_INVALID_FORMAT = 'Invalid message format';
 const STR_NEED_LOBBY = 'Invalid message when not in a lobby';
 const STR_SERVER_ERROR = 'Server error, lobby not found';
-const STR_INVALID_DEST = 'Invalid destination';
 const STR_INVALID_CMD = 'Invalid command';
 const STR_TOO_MANY_PEERS = 'Too many peers connected';
 const STR_INVALID_TRANSFER_MODE = 'Invalid transfer mode, must be text';
@@ -85,8 +78,8 @@ function ProtoMessage(type, id, data) {
   // 	'data': data || '',
   // })}`);
   return JSON.stringify({
-    type: type,
-    id: id,
+    type,
+    id,
     data: data || '',
   });
 }
@@ -132,13 +125,6 @@ class Lobby {
     this.gameInProgress = true;
   }
 
-  getPeerId(peer) {
-    // if (this.host === peer.id) {
-    // 	return 1;
-    // }
-    return peer.id;
-  }
-
   join(peer) {
     peer.lobby = this.name;
     // const assigned = this.getPeerId(peer);
@@ -147,18 +133,18 @@ class Lobby {
       ProtoMessage(CMD.HOST, serverPeerInfo.id, serverPeerInfo.user_name),
     );
     // peer.ws.send(ProtoMessage(CMD.ID, assigned, this.mesh ? 'true' : ''));
-    peer.ws.send(ProtoMessage(CMD.JOIN_LOBBY, 0, 'LOBBY_NAME' + this.name));
+    peer.ws.send(ProtoMessage(CMD.JOIN_LOBBY, 0, `LOBBY_NAME${this.name}`));
     // TODO: Loop over lobby users and send them all to each other like so:
     this.peers.forEach((p) => {
       p.ws.send(
         ProtoMessage(
           CMD.JOIN_LOBBY,
           peer.id,
-          'NEW_JOINED_USER_NAME' + peer.user_name,
+          `NEW_JOINED_USER_NAME${peer.user_name}`,
         ),
       );
       peer.ws.send(
-        ProtoMessage(CMD.JOIN_LOBBY, p.id, 'EXISTING_USER_NAME' + p.user_name),
+        ProtoMessage(CMD.JOIN_LOBBY, p.id, `EXISTING_USER_NAME${p.user_name}`),
       );
     });
     // this.peers.forEach((p) => {
@@ -190,39 +176,57 @@ class Lobby {
     }
     return peer.id === this.host;
   }
-
-  // TODO: I don't think that we use this anymore
-  seal(peer) {
-    // Only host can seal
-    if (peer.id !== this.host) {
-      throw new ProtoError(4000, STR_ONLY_HOST_CAN_SEAL);
-    }
-    this.sealed = true;
-    this.peers.forEach((p) => {
-      p.ws.send(ProtoMessage(CMD.SEAL, 0));
-    });
-    console.log(
-      `Peer ${peer.id} sealed lobby ${this.name} ` +
-        `with ${this.peers.length} peers`,
-    );
-    this.closeTimer = setTimeout(() => {
-      // Close peer connection to host (and thus the lobby)
-      this.peers.forEach((p) => {
-        p.ws.close(1000, STR_SEAL_COMPLETE);
-      });
-    }, SEAL_CLOSE_TIMEOUT);
-  }
 }
 
 const lobbies = new Map();
 let peersCount = 0;
 
+function lobbyListString() {
+  let returnString = '';
+  if (lobbies.size > 0) {
+    lobbies.forEach((p) => {
+      if (returnString !== '') {
+        returnString += ' ';
+      }
+      returnString += p.name;
+    });
+  }
+  return returnString;
+}
+
 wss.broadcast = function broadcast(msg) {
-  console.log(msg);
-  wss.clients.forEach(function each(client) {
+  wss.clients.forEach((client) => {
     client.send(msg);
   });
 };
+
+function sendGameStartMessage(peer) {
+  // Generate '***' delimited list of peers and send it to everyone.
+  let peerListString = '';
+  lobbies.get(peer.lobby).peers.forEach((p) => {
+    if (peerListString !== '') {
+      peerListString += '***';
+    }
+    peerListString += p.id;
+  });
+  if (peerListString !== '') {
+    // Send lobby peer list to all members
+    lobbies.get(peer.lobby).peers.forEach((p) => {
+      console.log('sendGameStartMessage', p.id);
+      p.ws.send(ProtoMessage(CMD.GAME_STARTING, 0, peerListString));
+    });
+  }
+  /*
+  var current_lobby = find_lobby_by_peer(peer)
+  if current_lobby:
+    var all_peer_ids : String = ""
+    for player in current_lobby.peers:
+      all_peer_ids += str(player.id) + "***"
+
+    for player in current_lobby.peers:
+      player.send_msg(Message.GAME_STARTING, 0 , all_peer_ids)
+   */
+}
 
 function joinLobby(peer, pLobby, mesh, isServer = true) {
   let newLobby;
@@ -268,51 +272,10 @@ function joinLobby(peer, pLobby, mesh, isServer = true) {
     // Send lobby list to everyone again with new lobby.
     wss.broadcast(ProtoMessage(CMD.LOBBY_LIST, 0, lobbyListString()));
   }
-  // If the game is already in progress, tell this new player to start game
+  // If the game is already in progress, tell this new player to start the game now
   if (lobby.gameInProgress) {
     sendGameStartMessage(peer);
   }
-}
-
-function lobbyListString() {
-  let lobbyListString = '';
-  if (lobbies.size > 0) {
-    lobbies.forEach((p) => {
-      if (lobbyListString !== '') {
-        lobbyListString += ' ';
-      }
-      lobbyListString += p.name;
-    });
-  }
-  return lobbyListString;
-}
-
-function sendGameStartMessage(peer) {
-  // Generate '***' delimited list of peers and send it to everyone.
-  let peerListString = '';
-  lobbies.get(peer.lobby).peers.forEach((p) => {
-    if (peerListString !== '') {
-      peerListString += '***';
-    }
-    peerListString += p.id;
-  });
-  if (peerListString !== '') {
-    // Send lobby peer list to all members
-    lobbies.get(peer.lobby).peers.forEach((p) => {
-      console.log('sendGameStartMessage', p.id);
-      p.ws.send(ProtoMessage(CMD.GAME_STARTING, 0, peerListString));
-    });
-  }
-  /*
-  var current_lobby = find_lobby_by_peer(peer)
-  if current_lobby:
-    var all_peer_ids : String = ""
-    for player in current_lobby.peers:
-      all_peer_ids += str(player.id) + "***"
-
-    for player in current_lobby.peers:
-      player.send_msg(Message.GAME_STARTING, 0 , all_peer_ids)
-   */
 }
 
 function parseMsg(peer, msg) {
@@ -325,9 +288,9 @@ function parseMsg(peer, msg) {
     throw new ProtoError(4000, STR_INVALID_FORMAT);
   }
 
-  const type = typeof json['type'] === 'number' ? Math.floor(json['type']) : -1;
-  const id = typeof json['id'] === 'number' ? Math.floor(json['id']) : -1;
-  const data = typeof json['data'] === 'string' ? json['data'] : '';
+  const type = typeof json.type === 'number' ? Math.floor(json.type) : -1;
+  const id = typeof json.id === 'number' ? Math.floor(json.id) : -1;
+  const data = typeof json.data === 'string' ? json.data : '';
 
   if (type < 0 || id < 0) {
     console.error(STR_INVALID_FORMAT, 207);
@@ -381,7 +344,7 @@ function parseMsg(peer, msg) {
   }
 
   if (type === CMD.GAME_STARTING) {
-    if ((serverPeerInfo.id = peer.id)) {
+    if (serverPeerInfo.id === peer.id) {
       console.log(`Game Start requested from ${peer.id}`);
       sendGameStartMessage(peer);
       const lobby = lobbies.get(peer.lobby);
@@ -432,7 +395,7 @@ function parseMsg(peer, msg) {
     lobbies.get(peer.lobby).peers.forEach((p) => {
       if (p.id === send_to_id) {
         found = true;
-        console.log(`Sending ANSWER from ${peer.id} to ${p.id}`);
+        // console.log(`Sending ANSWER from ${peer.id} to ${p.id}`);
         p.ws.send(ProtoMessage(CMD.ANSWER, peer.id, data));
       }
     });
@@ -441,18 +404,6 @@ function parseMsg(peer, msg) {
         `ERROR: ANSWER received for ${send_to_id} in lobby ${peer.lobby}, but ID do not match with any peer!`,
       );
     }
-    /*
-		var str_arr = data.split("***", true , 2)
-		var send_to_id = str_arr[2].to_int()
-		var receiver_peer = find_peer_by_id(send_to_id)
-		if receiver_peer:
-			receiver_peer.send_msg(type, peer.id, data)
-			print("Sending received ANSWER! to peer %d" %peer.id)
-			return true
-		else:
-			print("ERROR: ANSWER received but ID do not match with any peer!")
-			return false
-		 */
     return;
   }
 
@@ -465,7 +416,7 @@ function parseMsg(peer, msg) {
     lobbies.get(peer.lobby).peers.forEach((p) => {
       if (p.id === send_to_id) {
         found = true;
-        console.log(`Sending ICE from ${peer.id} to ${p.id}`);
+        // console.log(`Sending ICE from ${peer.id} to ${p.id}`);
         p.ws.send(ProtoMessage(CMD.ICE, peer.id, data));
       }
     });
@@ -474,18 +425,6 @@ function parseMsg(peer, msg) {
         `ERROR: ICE received for ${send_to_id} in lobby ${peer.lobby}, but ID do not match with any peer!`,
       );
     }
-    /*
-		var str_arr = data.split("***", true , 3)
-		var send_to_id = str_arr[3].to_int()
-		var receiver_peer = find_peer_by_id(send_to_id)
-		if receiver_peer:
-			receiver_peer.send_msg(type, peer.id, data)
-			print("Sending received ICE! to peer %d" %peer.id)
-			return true
-		else:
-			print("ERROR: ICE received but ID do not match with any peer!")
-			return false
-		 */
     return;
   }
 
@@ -500,34 +439,6 @@ function parseMsg(peer, msg) {
     throw new ProtoError(4000, STR_SERVER_ERROR);
   }
 
-  // Lobby sealing.
-  if (type === CMD.SEAL) {
-    lobby.seal(peer);
-    return;
-  }
-
-  // Message relaying format:
-  //
-  // {
-  //   "type": CMD.[OFFER|ANSWER|CANDIDATE],
-  //   "id": DEST_ID,
-  //   "data": PAYLOAD
-  // }
-  // TODO: I think we superceded all of these with new code
-  if (type === CMD.OFFER || type === CMD.ANSWER || type === CMD.CANDIDATE) {
-    let destId = id;
-    if (id === 1) {
-      destId = lobby.host;
-    }
-    const dest = lobby.peers.find((e) => e.id === destId);
-    // Dest is not in this room.
-    if (!dest) {
-      console.error(STR_INVALID_DEST, 250);
-      throw new ProtoError(4000, STR_INVALID_DEST);
-    }
-    dest.ws.send(ProtoMessage(type, lobby.getPeerId(peer), data));
-    return;
-  }
   console.error(' -', STR_INVALID_CMD, 383);
   console.error(msg);
   throw new ProtoError(4000, STR_INVALID_CMD);
