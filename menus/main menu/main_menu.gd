@@ -40,7 +40,7 @@ func _send_user_name():
 	$VBoxContainer/Title.text = "2"
 	User.client.user_name_feedback_received.connect(start_connetion_listening)
 	if User.client.is_connection_valid():
-		User.client.send_user_name(user_text)
+		User.client.send_user_name(user_text, User.is_server, User.server_password)
 
 func start_connetion_listening():
 	$VBoxContainer/Title.text = "Stand by, projecting your essence into the void..."

@@ -306,10 +306,18 @@ function parseMsg(peer, msg) {
 
   // Everybody does this first
   if (type === CMD.USER_INFO) {
-    peer.ws.send(ProtoMessage(CMD.USER_INFO, peer.id, data));
-    peer.user_name = data;
+    const dataObject = JSON.parse(data);
+    if (dataObject.isServer && dataObject.serverPassword === serverPassword) {
+      // Setting the ID to 1 has a real affect on how Godot processes the connections for this user.
+      // I'm not sure if this is good or bad or what yet though.
+      // At the moment, nobody will connect to a "client" with an ID of 1, so it is bad.
+      //peer.id = 1;
+      console.log(`Setting ${dataObject.name} ID to ${peer.id} as the server.`);
+    }
+    peer.ws.send(ProtoMessage(CMD.USER_INFO, peer.id, dataObject.name));
+    peer.user_name = dataObject.name;
     console.log(
-      `User name received! Received name ${data} for peer ID ${peer.id}`,
+      `User name received! Received name ${dataObject.name} for peer ID ${peer.id}`,
     );
     return;
   }

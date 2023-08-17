@@ -197,8 +197,8 @@ func parse_msg():
 func is_client_connected() -> bool:
 	return client_connected
 
-func send_user_name(_name : String):
-	send_msg(Message.USER_INFO, 0, _name)
+func send_user_name(_name : String, _is_server: bool, _server_password: String):
+	send_msg(Message.USER_INFO, 0, JSON.stringify({"name": _name, "isServer": _is_server, "serverPassword": _server_password}))
 
 func request_lobby_list():
 	send_msg(Message.LOBBY_LIST, 0, "")
