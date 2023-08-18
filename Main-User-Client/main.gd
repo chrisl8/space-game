@@ -65,3 +65,8 @@ func connection_reset():
 	await get_tree().create_timer(3).timeout
 	if is_instance_valid(pop_up):
 		pop_up.queue_free()
+
+func _input(event: InputEvent) -> void:
+	if event.is_action_pressed(&"dump_tree"):
+		print(multiplayer.get_unique_id())
+		get_tree().root.print_tree_pretty()

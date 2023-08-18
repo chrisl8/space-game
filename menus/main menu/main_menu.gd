@@ -11,7 +11,9 @@ func _ready():
 			$VBoxContainer/Title.text = "Debug delay " + str(debug_delay)
 			debug_delay = debug_delay - 1
 			await get_tree().create_timer(1).timeout
-	_on_play_pressed()
+	User.delete_main_menu.connect(_delete_main_menu)
+	User.init_connection()
+	#_on_play_pressed()
 
 func _on_play_pressed():
 	if control_flag: # Prevents prssing button repeatedly

@@ -2,39 +2,74 @@ extends Node
 
 # Check if this is the first instance of a debug run, so only one attempts to be the server
 # https://gist.github.com/CrankyBunny/71316e7af809d7d4cf5ec6e2369a30b9
-var instance_num               := -1
+var instance_num                            := -1
 var client: Client
-var user_name: String          =  ""
-var host_name: String          =  ""
-var current_lobby_name: String =  ""
-var current_lobby_list: String =  ""
-var is_host: bool              =  false
-var ID                         :=  -1
+var user_name: String                       =  ""
+var host_name: String                       =  ""
+var current_lobby_name: String              =  ""
+var current_lobby_list: String              =  ""
+var is_host: bool                           =  false
+var ID                                      := -1
 var peers: Dictionary
-var peer_count := -1
-var game_scene_initialized: bool = false
-var game_scene_template        :=  preload("res://spaceship.tscn")
-var player_character_template  :=  preload("res://player/player.tscn")
-var is_server: bool            =  false
-var server_name: String = ""
-var server_id := -1
-var server_password: String    =  ""
-var local_debug_instance_number := -1
-var mult: SceneMultiplayer = null
-
-var connection_list: Dictionary = {}
-var rtc_peer: WebRTCMultiplayerPeer
+var peer_count                              := -1
+var network_initialized: bool               =  false
+var game_started: bool                      =  false
+var game_scene_initialize_in_progress: bool =  false
+var game_scene_initialized: bool            =  false
+var players_initialized: bool               =  false
+var player_character_template               := preload("res://player/player.tscn")
+var level_scene                             := preload("res://spaceship.tscn")
+var is_server: bool                         =  false
+var server_name: String                     =  ""
+var server_password: String                 =  ""
+var local_debug_instance_number             := -1
+var mult: SceneMultiplayer                  =  null
+var connection_list: Dictionary             =  {}
+#var rtc_peer: ENetMultiplayerPeer # ENet
+var rtc_peer: WebSocketMultiplayerPeer # WebSocket
 signal reset
 signal delete_main_menu
 
 
-func _process(_delta):
+func _process(_delta) -> void:
+	if not network_initialized:
+		return
+
 	if peers.size() != peer_count:
 		peer_count = peers.size()
-		print(ID, " New peer count is: ", peer_count)
+		print(multiplayer.get_unique_id(), " New peer count is: ", peer_count)
 
-#	if peer_count > 0 and game_scene_initialized:
-#		spawn_things()
+	if not User.is_server:
+		# Only server adds and removes objects
+		return
+
+	# Initialize the Level if it isn't yet
+	if not game_scene_initialized:
+		if not game_scene_initialize_in_progress:
+			game_scene_initialize_in_progress = true
+			load_level.call_deferred(level_scene)
+		elif get_node_or_null("../Main/Level/game_scene"):
+			game_scene_initialized = true
+		return
+
+	spawn_things()
+
+func _enter_tree():
+	print("%d: Enter Tree" % [multiplayer.get_unique_id()])
+
+func _spawn_custom():
+	print("%d: Spawn Custom" % [multiplayer.get_unique_id()])
+
+func load_level(scene: PackedScene):
+	print("%d Loading Scene" % [multiplayer.get_unique_id()])
+	var level_parent := get_tree().get_root().get_node("Main/Level")
+	for c in level_parent.get_children():
+		level_parent.remove_child(c)
+		c.queue_free()
+	#level_parent.set_multiplayer_authority(server_id, true)
+	var game_scene = scene.instantiate()
+	game_scene.name = "game_scene"
+	level_parent.add_child(game_scene)
 
 
 func client_listener_init():
@@ -44,37 +79,80 @@ func client_listener_init():
 	client.reset_connection.connect(reset_connection)
 	client.game_start_received.connect(_game_start_received)
 
+func _peer_connected(id):
+	print("%d: Peer %d connected." % [multiplayer.get_unique_id(), id])
+	if User.is_server and id > 1:
+		var character = player_character_template.instantiate()
+		character.player = id # Set player id.
+		# Randomize character position.
+		var pos := Vector2.from_angle(randf() * 2 * PI)
+		const SPAWN_RANDOM := 2.0
+		character.position = Vector3(pos.x * SPAWN_RANDOM * randf(), 0, pos.y * SPAWN_RANDOM * randf())
+		character.name = str(id)
+		#$Players.add_child(character, true)
+		get_node("../Main/Players").add_child(character, true)
+
+#		var players_node := get_node("../Main/Players")
+#		var this_player_exists := players_node.get_node_or_null("%s" % [peer])
+#		if not this_player_exists:
+#			print("%d: Initializing New Player ID %d" % [multiplayer.get_unique_id(), peer])
+#			var player_character = player_character_template.instantiate()
+#			player_character.name = str(peer)
+#			#player_character.owner_id = peer
+#			# Randomize initial position to avoid spawning inside other players
+#			player_character.position = Vector3(randf_range(-2.5, 2.5), randf_range(-2.5, 2.5), 0.0)
+#			# Note the owner_id SHOULD do this inside of the player, but it don't.
+#			#player_character.set_multiplayer_authority(peer)
+#			players_node.add_child(player_character)
+##players_node.get_node("%s" % [peer]).set_multiplayer_authority(peer)
+
+func _peer_disconnected(id) -> void:
+	print("%d: Peer %d Disconnected." % [multiplayer.get_unique_id(), id])
+	if not User.is_server:
+		return
+	var player_spawner_node = get_node_or_null("../Main/Players")
+	if player_spawner_node and player_spawner_node.has_node(str(id)):
+		player_spawner_node.get_node(str(id)).queue_free()
+#
+#	# connection_list.erase(peer_id) # TODO: Do we need this?
+#	# Remove other player from game.
+#	var other_player := get_node_or_null("../Main/Players/%s" % [multiplayer.get_unique_id()])
+#	if other_player:
+#		other_player.queue_free()
+
+func _connected_to_server():
+	print("%d: I connected to the server!" % [multiplayer.get_unique_id()])
+	delete_main_menu.emit()
+
+func _connection_failed():
+	print("%d: My connection failed. =(" % [multiplayer.get_unique_id()])
+
+func _server_disconnected():
+	print("%d: Server Disconnected" % [multiplayer.get_unique_id()])
 
 func init_connection():
-	print(ID, " init_connection")
-	#mult = get_tree().get_multiplayer() as SceneMultiplayer
-	rtc_peer = WebRTCMultiplayerPeer.new()
+	print("Connecting!")
+	#rtc_peer = ENetMultiplayerPeer.new() # ENet
+	rtc_peer = WebSocketMultiplayerPeer.new() # WebSocket
+
+	multiplayer.peer_connected.connect(_peer_connected)
+	multiplayer.peer_disconnected.connect(_peer_disconnected)
+	multiplayer.connected_to_server.connect(_connected_to_server)
+	multiplayer.connection_failed.connect(_connection_failed)
+	multiplayer.server_disconnected.connect(_server_disconnected)
+
+	multiplayer.multiplayer_peer = null
 	if User.is_server:
-		#rtc_peer.create_server()
-		rtc_peer.create_mesh(ID)
-		#get_tree().get_multiplayer().multiplayer_peer = rtc_peer
+		rtc_peer.create_server(8080)
+		# Server is born ready
+		network_initialized = true
+		delete_main_menu.emit()
 	else:
-		#rtc_peer.create_client(ID)
-		rtc_peer.create_mesh(ID)
-		#mult.multiplayer_peer = rtc_peer
-	print("WebRTCMultiplayerPeer mesh id ", ID)
-
-	connection_list.clear()
-
-	for peer_id in peers.keys():
-		var connection = WebRTCPeerConnection.new()
-		connection.initialize({"iceServers": [ { "urls": ["stun:stun.l.google.com:19302"]}]})
-		connection.session_description_created.connect(session_created.bind(connection))
-		connection.ice_candidate_created.connect(ice_created.bind(connection))
-		connection_list[peer_id] = connection
-		rtc_peer.add_peer(connection, peer_id)
-
-	for peer_id in peers.keys():
-		print("PEER LIST: Name: %s with ID# %d" %[peers.get(peer_id), peer_id])
-
-	rtc_peer.peer_connected.connect(_peer_connected)
-	rtc_peer.peer_disconnected.connect(_peer_disconnected)
-	get_tree().get_multiplayer().multiplayer_peer = rtc_peer
+		#rtc_peer.create_client('127.0.0.1', 8080) # ENet
+		var error = rtc_peer.create_client('ws://localhost:8080') # WebSocket
+		if error:
+			print(error)
+	multiplayer.multiplayer_peer = rtc_peer
 
 
 func session_created(type: String, sdp: String, connection):
@@ -101,75 +179,44 @@ func _answer_received(type: String, sdp: String, sender_id):
 	connection_list.get(sender_id).set_remote_description(type, sdp)
 
 
-func _peer_connected(peer_id: int):
-	print(User.ID, " ", "_peer_connected ", peer_id)
-	delete_main_menu.emit()
-
-	var game_scene_node = get_node_or_null("../Main/game_scene")
-	if not game_scene_node:
-		var game_scene = game_scene_template.instantiate()
-		game_scene.set_multiplayer_authority(User.ID)
-		game_scene.name = "game_scene"
-		get_parent().get_node("Main").add_child(game_scene)
-
-	game_scene_node = get_node("../Main/game_scene")
-
-	var players_node = get_node("../Main/Players")
-
-	if not User.is_server:
-		# Add ME if I don't exist already
-		var my_player = players_node.get_node_or_null("%s" %ID)
-		if not my_player:
-			var player_character = player_character_template.instantiate()
-			player_character.name = str(User.ID)
-			player_character.owner_id = User.ID
-			# Randomize initial position to avoid spawning inside other players
-			player_character.position = Vector3(randf_range(-1.5, 1.5), randf_range(-1.5, 1.5), 0.0)
-			# Note the owner_id SHOULD do this inside of the player, but it don't.
-			player_character.set_multiplayer_authority(User.ID)
-			players_node.add_child(player_character)
-
-	# Add OTHER players if they don't already exist.
-	# (Note case of peer_id variable.)
-	if peer_id != User.server_id:
-		var other_player = players_node.get_node_or_null("%s" %peer_id)
-		if not other_player:
-			var player_character = player_character_template.instantiate()
-			player_character.name = str(peer_id)
-			player_character.owner_id = peer_id
-			#player_character.position = Vector3(randf_range(-1.0, 1.0), randf_range(-1.0, 1.0), 0.0)
-			player_character.set_multiplayer_authority(peer_id)
-			players_node.add_child(player_character)
-
-	game_scene_initialized = true
-
-		#get_tree().root.print_tree()
-#	print(User.ID)
-#	get_tree().root.print_tree_pretty()
-
-#	for connection in connection_list.values():
-#		print("Peer connected with id %d" %connection_list.find_key(connection))
+#func _peer_connected(peer_id: int):
+#	if not User.is_server:
+#		return
+#	print(User.ID, " ", "_peer_connected ", peer_id)
+#	# Add OTHER players if they don't already exist.
+#	var players_node := get_node("../Main/Players")
+#	if peer_id != User.server_id:
+#		var other_player := players_node.get_node_or_null("%s" %peer_id)
+#		if not other_player:
+#			print(User.ID, " Initializing Player ", peer_id)
+#			var player_character = player_character_template.instantiate()
+#			player_character.name = str(peer_id)
+#			player_character.owner_id = peer_id
+#			player_character.set_multiplayer_authority(peer_id)
+#			players_node.add_child(player_character)
 
 
 func spawn_things():
-	var thing_name_to_spawn = "b0rp"
-	var game_scene_node = get_node("../Main/game_scene")
-	var beach_ball = preload("res://things/beach_ball.tscn")
-	var existing_thing = game_scene_node.get_node_or_null(thing_name_to_spawn)
+	var thing_name_to_spawn := "b0rp"
+	var things_spawning_node := get_node("../Main/Things")
+	var beach_ball := preload("res://things/beach_ball/beach_ball.tscn")
+	var existing_thing := things_spawning_node.get_node_or_null(thing_name_to_spawn)
 	if not existing_thing:
 		print("BALL!")
 		var new_thing = beach_ball.instantiate()
-		new_thing.set_multiplayer_authority(User.server_id)
+		#new_thing.set_multiplayer_authority(User.server_id)
 		new_thing.name = str(thing_name_to_spawn)
-		game_scene_node.add_child(new_thing)
+		things_spawning_node.add_child(new_thing)
 
 
-func _peer_disconnected(peer_id: int):
-	print("Peer disconnected with peer_id %d" %peer_id)
-	connection_list.erase(peer_id)
-	var other_player = get_node_or_null("../Main/Players/%s" %peer_id)
-	if other_player:
-		other_player.queue_free()
+#func _peer_disconnected(peer_id: int):
+#	if not User.is_server:
+#		return
+#	print("Peer disconnected with peer_id %d" %peer_id)
+#	connection_list.erase(peer_id)
+#	var other_player := get_node_or_null("../Main/Players/%s" %peer_id)
+#	if other_player:
+#		other_player.queue_free()
 
 
 func _game_start_received(peer_ids: String):
@@ -177,8 +224,6 @@ func _game_start_received(peer_ids: String):
 	for id_string in arr:
 		# NOTE: This errors sometimtes, I'm not sure why.
 		# My guess is it is just trying to connect.
-		if User.connection_list.get(id_string.to_int()):
-			print("_game_start_received ", User.connection_list, " ", id_string.to_int(), " <-")
 		User.connection_list.get(id_string.to_int()).create_offer()
 
 
@@ -196,7 +241,7 @@ func reset_connection():
 	print("User reset!")
 	ID = -1
 	peers.clear()
-	var game_scene_node = get_node_or_null("../Main/game_scene")
+	var game_scene_node := get_node_or_null("../Main/game_scene")
 	if game_scene_node and is_instance_valid(game_scene_node):
 		game_scene_node.queue_free()
 	reset.emit()

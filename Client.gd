@@ -187,7 +187,8 @@ func parse_msg():
 		return
 
 	if type == Message.GAME_STARTING:
-		print("GAME_STARTING")
+		print(User.ID, " GAME_STARTING")
+		User.game_started = true
 		var string = data.get_slice(str(User.ID), 1)
 		if not string == "":
 			game_start_received.emit(string)

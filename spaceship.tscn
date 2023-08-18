@@ -26,3 +26,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.71586, -2.04223, -4.56176)
 transform = Transform3D(0.723762, 0, -0.690049, 0, 1, 0, 0.690049, 0, 0.723762, -4.6958, 0, 5.24083)
 current = true
 fov = 56.8
+
+[node name="Things" type="Node3D" parent="."]
+
+[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="Things"]
+spawn_path = NodePath("..")
