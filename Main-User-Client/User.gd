@@ -25,11 +25,18 @@ var server_password: String                 =  ""
 var local_debug_instance_number             := -1
 var mult: SceneMultiplayer                  =  null
 var connection_list: Dictionary             =  {}
+var url := "ws://127.0.0.1:9080"
+#var url := "wss://godot-test.voidshipephemeral.space/server/"
 #var rtc_peer: ENetMultiplayerPeer # ENet
 var rtc_peer: WebSocketMultiplayerPeer # WebSocket
 signal reset
 signal delete_main_menu
 
+
+func _init():
+	if not OS.is_debug_build():
+		# NEVER use local IP in release
+		url = "wss://godot-test.voidshipephemeral.space/server/"
 
 func _process(_delta) -> void:
 	if not network_initialized:
@@ -53,12 +60,6 @@ func _process(_delta) -> void:
 		return
 
 	spawn_things()
-
-func _enter_tree():
-	print("%d: Enter Tree" % [multiplayer.get_unique_id()])
-
-func _spawn_custom():
-	print("%d: Spawn Custom" % [multiplayer.get_unique_id()])
 
 func load_level(scene: PackedScene):
 	print("%d Loading Scene" % [multiplayer.get_unique_id()])
@@ -91,20 +92,6 @@ func _peer_connected(id):
 		character.name = str(id)
 		#$Players.add_child(character, true)
 		get_node("../Main/Players").add_child(character, true)
-
-#		var players_node := get_node("../Main/Players")
-#		var this_player_exists := players_node.get_node_or_null("%s" % [peer])
-#		if not this_player_exists:
-#			print("%d: Initializing New Player ID %d" % [multiplayer.get_unique_id(), peer])
-#			var player_character = player_character_template.instantiate()
-#			player_character.name = str(peer)
-#			#player_character.owner_id = peer
-#			# Randomize initial position to avoid spawning inside other players
-#			player_character.position = Vector3(randf_range(-2.5, 2.5), randf_range(-2.5, 2.5), 0.0)
-#			# Note the owner_id SHOULD do this inside of the player, but it don't.
-#			#player_character.set_multiplayer_authority(peer)
-#			players_node.add_child(player_character)
-##players_node.get_node("%s" % [peer]).set_multiplayer_authority(peer)
 
 func _peer_disconnected(id) -> void:
 	print("%d: Peer %d Disconnected." % [multiplayer.get_unique_id(), id])
@@ -143,13 +130,14 @@ func init_connection():
 
 	multiplayer.multiplayer_peer = null
 	if User.is_server:
-		rtc_peer.create_server(8080)
+		rtc_peer.create_server(9080)
 		# Server is born ready
 		network_initialized = true
 		delete_main_menu.emit()
 	else:
-		#rtc_peer.create_client('127.0.0.1', 8080) # ENet
-		var error = rtc_peer.create_client('ws://localhost:8080') # WebSocket
+		#rtc_peer.create_client('127.0.0.1', 9080) # ENet
+		print(url)
+		var error := rtc_peer.create_client(url) # WebSocket
 		if error:
 			print(error)
 	multiplayer.multiplayer_peer = rtc_peer
