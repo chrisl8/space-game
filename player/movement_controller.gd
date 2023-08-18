@@ -46,14 +46,10 @@ func dir(class_instance):
 
 	return output
 
-# Called every physics tick. 'delta' is constant
+func _process( delta: float, ) -> void:
+	rotate_y(-input.camera_rotation_y)
+
 func _physics_process(delta: float) -> void:
-
-	if abs(input.camera_rotation_y) > 0.0:
-		#print(rotation.y, " ", input.camera_rotation_y)
-		rotate_y(-input.camera_rotation_y)
-		#input.camera_rotation_y = 0.0
-
 	if is_on_floor():
 		if input.jumping:
 			velocity.y = jump_height

@@ -66,14 +66,11 @@ func _process(_delta):
 	if Input.is_action_just_pressed(&"jump"):
 		jump.rpc()
 
-@rpc("reliable")
-func send_rotate_y(input):
-	camera_rotation_y = input
-
 func camera_rotation() -> void:
 	# Horizontal mouse look.
 	#rot.y -= mouse_axis.x * mouse_sensitivity
-	send_rotate_y(mouse_axis.x * mouse_sensitivity)
+	camera_rotation_y = mouse_axis.x * mouse_sensitivity
+
 	# Vertical mouse look.
 	rot.x = clamp(rot.x - mouse_axis.y * mouse_sensitivity, -y_limit, y_limit)
 
