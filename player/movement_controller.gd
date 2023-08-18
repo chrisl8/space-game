@@ -3,12 +3,6 @@ class_name MovementController
 
 # Source: https://github.com/Whimfoome/godot-FirstPersonStarter
 
-# Note: This does not seem to do anything. Maybe it will if we fix the Spawner?
-@export var owner_id := -1 :
-	set(_own):
-		owner_id = _own
-		$ServerSynchronizer.set_multiplayer_authority(owner_id)
-
 @export var gravity_multiplier := 3.0
 @export var speed := 10
 @export var acceleration := 8
@@ -21,17 +15,45 @@ class_name MovementController
 @onready var gravity: float = (ProjectSettings.get_setting("physics/3d/default_gravity")
 * gravity_multiplier)
 
+# Set by the authority, synchronized on spawn.
+@export var player := 1:
+	set(id):
+		player = id
+		# Give authority over the player input to the appropriate peer.
+		$PlayerInput.set_multiplayer_authority(id)
+		$Head.set_multiplayer_authority(id)
+
+#$Head.set_multiplayer_authority(id)
+
 # Player synchronized input.
 @onready var input = $PlayerInput
 
+var previous_thing: float
 
-func _ready():
-	if not User.is_server:
-		print(User.ID)
-		get_tree().root.print_tree_pretty()
+func dir(class_instance):
+	var output = {}
+	var methods = []
+	for method in class_instance.get_method_list():
+		methods.append(method.name)
+
+	output["METHODS"] = methods
+
+	var properties = []
+	for prop in class_instance.get_property_list():
+		if prop.type == 3:
+			properties.append(prop.name)
+	output["PROPERTIES"] = properties
+
+	return output
 
 # Called every physics tick. 'delta' is constant
 func _physics_process(delta: float) -> void:
+
+	if abs(input.camera_rotation_y) > 0.0:
+		#print(rotation.y, " ", input.camera_rotation_y)
+		rotate_y(-input.camera_rotation_y)
+		#input.camera_rotation_y = 0.0
+
 	if is_on_floor():
 		if input.jumping:
 			velocity.y = jump_height
@@ -43,11 +65,13 @@ func _physics_process(delta: float) -> void:
 	accelerate(delta, direction)
 	move_and_slide()
 
+
 func direction_input() -> Vector3:
 	var direction := Vector3()
 	var aim: Basis = get_global_transform().basis
 	direction = aim.z * -input.input_axis.x + aim.x * input.input_axis.y
 	return direction
+
 
 func accelerate(delta: float, direction: Vector3) -> void:
 	# Using only the horizontal velocity, interpolate towards the input.
