@@ -1,6 +1,5 @@
 extends Node3D
 
-
 #-----------------SCENE--SCRIPT------------------#
 #    Close your game faster by clicking 'Esc'    #
 #   Change mouse mode by clicking 'Shift + F1'   #
@@ -9,6 +8,7 @@ extends Node3D
 
 @export var fast_close := true
 @export var capture_mouse := true
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -37,11 +37,10 @@ func _input(event: InputEvent) -> void:
 				Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 
-
 # Capture mouse if clicked on the game, needed for HTML5
 # Called when an InputEvent hasn't been consumed by _input() or any GUI item
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
-			if event.button_index == MOUSE_BUTTON_LEFT && event.pressed:
-				Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+		if event.button_index == MOUSE_BUTTON_LEFT && event.pressed:
+			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 

@@ -46,7 +46,7 @@ func dir(class_instance):
 
 	return output
 
-func _process( delta: float, ) -> void:
+func _process( _delta: float, ) -> void:
 	rotate_y(-input.camera_rotation_y)
 
 func _physics_process(delta: float) -> void:
