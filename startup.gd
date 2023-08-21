@@ -32,23 +32,28 @@ func _init():
 				User.is_server = true
 
 func _ready():
+	User.reset.connect(connection_reset)
+	User.close_popup.connect(force_close_popup)
 	if OS.is_debug_build() and run_server_in_debug and User.local_debug_instance_number < 1:
 		print("Setting as server based on run_server_in_debug and being first insatnce to run.")
 		User.is_server = true
+	force_close_popup()
 	pop_up = pop_up_template.instantiate()
 	pop_up.set_msg("Welcome!", Color(0, 0, 1))
 	add_child(pop_up) # add_child(main_menu.instantiate())
-	User.reset.connect(connection_reset)
-	User.close_popup.connect(force_close_popup)
 	start_connection()
 
 func start_connection():
+	force_close_popup()
+	pop_up = pop_up_template.instantiate()
+	add_child(pop_up)
 	if OS.is_debug_build() and User.local_debug_instance_number > 0 and not User.is_server:
 		var debug_delay = User.local_debug_instance_number
 		while debug_delay > 0:
-			$VBoxContainer/Title.text = "Debug delay " + str(debug_delay)
+			pop_up.set_msg("Debug delay " + str(debug_delay))
 			debug_delay = debug_delay - 1
 			await get_tree().create_timer(1).timeout
+	pop_up.set_msg("Connecting...")
 	User.init_connection()
 
 func connection_reset(delay):
@@ -58,6 +63,7 @@ func connection_reset(delay):
 	if game_scene_node and is_instance_valid(game_scene_node):
 		game_scene_node.queue_free()
 
+	force_close_popup()
 	pop_up = pop_up_template.instantiate()
 	pop_up.set_msg("Connection Interrupted!", Color(0.79215687513351, 0.26274511218071, 0.56470590829849))
 	add_child(pop_up)

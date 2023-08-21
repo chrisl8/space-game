@@ -119,12 +119,12 @@ func init_connection():
 		rtc_peer.create_server(9080)
 		# Server is born ready
 		network_initialized = true
-		close_popup.emit()
 	else:
 		#rtc_peer.create_client('127.0.0.1', 9080) # ENet
 		var error := rtc_peer.create_client(url) # WebSocket
 		if error:
 			print(error)
+	close_popup.emit()
 	multiplayer.multiplayer_peer = rtc_peer
 
 
