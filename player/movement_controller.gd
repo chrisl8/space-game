@@ -74,7 +74,10 @@ func accelerate(delta: float, direction: Vector3) -> void:
 	if not is_on_floor():
 		temp_accel *= air_control
 
-	temp_vel = temp_vel.lerp(target, temp_accel * delta)
+	# https://github.com/Whimfoome/godot-FirstPersonStarter/issues/32
+	var clamped_accel = clamp(temp_accel * delta, 0.0, 1.0)
+	temp_vel = temp_vel.lerp(target, clamped_accel)
+	#temp_vel = temp_vel.lerp(target, temp_accel * delta)
 
 	velocity.x = temp_vel.x
 	velocity.z = temp_vel.z
