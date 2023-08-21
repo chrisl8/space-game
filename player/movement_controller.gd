@@ -32,7 +32,7 @@ var previous_thing: float
 var character_trimmed := false
 
 func _process( _delta: float, ) -> void:
-	if not character_trimmed and not User.is_server and $Head.get_multiplayer_authority() == multiplayer.get_unique_id():
+	if player > 1 and not character_trimmed and $Head.get_multiplayer_authority() == multiplayer.get_unique_id():
 		character_trimmed = true
 		$Character.get_node("Head").queue_free()
 		$Character.get_node("Body").queue_free()
