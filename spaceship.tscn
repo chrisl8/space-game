@@ -8,7 +8,6 @@
 
 [node name="Spaceship" type="Node3D"]
 script = ExtResource("1_00g2k")
-capture_mouse = false
 
 [node name="Godot Test Room 1" parent="." instance=ExtResource("2_0sr0a")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.28414, -2.04223, 5.93824)
