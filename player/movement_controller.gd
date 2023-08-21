@@ -29,24 +29,13 @@ class_name MovementController
 @onready var input = $PlayerInput
 
 var previous_thing: float
-
-func dir(class_instance):
-	var output = {}
-	var methods = []
-	for method in class_instance.get_method_list():
-		methods.append(method.name)
-
-	output["METHODS"] = methods
-
-	var properties = []
-	for prop in class_instance.get_property_list():
-		if prop.type == 3:
-			properties.append(prop.name)
-	output["PROPERTIES"] = properties
-
-	return output
+var character_trimmed := false
 
 func _process( _delta: float, ) -> void:
+	if not character_trimmed and not User.is_server and $Head.get_multiplayer_authority() == multiplayer.get_unique_id():
+		character_trimmed = true
+		$Character.get_node("Head").queue_free()
+		$Character.get_node("Body").queue_free()
 	rotate_y(-input.camera_rotation_y)
 
 func _physics_process(delta: float) -> void:
