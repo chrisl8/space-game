@@ -54,11 +54,6 @@ func _physics_process(delta: float) -> void:
 		mouse_axis = joystick_axis * 1000.0 * delta
 		camera_rotation()
 
-	var mouse_input = Input.get_last_mouse_velocity()
-	#print(mouse_input)
-	camera_rotation_y = mouse_input.x * mouse_sensitivity / 50
-
-
 
 @rpc("authority")
 func jump():
@@ -71,13 +66,17 @@ func _process(_delta):
 	if Input.is_action_just_pressed(&"jump"):
 		jump.rpc()
 
+
+@rpc("authority")
+func cam_rotate_y(input):
+	camera_rotation_y = input
+
+
 func camera_rotation() -> void:
 	# Horizontal mouse look.
-	#rot.y -= mouse_axis.x * mouse_sensitivity
-	#camera_rotation_y = mouse_axis.x * mouse_sensitivity
+	rot.y -= mouse_axis.x * mouse_sensitivity
+	cam_rotate_y(rot.y)
 
 	# Vertical mouse look.
 	rot.x = clamp(rot.x - mouse_axis.y * mouse_sensitivity, -y_limit, y_limit)
-
-	#rotation.y = rot.y
 	cam.rotation.x = rot.x

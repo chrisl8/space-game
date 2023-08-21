@@ -36,7 +36,7 @@ func _process( _delta: float, ) -> void:
 		character_trimmed = true
 		$Character.get_node("Head").queue_free()
 		$Character.get_node("Body").queue_free()
-	rotate_y(-input.camera_rotation_y)
+	rotation.y = input.camera_rotation_y
 
 func _physics_process(delta: float) -> void:
 	if is_on_floor():
