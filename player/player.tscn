@@ -4,6 +4,9 @@
 [ext_resource type="Script" path="res://player/player_input.gd" id="2_b7s6w"]
 [ext_resource type="PackedScene" uid="uid://cqgo3o7mf7fma" path="res://player/head.tscn" id="2_l45q4"]
 [ext_resource type="Script" path="res://player/sprint.gd" id="3_soypm"]
+[ext_resource type="PackedScene" uid="uid://don84nc4fo8xc" path="res://assets/character/head.gltf" id="5_mnpm1"]
+[ext_resource type="PackedScene" uid="uid://b87td660isajr" path="res://assets/character/body.gltf" id="6_7cdlo"]
+[ext_resource type="PackedScene" uid="uid://dol1pdrb20swb" path="res://assets/character/foot.gltf" id="7_56uny"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_ir062"]
 properties/0/path = NodePath(".:player")
@@ -33,14 +36,6 @@ properties/1/spawn = false
 properties/1/sync = true
 properties/1/watch = false
 
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_jfwvg"]
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hvpxl"]
-albedo_color = Color(0, 0, 0, 1)
-
-[sub_resource type="SphereMesh" id="SphereMesh_j6owx"]
-material = SubResource("StandardMaterial3D_hvpxl")
-
 [node name="Player" instance=ExtResource("2_4d6m2")]
 collision_layer = 2
 collision_mask = 3
@@ -57,10 +52,16 @@ script = ExtResource("2_b7s6w")
 
 [node name="Sprint" type="Node" parent="." index="4"]
 script = ExtResource("3_soypm")
+controller_path = null
+head_path = null
+sprint_speed = null
+fov_multiplier = null
 
-[node name="Body" type="MeshInstance3D" parent="." index="5"]
-mesh = SubResource("CapsuleMesh_jfwvg")
+[node name="Character" type="Node3D" parent="." index="5"]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, -1, 0)
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Body" index="0"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -0.02)
-mesh = SubResource("SphereMesh_j6owx")
+[node name="Head" parent="Character" index="0" instance=ExtResource("5_mnpm1")]
+
+[node name="Body" parent="Character" index="1" instance=ExtResource("6_7cdlo")]
+
+[node name="Foot" parent="Character" index="2" instance=ExtResource("7_56uny")]
