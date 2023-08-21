@@ -27,7 +27,7 @@ func _ready():
 	set_process_input(get_multiplayer_authority() == multiplayer.get_unique_id())
 
 	if User.is_server:
-		# Ensure server has no camera
+		# Ensure server has no player cameras
 		cam.clear_current()
 	elif get_parent().player == multiplayer.get_unique_id():
 		cam.make_current()
@@ -54,6 +54,11 @@ func _physics_process(delta: float) -> void:
 		mouse_axis = joystick_axis * 1000.0 * delta
 		camera_rotation()
 
+	var mouse_input = Input.get_last_mouse_velocity()
+	#print(mouse_input)
+	camera_rotation_y = mouse_input.x * mouse_sensitivity / 50
+
+
 
 @rpc("authority")
 func jump():
@@ -69,7 +74,7 @@ func _process(_delta):
 func camera_rotation() -> void:
 	# Horizontal mouse look.
 	#rot.y -= mouse_axis.x * mouse_sensitivity
-	camera_rotation_y = mouse_axis.x * mouse_sensitivity
+	#camera_rotation_y = mouse_axis.x * mouse_sensitivity
 
 	# Vertical mouse look.
 	rot.x = clamp(rot.x - mouse_axis.y * mouse_sensitivity, -y_limit, y_limit)
