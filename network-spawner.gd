@@ -12,8 +12,8 @@ var game_scene_initialized: bool            =  false
 var game_scene_initialize_in_progress: bool =  false
 var player_character_template               := preload("res://player/player.tscn")
 var level_scene                             := preload("res://spaceship.tscn")
-#var url := "ws://127.0.0.1:9080"
-var url := "wss://godot-test.voidshipephemeral.space/server/"
+var url := "ws://127.0.0.1:9080"
+#var url := "wss://godot-test.voidshipephemeral.space/server/"
 #var rtc_peer: ENetMultiplayerPeer # ENet
 var rtc_peer: WebSocketMultiplayerPeer # WebSocket
 signal reset
