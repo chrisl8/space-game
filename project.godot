@@ -92,6 +92,12 @@ dump_tree={
 ]
 }
 
+[layer_names]
+
+3d_physics/layer_1="Walls and Floors"
+3d_physics/layer_2="Players"
+3d_physics/layer_4="Ball and other Things"
+
 [rendering]
 
 renderer/rendering_method.mobile="gl_compatibility"
