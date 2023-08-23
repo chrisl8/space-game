@@ -78,3 +78,11 @@ func accelerate(delta: float, direction: Vector3) -> void:
 
 	velocity.x = temp_vel.x
 	velocity.z = temp_vel.z
+
+func _on_personal_space_body_entered(body):
+	if body.has_method("select") and $PlayerInput.get_multiplayer_authority() == multiplayer.get_unique_id():
+		body.select(name)
+
+func _on_personal_space_body_exited(body):
+	if body.has_method("unselect") and $PlayerInput.get_multiplayer_authority() == multiplayer.get_unique_id():
+		body.unselect(name)

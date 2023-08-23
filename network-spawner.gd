@@ -135,7 +135,6 @@ func spawn_things():
 	var beach_ball := preload("res://things/beach_ball/beach_ball.tscn")
 	var existing_thing := things_spawning_node.get_node_or_null(thing_name_to_spawn)
 	if not existing_thing:
-		print(thing_name_to_spawn)
 		var new_thing = beach_ball.instantiate()
 		new_thing.name = str(thing_name_to_spawn)
 		things_spawning_node.add_child(new_thing)
@@ -143,7 +142,6 @@ func spawn_things():
 	thing_name_to_spawn = "Ball02"
 	existing_thing = things_spawning_node.get_node_or_null(thing_name_to_spawn)
 	if not existing_thing:
-		print(thing_name_to_spawn)
 		var new_thing = beach_ball.instantiate()
 		new_thing.name = str(thing_name_to_spawn)
 		things_spawning_node.add_child(new_thing)
@@ -152,7 +150,6 @@ func spawn_things():
 	existing_thing = things_spawning_node.get_node_or_null(thing_name_to_spawn)
 	var chair := preload("res://things/chair/chair.tscn")
 	if not existing_thing:
-		print(thing_name_to_spawn)
 		var new_thing = chair.instantiate()
 		new_thing.name = str(thing_name_to_spawn)
 		things_spawning_node.add_child(new_thing)

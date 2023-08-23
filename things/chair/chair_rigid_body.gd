@@ -18,3 +18,11 @@ func _physics_process(_delta):
 		get_parent().queue_free()
 	if abs(position.z) > bounds_distance:
 		get_parent().queue_free()
+
+func select(other_name):
+	print(other_name, " bumped into ", get_parent().name)
+	$SpotLight3D.visible = true
+
+func unselect(other_name):
+	print(other_name, " left ", get_parent().name)
+	$SpotLight3D.visible = false

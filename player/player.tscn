@@ -77,4 +77,5 @@ collision_mask = 10
 [node name="CollisionShape3D" type="CollisionShape3D" parent="PersonalSpace" index="0"]
 shape = SubResource("CylinderShape3D_sd7go")
 
-[connection signal="body_entered" from="PersonalSpace" to="." method="_on_object_entered_personal_space"]
+[connection signal="body_entered" from="PersonalSpace" to="." method="_on_personal_space_body_entered"]
+[connection signal="body_exited" from="PersonalSpace" to="." method="_on_personal_space_body_exited"]
