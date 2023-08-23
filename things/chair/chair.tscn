@@ -1,0 +1,42 @@
+[gd_scene load_steps=5 format=3 uid="uid://dgumnayv4d40c"]
+
+[ext_resource type="PackedScene" uid="uid://xjt6gb3h6u7t" path="res://things/chair/chair.glb" id="1_awrcu"]
+[ext_resource type="Script" path="res://things/chair/chair_rigid_body.gd" id="1_xr6d1"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_j5wk6"]
+size = Vector3(0.39615, 0.938752, 0.389975)
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_14qyn"]
+properties/0/path = NodePath(".:linear_velocity")
+properties/0/spawn = false
+properties/0/sync = true
+properties/0/watch = false
+properties/1/path = NodePath(".:angular_velocity")
+properties/1/spawn = false
+properties/1/sync = true
+properties/1/watch = false
+properties/2/path = NodePath(".:position")
+properties/2/spawn = false
+properties/2/sync = true
+properties/2/watch = false
+properties/3/path = NodePath(".:rotation")
+properties/3/spawn = false
+properties/3/sync = true
+properties/3/watch = false
+
+[node name="Chair" type="Node3D"]
+
+[node name="RigidBody3D" type="RigidBody3D" parent="."]
+collision_layer = 8
+collision_mask = 11
+script = ExtResource("1_xr6d1")
+
+[node name="chair" parent="RigidBody3D" instance=ExtResource("1_awrcu")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -0.2, 0, 0.2)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.47194, 0)
+shape = SubResource("BoxShape3D_j5wk6")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="RigidBody3D"]
+replication_config = SubResource("SceneReplicationConfig_14qyn")
