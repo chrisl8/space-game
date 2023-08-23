@@ -1,9 +1,8 @@
-[gd_scene load_steps=10 format=3 uid="uid://cnckqfxi8eyk8"]
+[gd_scene load_steps=11 format=3 uid="uid://cnckqfxi8eyk8"]
 
 [ext_resource type="PackedScene" uid="uid://btm3vke8t307r" path="res://player/movement_controller.tscn" id="2_4d6m2"]
 [ext_resource type="Script" path="res://player/player_input.gd" id="2_b7s6w"]
 [ext_resource type="PackedScene" uid="uid://cqgo3o7mf7fma" path="res://player/head.tscn" id="2_l45q4"]
-[ext_resource type="Script" path="res://player/sprint.gd" id="3_soypm"]
 [ext_resource type="PackedScene" uid="uid://don84nc4fo8xc" path="res://assets/character/head.gltf" id="5_mnpm1"]
 [ext_resource type="PackedScene" uid="uid://b87td660isajr" path="res://assets/character/body.gltf" id="6_7cdlo"]
 [ext_resource type="PackedScene" uid="uid://dol1pdrb20swb" path="res://assets/character/foot.gltf" id="7_56uny"]
@@ -35,29 +34,34 @@ properties/1/path = NodePath(".:camera_rotation_y")
 properties/1/spawn = false
 properties/1/sync = true
 properties/1/watch = false
+properties/2/path = NodePath(".:speed")
+properties/2/spawn = false
+properties/2/sync = true
+properties/2/watch = false
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_wrqe5"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_sd7go"]
+radius = 1.0
 
 [node name="Player" instance=ExtResource("2_4d6m2")]
 collision_layer = 2
 collision_mask = 3
 
-[node name="Head" parent="." index="0" instance=ExtResource("2_l45q4")]
-
-[node name="ServerSynchronizer" type="MultiplayerSynchronizer" parent="." index="1"]
+[node name="ServerSynchronizer" type="MultiplayerSynchronizer" parent="." index="0"]
 replication_config = SubResource("SceneReplicationConfig_ir062")
 
-[node name="PlayerInput" type="MultiplayerSynchronizer" parent="." index="2"]
+[node name="PlayerInput" type="MultiplayerSynchronizer" parent="." index="1"]
 root_path = NodePath(".")
 replication_config = SubResource("SceneReplicationConfig_l3b2l")
 script = ExtResource("2_b7s6w")
 
-[node name="Sprint" type="Node" parent="." index="4"]
-script = ExtResource("3_soypm")
-controller_path = null
-head_path = null
-sprint_speed = null
-fov_multiplier = null
+[node name="Head" parent="." index="2" instance=ExtResource("2_l45q4")]
 
-[node name="Character" type="Node3D" parent="." index="5"]
+[node name="Collision" parent="." index="3"]
+shape = SubResource("CylinderShape3D_wrqe5")
+
+[node name="Character" type="Node3D" parent="." index="4"]
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, -1, 0)
 
 [node name="Head" parent="Character" index="0" instance=ExtResource("5_mnpm1")]
@@ -65,3 +69,12 @@ transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, -1,
 [node name="Body" parent="Character" index="1" instance=ExtResource("6_7cdlo")]
 
 [node name="Foot" parent="Character" index="2" instance=ExtResource("7_56uny")]
+
+[node name="PersonalSpace" type="Area3D" parent="." index="5"]
+collision_layer = 2
+collision_mask = 10
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PersonalSpace" index="0"]
+shape = SubResource("CylinderShape3D_sd7go")
+
+[connection signal="body_entered" from="PersonalSpace" to="." method="_on_object_entered_personal_space"]

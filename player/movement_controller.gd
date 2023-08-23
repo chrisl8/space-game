@@ -4,7 +4,6 @@ class_name MovementController
 # Source: https://github.com/Whimfoome/godot-FirstPersonStarter
 
 @export var gravity_multiplier := 3.0
-@export var speed := 10
 @export var acceleration := 8
 @export var deceleration := 10
 
@@ -22,8 +21,6 @@ class_name MovementController
 		# Give authority over the player input to the appropriate peer.
 		$PlayerInput.set_multiplayer_authority(id)
 		$Head.set_multiplayer_authority(id)
-
-#$Head.set_multiplayer_authority(id)
 
 # Player synchronized input.
 @onready var input = $PlayerInput
@@ -64,7 +61,7 @@ func accelerate(delta: float, direction: Vector3) -> void:
 	temp_vel.y = 0
 
 	var temp_accel: float
-	var target: Vector3 = direction * speed
+	var target: Vector3 = direction * input.speed
 
 	if direction.dot(temp_vel) > 0:
 		temp_accel = acceleration
