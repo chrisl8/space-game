@@ -9,13 +9,13 @@ run_server_in_debug = true
 [node name="Level" type="Node" parent="."]
 
 [node name="LevelSpawner" type="MultiplayerSpawner" parent="."]
-_spawnable_scenes = PackedStringArray("res://spaceship.tscn")
+_spawnable_scenes = PackedStringArray("res://spaceship/spaceship.tscn")
 spawn_path = NodePath("../Level")
 
 [node name="Players" type="Node" parent="."]
 
 [node name="PlayersSpawner" type="MultiplayerSpawner" parent="."]
-_spawnable_scenes = PackedStringArray("res://player/player.tscn", "res://player/movement_controller.tscn", "res://player/head.tscn")
+_spawnable_scenes = PackedStringArray("res://player/player.tscn")
 spawn_path = NodePath("../Players")
 
 [node name="Things" type="Node" parent="."]

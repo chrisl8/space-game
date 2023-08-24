@@ -11,13 +11,15 @@ var network_initialized: bool               =  false
 var game_scene_initialized: bool            =  false
 var game_scene_initialize_in_progress: bool =  false
 var player_character_template               := preload("res://player/player.tscn")
-var level_scene                             := preload("res://spaceship.tscn")
+var level_scene                             := preload("res://spaceship/spaceship.tscn")
 var url := "ws://127.0.0.1:9080"
 #var url := "wss://godot-test.voidshipephemeral.space/server/"
 #var rtc_peer: ENetMultiplayerPeer # ENet
 var rtc_peer: WebSocketMultiplayerPeer # WebSocket
 signal reset
 signal close_popup
+
+@export var player_spawn_point := Vector3(4,1,-4)
 
 
 func _init():
@@ -74,7 +76,7 @@ func _peer_connected(id):
 		# Randomize character position.
 		var pos := Vector2.from_angle(randf() * 2 * PI)
 		const SPAWN_RANDOM := 2.0
-		character.position = Vector3(pos.x * SPAWN_RANDOM * randf(), 0, pos.y * SPAWN_RANDOM * randf())
+		character.position = Vector3(player_spawn_point.x + (pos.x * SPAWN_RANDOM * randf()), player_spawn_point.y, player_spawn_point.z + (pos.y * SPAWN_RANDOM * randf()))
 		character.name = str(id)
 		#$Players.add_child(character, true)
 		get_node("../Main/Players").add_child(character, true)

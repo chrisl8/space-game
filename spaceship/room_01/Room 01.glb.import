@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://dj2cfrnm2vefv"
-path="res://.godot/imported/Godot Test Room 3.gltf-8e1bb9ab6ca175ccde03bb5303de5f9f.scn"
+uid="uid://dv5m61hxe6dix"
+path="res://.godot/imported/Room 01.glb-6b6de661a4175ac85a2882e724c8664d.scn"
 
 [deps]
 
-source_file="res://assets/Godot Test Room 3.gltf"
-dest_files=["res://.godot/imported/Godot Test Room 3.gltf-8e1bb9ab6ca175ccde03bb5303de5f9f.scn"]
+source_file="res://spaceship/room_01/Room 01.glb"
+dest_files=["res://.godot/imported/Room 01.glb-6b6de661a4175ac85a2882e724c8664d.scn"]
 
 [params]
 
@@ -32,11 +32,21 @@ _subresources={
 "materials": {
 "mat_3": {
 "use_external/enabled": true,
-"use_external/path": "res://assets/textures/grey_floor.tres"
+"use_external/path": "res://assets/textures/white_walls.tres"
 },
 "mat_4": {
 "use_external/enabled": true,
-"use_external/path": "res://assets/textures/white_walls.tres"
+"use_external/path": "res://assets/textures/grey_floor.tres"
+}
+},
+"nodes": {
+"PATH:root003/root001": {
+"generate/physics": true,
+"physics/shape_type": 1
+},
+"PATH:root003/root002": {
+"generate/physics": true,
+"physics/shape_type": 2
 }
 }
 }

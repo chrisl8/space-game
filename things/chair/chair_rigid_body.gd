@@ -6,7 +6,8 @@ extends RigidBody3D
 func _ready():
 	set_physics_process(User.is_server)
 	if User.is_server:
-		position = Vector3(4,0,4)
+		position = Vector3(8,1,-8)
+		rotation.y = -45.0
 
 func _physics_process(_delta):
 	# Only the server should act on this object, as the server owns it,
