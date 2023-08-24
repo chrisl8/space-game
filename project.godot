@@ -19,6 +19,10 @@ config/icon="res://icon.svg"
 
 User="*res://network-spawner.gd"
 
+[filesystem]
+
+import/blender/enabled=false
+
 [input]
 
 move_forward={
