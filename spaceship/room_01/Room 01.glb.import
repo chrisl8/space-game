@@ -45,7 +45,6 @@ _subresources={
 "physics/shape_type": 1
 },
 "PATH:root003/root002": {
-"generate/physics": true,
 "physics/shape_type": 2
 }
 }
