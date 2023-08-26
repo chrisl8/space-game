@@ -28,12 +28,14 @@ class_name MovementController
 var previous_thing: float
 var character_trimmed := false
 
+
 func _process( _delta: float, ) -> void:
 	if player > 1 and not character_trimmed and $Head.get_multiplayer_authority() == multiplayer.get_unique_id():
 		character_trimmed = true
 		$Character.get_node("Head").queue_free()
 		$Character.get_node("Body").queue_free()
 	rotation.y = input.camera_rotation_y
+
 
 func _physics_process(delta: float) -> void:
 	if is_on_floor():
@@ -79,9 +81,11 @@ func accelerate(delta: float, direction: Vector3) -> void:
 	velocity.x = temp_vel.x
 	velocity.z = temp_vel.z
 
+
 func _on_personal_space_body_entered(body):
 	if body.has_method("select") and $PlayerInput.get_multiplayer_authority() == multiplayer.get_unique_id():
 		body.select(name)
+
 
 func _on_personal_space_body_exited(body):
 	if body.has_method("unselect") and $PlayerInput.get_multiplayer_authority() == multiplayer.get_unique_id():
