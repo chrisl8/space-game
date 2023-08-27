@@ -46,7 +46,7 @@ radius = 1.0
 
 [node name="Player" instance=ExtResource("2_4d6m2")]
 collision_layer = 2
-collision_mask = 3
+collision_mask = 11
 
 [node name="ServerSynchronizer" type="MultiplayerSynchronizer" parent="." index="0"]
 replication_config = SubResource("SceneReplicationConfig_ir062")
