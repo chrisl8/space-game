@@ -20,7 +20,7 @@ _surfaces = [{
 }]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_j5wk6"]
-size = Vector3(0.415949, 0.875053, 0.384546)
+size = Vector3(0.415949, 0.875053, 0.509458)
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_14qyn"]
 properties/0/path = NodePath(".:linear_velocity")
@@ -68,8 +68,19 @@ material_override = ExtResource("5_rfvgn")
 mesh = ExtResource("5_rco2u")
 skeleton = NodePath("../..")
 
+[node name="PlantA5" type="MeshInstance3D" parent="RigidBody3D"]
+transform = Transform3D(-0.00954002, -0.00468187, -0.0169431, -0.00595252, 0.018999, -0.00189835, 0.0165395, 0.00413719, -0.010456, 0, 0.535886, 0)
+material_override = ExtResource("5_rfvgn")
+mesh = ExtResource("5_rco2u")
+skeleton = NodePath("../..")
+
 [node name="PlantA2" type="MeshInstance3D" parent="RigidBody3D"]
 transform = Transform3D(0.00981272, -0.00365532, -0.0170396, 0.00190086, 0.0196629, -0.00312341, 0.0173233, -8.70427e-05, 0.00999475, 0, 0.535886, 0)
+material_override = ExtResource("5_rfvgn")
+mesh = ExtResource("5_rco2u")
+
+[node name="PlantA6" type="MeshInstance3D" parent="RigidBody3D"]
+transform = Transform3D(-0.00416184, -0.00204829, 0.0194546, -0.00588835, 0.0190987, 0.000751151, -0.0186549, -0.00557148, -0.00457735, 0, 0.535886, 0)
 material_override = ExtResource("5_rfvgn")
 mesh = ExtResource("5_rco2u")
 
@@ -86,7 +97,7 @@ mesh = ExtResource("5_rco2u")
 skeleton = NodePath("")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBody3D"]
-transform = Transform3D(0.999998, 0, 0.00197222, 0, 1, 0, -0.00197222, 0, 0.999998, 0.00931561, 0.925291, 0.0341566)
+transform = Transform3D(0.999998, 0, 0.00197222, 0, 1, 0, -0.00197222, 0, 0.999998, -0.0239495, 0.925291, -0.0141093)
 shape = SubResource("BoxShape3D_j5wk6")
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="RigidBody3D"]
