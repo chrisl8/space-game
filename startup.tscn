@@ -21,5 +21,5 @@ spawn_path = NodePath("../Players")
 [node name="Things" type="Node" parent="."]
 
 [node name="ThingSpawner" type="MultiplayerSpawner" parent="."]
-_spawnable_scenes = PackedStringArray("res://things/beach_ball/beach_ball.tscn", "res://things/chair/chair.tscn")
+_spawnable_scenes = PackedStringArray("res://things/beach_ball/beach_ball.tscn", "res://things/chair/chair.tscn", "res://things/plant_a/plant_a.tscn", "res://things/plant_a/plant_a.tscn", "res://things/plant_a/plant_a.tscn")
 spawn_path = NodePath("../Things")
