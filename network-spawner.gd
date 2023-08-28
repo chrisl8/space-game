@@ -13,7 +13,7 @@ var game_scene_initialize_in_progress: bool =  false
 var player_character_template               := preload("res://player/player.tscn")
 var level_scene                             := preload("res://spaceship/spaceship.tscn")
 var url := "ws://127.0.0.1:9080"
-#var url := "wss://godot-test.voidshipephemeral.space/server/"
+#var url := "wss://voidshipephemeral.space/server/"
 #var rtc_peer: ENetMultiplayerPeer # ENet
 var rtc_peer: WebSocketMultiplayerPeer # WebSocket
 signal reset
@@ -25,7 +25,7 @@ signal close_popup
 func _init():
 	if not OS.is_debug_build():
 		# NEVER use local IP in release
-		url = "wss://godot-test.voidshipephemeral.space/server/"
+		url = "wss://voidshipephemeral.space/server/"
 
 func _ready():
 	multiplayer.peer_connected.connect(_peer_connected)
