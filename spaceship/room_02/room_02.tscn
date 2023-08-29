@@ -1,0 +1,25 @@
+[gd_scene load_steps=4 format=3 uid="uid://bywfoekpnmak5"]
+
+[ext_resource type="PackedScene" uid="uid://cl3j2ii5d3k4i" path="res://spaceship/room_02/Room 02.glb" id="1_k6jjw"]
+[ext_resource type="PackedScene" uid="uid://c32y2th42csnb" path="res://spaceship/room_02/Room 02 Ceiling.glb" id="2_1rqa8"]
+[ext_resource type="PackedScene" uid="uid://cm2b8wui16i" path="res://posters/purple_running_runes/purple_running_runes_poster.tscn" id="3_xmyrr"]
+
+[node name="Room 02" type="Node3D"]
+
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.0423, 3.19803, -5.23849)
+omni_range = 14.425
+omni_attenuation = 0.019915
+
+[node name="Room 02" parent="." instance=ExtResource("1_k6jjw")]
+
+[node name="Room 02 Ceiling" parent="." instance=ExtResource("2_1rqa8")]
+
+[node name="Window Poster 1" parent="." instance=ExtResource("3_xmyrr")]
+transform = Transform3D(-2, 0, -1.74846e-07, 0, 2, 0, 1.74846e-07, 0, -2, 7, 2.5, 0)
+
+[node name="Window Poster 2" parent="." instance=ExtResource("3_xmyrr")]
+transform = Transform3D(-2, 0, -1.74846e-07, 0, 2, 0, 1.74846e-07, 0, -2, 5, 2.5, 0)
+
+[node name="Window Poster 3" parent="." instance=ExtResource("3_xmyrr")]
+transform = Transform3D(-2, 0, -1.74846e-07, 0, 2, 0, 1.74846e-07, 0, -2, 3, 2.5, 0)

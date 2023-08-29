@@ -1,21 +1,21 @@
 [gd_scene load_steps=4 format=3 uid="uid://cbs4s4ea2n473"]
 
 [ext_resource type="Script" path="res://spaceship/spaceship.gd" id="1_e1est"]
-[ext_resource type="PackedScene" uid="uid://ge3w1tcbg65g" path="res://spaceship/room_01/room_01.tscn" id="2_6r2h0"]
+[ext_resource type="PackedScene" uid="uid://bywfoekpnmak5" path="res://spaceship/room_02/room_02.tscn" id="2_xjddl"]
 [ext_resource type="PackedScene" uid="uid://c4lai1ecyvqnu" path="res://posters/data_flow_poster/data_flow_poster.tscn" id="3_5q6ig"]
 
 [node name="Spaceship" type="Node3D"]
 script = ExtResource("1_e1est")
 
-[node name="Room 01" parent="." instance=ExtResource("2_6r2h0")]
+[node name="Room 01" parent="." instance=ExtResource("2_xjddl")]
 
-[node name="Room 02" parent="." instance=ExtResource("2_6r2h0")]
+[node name="Room 02" parent="." instance=ExtResource("2_xjddl")]
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 20, 0, 0)
 
-[node name="Room 03" parent="." instance=ExtResource("2_6r2h0")]
-transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 20, 0, -20)
+[node name="Room 03" parent="." instance=ExtResource("2_xjddl")]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 20, 0, -20)
 
-[node name="Room 04" parent="." instance=ExtResource("2_6r2h0")]
+[node name="Room 04" parent="." instance=ExtResource("2_xjddl")]
 transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 0, -20)
 
 [node name="Camera3D" type="Camera3D" parent="."]

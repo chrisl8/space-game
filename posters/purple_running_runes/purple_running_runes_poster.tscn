@@ -1,0 +1,148 @@
+[gd_scene load_steps=22 format=3 uid="uid://cm2b8wui16i"]
+
+[ext_resource type="Texture2D" uid="uid://cmxhvomdwxxox" path="res://posters/purple_running_runes/purpleRunningRunes.png" id="1_070lo"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bm77l"]
+atlas = ExtResource("1_070lo")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8eajt"]
+atlas = ExtResource("1_070lo")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lod7v"]
+atlas = ExtResource("1_070lo")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_d3dj1"]
+atlas = ExtResource("1_070lo")
+region = Rect2(48, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_oge4r"]
+atlas = ExtResource("1_070lo")
+region = Rect2(64, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_y8ggb"]
+atlas = ExtResource("1_070lo")
+region = Rect2(80, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5kt3g"]
+atlas = ExtResource("1_070lo")
+region = Rect2(96, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vfxjv"]
+atlas = ExtResource("1_070lo")
+region = Rect2(112, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rq83d"]
+atlas = ExtResource("1_070lo")
+region = Rect2(128, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_66v36"]
+atlas = ExtResource("1_070lo")
+region = Rect2(144, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_80oub"]
+atlas = ExtResource("1_070lo")
+region = Rect2(160, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_42vt4"]
+atlas = ExtResource("1_070lo")
+region = Rect2(176, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_arxgy"]
+atlas = ExtResource("1_070lo")
+region = Rect2(192, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2i5my"]
+atlas = ExtResource("1_070lo")
+region = Rect2(208, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yhntg"]
+atlas = ExtResource("1_070lo")
+region = Rect2(224, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_grumw"]
+atlas = ExtResource("1_070lo")
+region = Rect2(240, 0, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_at0en"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bm77l")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8eajt")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lod7v")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_d3dj1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_oge4r")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_y8ggb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5kt3g")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vfxjv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rq83d")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_66v36")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_80oub")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_42vt4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_arxgy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2i5my")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yhntg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_grumw")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="QuadMesh" id="QuadMesh_1bldy"]
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_wtpcn"]
+viewport_path = NodePath("SubViewport")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_l6873"]
+resource_local_to_scene = true
+albedo_texture = SubResource("ViewportTexture_wtpcn")
+uv1_scale = Vector3(16, 16, 16)
+
+[node name="purple_running_runes_poster" type="Node3D"]
+
+[node name="SubViewport" type="SubViewport" parent="."]
+size = Vector2i(16, 16)
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="SubViewport"]
+sprite_frames = SubResource("SpriteFrames_at0en")
+autoplay = "default"
+frame_progress = 0.0212691
+centered = false
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("QuadMesh_1bldy")
+surface_material_override/0 = SubResource("StandardMaterial3D_l6873")
