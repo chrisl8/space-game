@@ -155,3 +155,18 @@ func spawn_things():
 		var new_thing = chair.instantiate()
 		new_thing.name = str(thing_name_to_spawn)
 		things_spawning_node.add_child(new_thing)
+		
+	#Spawn randomization bounds configured for 3
+	#Will generate somewhat reasonably up to 20
+	var PlantsToSpawn = 3
+	
+	var plant_a := preload("res://things/plant_a/plant_a.tscn")
+	while (PlantsToSpawn > 0):
+		thing_name_to_spawn = "Plant_A" + str(PlantsToSpawn)
+		existing_thing = things_spawning_node.get_node_or_null(thing_name_to_spawn)
+		if not existing_thing:
+			var new_thing = plant_a.instantiate()
+			new_thing.name = str(thing_name_to_spawn)
+			things_spawning_node.add_child(new_thing)
+		PlantsToSpawn-=1
+		
