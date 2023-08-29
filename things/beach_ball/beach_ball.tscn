@@ -27,7 +27,7 @@ properties/3/watch = false
 
 [node name="Beach Ball" type="Node3D"]
 
-[node name="RigidBody3D" type="RigidBody3D" parent="." groups=["Things"]]
+[node name="RigidBody3D" type="RigidBody3D" parent="."]
 collision_layer = 8
 collision_mask = 11
 mass = 0.02

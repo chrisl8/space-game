@@ -52,7 +52,7 @@ func _physics_process(delta: float) -> void:
 		# We get one of the collisions with the player
 		var collision = get_slide_collision(index)
 
-		if collision.get_collider().is_in_group("Things") and collision.get_collider().has_method("push_me"):
+		if collision.get_collider().has_method("push_me"):
 			collision.get_collider().push_me(collision.get_normal(), velocity.length())
 
 	move_and_slide()
