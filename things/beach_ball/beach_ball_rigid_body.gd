@@ -26,9 +26,8 @@ func _physics_process(_delta):
 # https://github.com/godotengine/godot/issues/74804
 # There are other ways, but that results in pushing these things
 # through walls, so this is the way.
-# NOTE: Do this BEFORE move_and_slide() or else your velocity may be 0
-# at this moment (because you bumped into the thing) and hence no
+# NOTE: Do call this in the character/player's script BEFORE move_and_slide()
+# or else your velocity may be 0 at this moment (because you bumped into the thing) and hence no
 # impulse will be telegraphed.
 func push_me(collision_get_normal, velocity_length):
 	self.apply_central_impulse(-collision_get_normal * velocity_length * push_factor)
-	#linear_velocity = linear_velocity.clamp(minimum_velocity, maximum_velocity)
