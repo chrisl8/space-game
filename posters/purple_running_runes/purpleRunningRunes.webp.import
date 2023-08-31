@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cy2alvgllpy85"
-path="res://.godot/imported/data_flow.jpg-2b2c2695262cc38b7c5729b293828ecd.ctex"
+uid="uid://vcry5f0dcaro"
+path="res://.godot/imported/purpleRunningRunes.webp-10a238c4110732617bd59ef17fd9887f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://posters/data_flow_poster/data_flow.jpg"
-dest_files=["res://.godot/imported/data_flow.jpg-2b2c2695262cc38b7c5729b293828ecd.ctex"]
+source_file="res://posters/purple_running_runes/purpleRunningRunes.webp"
+dest_files=["res://.godot/imported/purpleRunningRunes.webp-10a238c4110732617bd59ef17fd9887f.ctex"]
 
 [params]
 

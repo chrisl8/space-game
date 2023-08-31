@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://c4lai1ecyvqnu"]
 
-[ext_resource type="Texture2D" uid="uid://cy2alvgllpy85" path="res://posters/data_flow_poster/data_flow.jpg" id="1_7nir4"]
+[ext_resource type="Texture2D" uid="uid://bp6vb1ulv2mb5" path="res://posters/data_flow_poster/data_flow.webp" id="1_1m32k"]
 
 [sub_resource type="QuadMesh" id="QuadMesh_jmdnh"]
 
@@ -20,8 +20,7 @@ render_target_update_mode = 1
 [node name="TextureRect" type="TextureRect" parent="SubViewport"]
 offset_right = 40.0
 offset_bottom = 40.0
-texture = ExtResource("1_7nir4")
-stretch_mode = 1
+texture = ExtResource("1_1m32k")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 mesh = SubResource("QuadMesh_jmdnh")
