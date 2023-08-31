@@ -10,12 +10,13 @@ var pop_up: Node
 # https://gist.github.com/CrankyBunny/71316e7af809d7d4cf5ec6e2369a30b9
 var _instance_socket: TCPServer
 
+
 func _init():
 	# Check if this is the first instance of a debug run, so only one attempts to be the server
 	# https://gist.github.com/CrankyBunny/71316e7af809d7d4cf5ec6e2369a30b9
 	if OS.is_debug_build():
 		_instance_socket = TCPServer.new()
-		for n in range(0,4):
+		for n in range(0, 4):
 			if _instance_socket.listen(5000 + n) == OK:
 				User.local_debug_instance_number = n
 				break
@@ -31,6 +32,7 @@ func _init():
 				print("Setting as server based on command line argument.")
 				User.is_server = true
 
+
 func _ready():
 	User.reset.connect(connection_reset)
 	User.close_popup.connect(force_close_popup)
@@ -40,8 +42,9 @@ func _ready():
 	force_close_popup()
 	pop_up = pop_up_template.instantiate()
 	pop_up.set_msg("Welcome!", Color(0, 0, 1))
-	add_child(pop_up) # add_child(main_menu.instantiate())
+	add_child(pop_up)  # add_child(main_menu.instantiate())
 	start_connection()
+
 
 func start_connection():
 	force_close_popup()
@@ -56,6 +59,7 @@ func start_connection():
 	pop_up.set_msg("Connecting...")
 	User.init_connection()
 
+
 func connection_reset(delay):
 #	for i in get_children():
 #		i.queue_free()
@@ -65,7 +69,9 @@ func connection_reset(delay):
 
 	force_close_popup()
 	pop_up = pop_up_template.instantiate()
-	pop_up.set_msg("Connection Interrupted!", Color(0.79215687513351, 0.26274511218071, 0.56470590829849))
+	pop_up.set_msg(
+		"Connection Interrupted!", Color(0.79215687513351, 0.26274511218071, 0.56470590829849)
+	)
 	add_child(pop_up)
 	await get_tree().create_timer(3).timeout
 	var retry_delay = delay
@@ -76,10 +82,12 @@ func connection_reset(delay):
 	pop_up.set_msg("Connecting...")
 	start_connection()
 
+
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed(&"dump_tree"):
 		print(multiplayer.get_unique_id())
 		get_tree().root.print_tree_pretty()
+
 
 func force_close_popup():
 	if pop_up and is_instance_valid(pop_up):

@@ -11,8 +11,8 @@ class_name MovementController
 @export var jump_height := 10
 
 # Get the gravity from the project settings to be synced with RigidDynamicBody nodes.
-@onready var gravity: float = (ProjectSettings.get_setting("physics/3d/default_gravity")
-* gravity_multiplier)
+@onready
+var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity") * gravity_multiplier
 
 # Set by the authority, synchronized on spawn.
 @export var player := 1:
@@ -29,8 +29,14 @@ var previous_thing: float
 var character_trimmed := false
 
 
-func _process( _delta: float, ) -> void:
-	if player > 1 and not character_trimmed and $Head.get_multiplayer_authority() == multiplayer.get_unique_id():
+func _process(
+	_delta: float,
+) -> void:
+	if (
+		player > 1
+		and not character_trimmed
+		and $Head.get_multiplayer_authority() == multiplayer.get_unique_id()
+	):
 		character_trimmed = true
 		$Character.get_node("Head").queue_free()
 		$Character.get_node("Body").queue_free()
@@ -48,6 +54,15 @@ func _physics_process(delta: float) -> void:
 	var direction := direction_input()
 	accelerate(delta, direction)
 
+	# Apply impulses to rigid bodies that we encounter to make them move.
+	# https://kidscancode.org/godot_recipes/3.x/physics/kinematic_to_rigidbody/index.html
+	# https://github.com/godotengine/godot/issues/74804
+	# There are other ways, but that results in pushing these things
+	# through walls, so this is the way.
+	# NOTE: Do call this in the character/player's script BEFORE move_and_slide()
+	# or else your velocity may be 0 at this moment (because you already bumped into the thing) and hence no
+	# impulse will be telegraphed. If youc all move_and_slide() first you will see that you run up to something
+	# and just immediately stop and the object doesn't move.
 	for index in range(get_slide_collision_count()):
 		# We get one of the collisions with the player
 		var collision = get_slide_collision(index)
@@ -91,10 +106,16 @@ func accelerate(delta: float, direction: Vector3) -> void:
 
 
 func _on_personal_space_body_entered(body):
-	if body.has_method("select") and $PlayerInput.get_multiplayer_authority() == multiplayer.get_unique_id():
+	if (
+		body.has_method("select")
+		and $PlayerInput.get_multiplayer_authority() == multiplayer.get_unique_id()
+	):
 		body.select(name)
 
 
 func _on_personal_space_body_exited(body):
-	if body.has_method("unselect") and $PlayerInput.get_multiplayer_authority() == multiplayer.get_unique_id():
+	if (
+		body.has_method("unselect")
+		and $PlayerInput.get_multiplayer_authority() == multiplayer.get_unique_id()
+	):
 		body.unselect(name)

@@ -4,13 +4,19 @@ extends RigidBody3D
 
 @export var push_factor = 0.8
 
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	set_physics_process(User.is_server)
 	if User.is_server:
-		position = Vector3(2.274 + RandomNumberGenerator.new().randf_range(-1.0, 1.0),0.5,-17.702 + RandomNumberGenerator.new().randf_range(-1.0, 1.0))
+		position = Vector3(
+			2.274 + RandomNumberGenerator.new().randf_range(-1.0, 1.0),
+			0.5,
+			-17.702 + RandomNumberGenerator.new().randf_range(-1.0, 1.0)
+		)
 		rotation.y = RandomNumberGenerator.new().randf_range(-180.0, 180.0)
 		print("A")
+
 
 func _physics_process(_delta):
 	# Only the server should act on this object, as the server owns it,

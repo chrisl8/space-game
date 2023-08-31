@@ -7,7 +7,6 @@ extends MultiplayerSynchronizer
 
 @export var camera_rotation_y := 0.0
 
-
 # Source: https://github.com/Whimfoome/godot-FirstPersonStarter
 
 var cam: Camera3D
@@ -16,7 +15,7 @@ var cam: Camera3D
 @export var y_limit := 80.0
 
 var mouse_axis := Vector2()
-var rot        := Vector3()
+var rot := Vector3()
 
 @export var speed := 10
 var normal_fov: float
@@ -25,8 +24,8 @@ var is_sprinting := false
 var normal_speed := speed
 var sprint_speed := 25
 
-func _ready():
 
+func _ready():
 	cam = get_parent().get_node("Head").get_node("Camera3D")
 	normal_fov = cam.fov
 
@@ -48,40 +47,37 @@ func _ready():
 func _input(event: InputEvent) -> void:
 	# Mouse look (only if the mouse is captured).
 	# and only if this is the local player
-	if  event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
+	if event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
 		mouse_axis = event.relative
 		camera_rotation()
 	elif event is InputEventKey and event.keycode == KEY_SHIFT:
 		if event.pressed != is_sprinting:
 			is_sprinting = event.pressed
-			if (is_sprinting):
+			if is_sprinting:
 				speed = sprint_speed
 			else:
 				speed = normal_speed
 
 
 func _physics_process(delta: float) -> void:
-	var joystick_axis := Input.get_vector(&"look_left", &"look_right",
-	&"look_down", &"look_up")
+	var joystick_axis := Input.get_vector(&"look_left", &"look_right", &"look_down", &"look_up")
 
 	if joystick_axis != Vector2.ZERO:
 		mouse_axis = joystick_axis * 1000.0 * delta
 		camera_rotation()
 
-	if (is_sprinting):
+	if is_sprinting:
 		cam.set_fov(lerp(cam.fov, normal_fov * fov_multiplier, delta * 8))
 	else:
 		cam.set_fov(lerp(cam.fov, normal_fov, delta * 8))
 
 
-@rpc()
-func jump():
+@rpc() func jump():
 	jumping = true
 
 
 func _process(_delta):
-	input_axis = Input.get_vector(&"move_back", &"move_forward",
-	&"move_left", &"move_right")
+	input_axis = Input.get_vector(&"move_back", &"move_forward", &"move_left", &"move_right")
 
 	if Input.is_action_just_pressed(&"jump"):
 		jump.rpc()
