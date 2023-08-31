@@ -136,6 +136,7 @@ uv1_scale = Vector3(16, 16, 16)
 
 [node name="SubViewport" type="SubViewport" parent="."]
 size = Vector2i(16, 16)
+render_target_update_mode = 3
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="SubViewport"]
 sprite_frames = SubResource("SpriteFrames_at0en")
