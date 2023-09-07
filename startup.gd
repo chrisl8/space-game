@@ -39,6 +39,10 @@ func _ready():
 	if OS.is_debug_build() and run_server_in_debug and User.local_debug_instance_number < 1:
 		print("Setting as server based on run_server_in_debug and being first insatnce to run.")
 		User.is_server = true
+
+	if User.is_server:
+		SignalingServer.start()
+
 	force_close_popup()
 	pop_up = pop_up_template.instantiate()
 	pop_up.set_msg("Welcome!", Color(0, 0, 1))
@@ -57,7 +61,7 @@ func start_connection():
 			debug_delay = debug_delay - 1
 			await get_tree().create_timer(1).timeout
 	pop_up.set_msg("Connecting...")
-	User.init_connection()
+	User.ready_to_connect = true
 
 
 func connection_reset(delay):
