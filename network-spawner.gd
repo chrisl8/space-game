@@ -3,7 +3,7 @@ extends Node
 enum Message { USER_INFO, PLAYER_JOINED, PLAYER_LEFT, OFFER, ANSWER, ICE }
 
 var ws := WebSocketPeer.new()
-var url := "wss://test.voidshipephemeral.space/signal/"
+var url := "wss://voidshipephemeral.space/signal/"
 var websocket_client_connected: bool = false
 var websocket_close_reason: String = ""
 
