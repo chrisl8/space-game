@@ -44,16 +44,26 @@ func _process(
 
 
 func _physics_process(delta: float) -> void:
-	if held_item_name != "":
-		var things_spawning_node := get_tree().get_root().get_node("Main/Things")
-		var existing_thing = things_spawning_node.get_node_or_null(held_item_name)
-		if existing_thing:
-			existing_thing.input_position(Vector3(8, 1, -8))
-		#position = Vector3(8, 1, -8)
+	# if held_item_name != "":
+	# 	var things_spawning_node := get_tree().get_root().get_node("Main/Things")
+	# 	var existing_thing = things_spawning_node.get_node_or_null(held_item_name)
+	# 	if existing_thing:
+	# 		existing_thing.input_position(Vector3(8, 1, -8))
+	#position = Vector3(8, 1, -8)
 
 	if input.interacting:
-		print(User.local_debug_instance_number, " Interact")
-		_spawn_chair()
+		print(
+			User.local_debug_instance_number, " ", name, " ", input.selected_thing_name, " Interact"
+		)
+		if input.selected_thing_name != "":
+			var things_parent := get_tree().get_root().get_node("Main/Things")
+			var thing_to_grab = things_parent.get_node_or_null(input.selected_thing_name)
+			if thing_to_grab:
+				print(thing_to_grab)
+				var thing_to_grab_body = thing_to_grab.get_node_or_null("./RigidBody3D")
+				if thing_to_grab_body and thing_to_grab_body.has_method("grab"):
+					print(thing_to_grab_body)
+					thing_to_grab_body.grab(name)
 	input.interacting = false
 
 	if is_on_floor():
@@ -115,23 +125,6 @@ func accelerate(delta: float, direction: Vector3) -> void:
 
 	velocity.x = temp_vel.x
 	velocity.z = temp_vel.z
-
-
-func _on_personal_space_body_entered(body):
-	print(".")
-	if (
-		body.has_method("select")
-		and $PlayerInput.get_multiplayer_authority() == multiplayer.get_unique_id()
-	):
-		body.select(name)
-
-
-func _on_personal_space_body_exited(body):
-	if (
-		body.has_method("unselect")
-		and $PlayerInput.get_multiplayer_authority() == multiplayer.get_unique_id()
-	):
-		body.unselect(name)
 
 
 var held_item_name := ""
