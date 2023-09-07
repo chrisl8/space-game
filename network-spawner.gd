@@ -342,6 +342,9 @@ func parse_msg():
 		return
 
 	if type == Message.PLAYER_LEFT:
+		# There seems to be a delay between a websocket disconnect sending and the WebRTC disconnect,
+		# so we run this now instead of waiting so other player bodies don't linger.
+		_peer_disconnected(id)
 		if peers.has(id):
 			peers.erase(id)
 			log_print("Peer name: %s with ID # %s erased from the list" % [data, id])
