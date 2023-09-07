@@ -30,12 +30,16 @@ var character_trimmed := false
 
 
 func _ready():
-	# By only processing physics on the authority,
+	# TODO: This is not perfect, but better.
+	# 		Before this, the player would "rewind" constantly.
+	#		Now they get "stuck" sometimes, but then can move.
+	#		This is superior, but I'd rather that not happen either, but it will take some experimentation.
+	# Only processing Physics on the authority, which is the SERVER.
 	# This prevents the local palyer from jittering around when the network is slow.
-	# The local player will see themselves move to where they expect,
-	# but others may see them behind if things lag.
-	# However, without this, the local player will find themselves being snapped back and then forward
-	# in time!
+	# The local player will only see themselves move to where they expect if the network is working,
+	# but others may see them behind if the network lags for them.
+	# Without this, the local player will find themselves being snapped back to where the server THOUGHT they were
+	# and then forward in time to where they thought they were before.
 	set_physics_process(get_multiplayer_authority() == multiplayer.get_unique_id())
 	# Note: Do NOT set this on _process, as that relates to the player's local body and camera.
 	# If you take _process away, their camera will be stuck in their visible head and they won't be able to look around.
