@@ -450,5 +450,5 @@ func _offer_received(type: String, sdp: String, sender_id):
 
 
 func _answer_received(type: String, sdp: String, sender_id):
-	# log_print(str("_answer_received ", type, " ", sdp, " ", sender_id))
+	#log_print(str("_answer_received ", type, " ", sdp, " ", sender_id))
 	connection_list.get(sender_id).set_remote_description(type, sdp)
