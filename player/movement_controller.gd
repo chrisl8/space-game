@@ -29,6 +29,18 @@ var previous_thing: float
 var character_trimmed := false
 
 
+func _ready():
+	# By only processing physics on the authority,
+	# This prevents the local palyer from jittering around when the network is slow.
+	# The local player will see themselves move to where they expect,
+	# but others may see them behind if things lag.
+	# However, without this, the local player will find themselves being snapped back and then forward
+	# in time!
+	set_physics_process(get_multiplayer_authority() == multiplayer.get_unique_id())
+	# Note: Do NOT set this on _process, as that relates to the player's local body and camera.
+	# If you take _process away, their camera will be stuck in their visible head and they won't be able to look around.
+
+
 func _process(
 	_delta: float,
 ) -> void:
