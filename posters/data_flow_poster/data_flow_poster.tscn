@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://c4lai1ecyvqnu"]
 
-[ext_resource type="Texture2D" uid="uid://bp6vb1ulv2mb5" path="res://posters/data_flow_poster/data_flow.webp" id="1_1m32k"]
+[ext_resource type="Texture2D" uid="uid://dac1rvkd0popu" path="res://posters/data_flow_poster/data_flow.webp" id="1_1m32k"]
 
 [sub_resource type="QuadMesh" id="QuadMesh_jmdnh"]
 
