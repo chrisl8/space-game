@@ -4,6 +4,7 @@ extends MultiplayerSynchronizer
 
 # Set via RPC to simulate is_action_just_pressed.
 @export var jumping := false
+@export var interacting := false
 
 @export var camera_rotation_y := 0.0
 
@@ -76,11 +77,18 @@ func _physics_process(delta: float) -> void:
 	jumping = true
 
 
+@rpc() func interact():
+	interacting = true
+
+
 func _process(_delta):
 	input_axis = Input.get_vector(&"move_back", &"move_forward", &"move_left", &"move_right")
 
 	if Input.is_action_just_pressed(&"jump"):
 		jump.rpc()
+
+	if Input.is_action_just_pressed(&"interact"):
+		interact.rpc()
 
 
 func camera_rotation() -> void:

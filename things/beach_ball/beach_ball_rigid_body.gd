@@ -31,5 +31,5 @@ func _physics_process(_delta):
 # NOTE: Do call this in the character/player's script BEFORE move_and_slide()
 # or else your velocity may be 0 at this moment (because you bumped into the thing) and hence no
 # impulse will be telegraphed.
-func push_me(collision_get_normal, velocity_length):
+func push(collision_get_normal, velocity_length):
 	self.apply_central_impulse(-collision_get_normal * velocity_length * push_factor)

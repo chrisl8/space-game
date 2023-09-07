@@ -4,14 +4,26 @@ extends RigidBody3D
 
 @export var push_factor = 0.9
 
+var player_focused: String
+var player_holding_me: String
+
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	set_physics_process(User.is_server)
 	if User.is_server:
-		position = Vector3(8,1,-8)
+		position = Vector3(8, 1, -8)
 		rotation.y = -45.0
 
+
 func _physics_process(_delta):
+	if player_holding_me != "":
+		var players_parent := get_tree().get_root().get_node("Main/Players")
+		var player_spawner_node := get_tree().get_root().get_node("Main/Players")
+		var player_to_follow = player_spawner_node.get_node_or_null(player_holding_me)
+		if player_to_follow:
+			position = player_to_follow.position
+
 	# Only the server should act on this object, as the server owns it,
 	# especially the delete part.
 	# Delete if it gets out of bounds
@@ -22,11 +34,16 @@ func _physics_process(_delta):
 	if abs(position.z) > bounds_distance:
 		get_parent().queue_free()
 
+
 func select(other_name):
-	print(other_name, " is near ", get_parent().name)
-	$SpotLight3D.visible = true
+	if player_focused == "":
+		player_focused = other_name
+		print(other_name, " is near ", get_parent().name)
+		$SpotLight3D.visible = true
+
 
 func unselect(other_name):
+	player_focused = ""
 	print(other_name, " moved away from ", get_parent().name)
 	$SpotLight3D.visible = false
 
@@ -39,5 +56,14 @@ func unselect(other_name):
 # NOTE: Do call this in the character/player's script BEFORE move_and_slide()
 # or else your velocity may be 0 at this moment (because you bumped into the thing) and hence no
 # impulse will be telegraphed.
-func push_me(collision_get_normal, velocity_length):
+func push(collision_get_normal, velocity_length):
 	self.apply_central_impulse(-collision_get_normal * velocity_length * push_factor)
+
+
+func grab(other_name, only_if_selected):
+	if not player_holding_me == "":
+		player_holding_me = other_name
+
+
+func input_position(new_position):
+	self.position = new_position

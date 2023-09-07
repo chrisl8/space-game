@@ -44,6 +44,18 @@ func _process(
 
 
 func _physics_process(delta: float) -> void:
+	if held_item_name != "":
+		var things_spawning_node := get_tree().get_root().get_node("Main/Things")
+		var existing_thing = things_spawning_node.get_node_or_null(held_item_name)
+		if existing_thing:
+			existing_thing.input_position(Vector3(8, 1, -8))
+		#position = Vector3(8, 1, -8)
+
+	if input.interacting:
+		print(User.local_debug_instance_number, " Interact")
+		_spawn_chair()
+	input.interacting = false
+
 	if is_on_floor():
 		if input.jumping:
 			velocity.y = jump_height
@@ -67,8 +79,8 @@ func _physics_process(delta: float) -> void:
 		# We get one of the collisions with the player
 		var collision = get_slide_collision(index)
 
-		if collision.get_collider().has_method("push_me"):
-			collision.get_collider().push_me(collision.get_normal(), velocity.length())
+		if collision.get_collider().has_method("push"):
+			collision.get_collider().push(collision.get_normal(), velocity.length())
 
 	move_and_slide()
 
@@ -106,6 +118,7 @@ func accelerate(delta: float, direction: Vector3) -> void:
 
 
 func _on_personal_space_body_entered(body):
+	print(".")
 	if (
 		body.has_method("select")
 		and $PlayerInput.get_multiplayer_authority() == multiplayer.get_unique_id()
@@ -119,3 +132,21 @@ func _on_personal_space_body_exited(body):
 		and $PlayerInput.get_multiplayer_authority() == multiplayer.get_unique_id()
 	):
 		body.unselect(name)
+
+
+var held_item_name := ""
+
+
+func _spawn_chair():
+	if held_item_name == "":
+		print("..")
+		var thing_name_to_spawn = "Chair01a"
+		var things_spawning_node := get_tree().get_root().get_node("Main/Things")
+		var existing_thing = things_spawning_node.get_node_or_null(thing_name_to_spawn)
+		var chair := preload("res://things/chair/chair.tscn")
+		if not existing_thing:
+			print("...")
+			var new_thing = chair.instantiate()
+			new_thing.name = str(thing_name_to_spawn)
+			things_spawning_node.add_child(new_thing)
+			print(thing_name_to_spawn)

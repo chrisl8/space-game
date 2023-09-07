@@ -16,37 +16,45 @@ func _ready():
 			-17.702 + RandomNumberGenerator.new().randf_range(-1.0, 1.0)
 		)
 		rotation.y = RandomNumberGenerator.new().randf_range(-180.0, 180.0)
-		
+
 	for Leaf in Leafs:
-		if(RandomNumberGenerator.new().randi_range(0, 1) == 1):
+		if RandomNumberGenerator.new().randi_range(0, 1) == 1:
 			LeafStates.append(false)
 		else:
 			LeafStates.append(true)
 
+
 func _process(delta):
 	ProcessLeaves(delta)
 
+
 var LeafStates: Array[bool] = []
+
 
 func ProcessLeaves(delta):
 	var Count = 0
 	for Leaf in Leafs:
 		var RotVal = 0.03 * RandomNumberGenerator.new().randf_range(0.5, 1.5)
-		if(LeafStates[Count]):
-			RotVal*=-1
+		if LeafStates[Count]:
+			RotVal *= -1
 
 		var Variance = 0.99
 
-		if(Leaf.get_rotation().z * 180/3.14 > 75 || RandomNumberGenerator.new().randf_range(0, 1) > Variance):
+		if (
+			Leaf.get_rotation().z * 180 / 3.14 > 75
+			|| RandomNumberGenerator.new().randf_range(0, 1) > Variance
+		):
 			LeafStates[Count] = false
-		if(Leaf.get_rotation().z * 180/3.14 < 55 || RandomNumberGenerator.new().randf_range(0, 1) > Variance):
+		if (
+			Leaf.get_rotation().z * 180 / 3.14 < 55
+			|| RandomNumberGenerator.new().randf_range(0, 1) > Variance
+		):
 			LeafStates[Count] = true
-			
-		Leaf.rotate_object_local(Vector3.FORWARD, delta * RotVal)
-		
-		Count+=1
-	return
 
+		Leaf.rotate_object_local(Vector3.FORWARD, delta * RotVal)
+
+		Count += 1
+	return
 
 
 func _physics_process(_delta):
@@ -69,5 +77,5 @@ func _physics_process(_delta):
 # NOTE: Do call this in the character/player's script BEFORE move_and_slide()
 # or else your velocity may be 0 at this moment (because you bumped into the thing) and hence no
 # impulse will be telegraphed.
-func push_me(collision_get_normal, velocity_length):
+func push(collision_get_normal, velocity_length):
 	self.apply_central_impulse(-collision_get_normal * velocity_length * push_factor)
