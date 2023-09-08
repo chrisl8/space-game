@@ -335,7 +335,7 @@ func parse_msg() -> bool:
 		return true
 
 	if type == Message.PLAYER_JOINED:
-		if id != ID and id not in peers:
+		if id != ID and ! peers.has(id):
 			peers[id] = data
 			log_print("Peer name: %s with ID # %s added to the peer list." % [peers[id], id])
 			init_connections()
@@ -398,7 +398,7 @@ func init_connections():
 			if connection_list.has(peer_id):
 				continue  # This peer has already been initiated, skipping
 			log_print(str("init_connections new peer ", peer_id))
-			var connection = WebRTCPeerConnection.new()
+			var connection: WebRTCPeerConnection = WebRTCPeerConnection.new()
 			connection.initialize({"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]})
 			connection.session_description_created.connect(session_created.bind(connection))
 			connection.ice_candidate_created.connect(ice_created.bind(connection))
@@ -416,7 +416,7 @@ func init_rtc_peer():
 		rtc_peer.create_client(ID)
 		# Clients ONLY connect TO the Server, not each other, as this is a client/server
 		# setup, not a Mesh.
-		var connection = WebRTCPeerConnection.new()
+		var connection: WebRTCPeerConnection = WebRTCPeerConnection.new()
 		connection.initialize({"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]})
 		connection.session_description_created.connect(session_created.bind(connection))
 		connection.ice_candidate_created.connect(ice_created.bind(connection))
