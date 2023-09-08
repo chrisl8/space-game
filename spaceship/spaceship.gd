@@ -6,8 +6,8 @@ extends Node3D
 #------------------------------------------------#
 # Source: https://github.com/Whimfoome/godot-FirstPersonStarter
 
-@export var fast_close := true
-@export var capture_mouse := true
+@export var fast_close: bool = true
+@export var capture_mouse: bool = true
 
 
 # Called when the node enters the scene tree for the first time.

@@ -1,8 +1,8 @@
 extends Node
 
-@export var run_server_in_debug := false
+@export var run_server_in_debug: bool = false
 
-var pop_up_template := preload("res://menus/pop_up/pop_up.tscn")
+var pop_up_template: Resource = preload("res://menus/pop_up/pop_up.tscn")
 
 var pop_up: Node
 
@@ -37,7 +37,7 @@ func _ready():
 	User.reset.connect(connection_reset)
 	User.close_popup.connect(force_close_popup)
 	if OS.is_debug_build() and run_server_in_debug and User.local_debug_instance_number < 1:
-		print("Setting as server based on run_server_in_debug and being first insatnce to run.")
+		print("Setting as server based on run_server_in_debug and being first instance to run.")
 		User.is_server = true
 
 	if User.is_server:
@@ -55,7 +55,7 @@ func start_connection():
 	pop_up = pop_up_template.instantiate()
 	add_child(pop_up)
 	if OS.is_debug_build() and User.local_debug_instance_number > 0 and not User.is_server:
-		var debug_delay = User.local_debug_instance_number
+		var debug_delay: int = User.local_debug_instance_number
 		while debug_delay > 0:
 			pop_up.set_msg("Debug delay " + str(debug_delay))
 			debug_delay = debug_delay - 1
@@ -67,7 +67,7 @@ func start_connection():
 func connection_reset(delay):
 #	for i in get_children():
 #		i.queue_free()
-	var game_scene_node := get_node_or_null("../Main/game_scene")
+	var game_scene_node: Node = get_node_or_null("../Main/game_scene")
 	if game_scene_node and is_instance_valid(game_scene_node):
 		game_scene_node.queue_free()
 

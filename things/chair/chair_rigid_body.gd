@@ -1,8 +1,8 @@
 extends RigidBody3D
 
-@export var bounds_distance = 100
+@export var bounds_distance: int = 100
 
-@export var push_factor = 0.9
+@export var push_factor: float = 0.9
 
 var player_focused: String
 @export var player_holding_me: String
@@ -28,11 +28,11 @@ func _physics_process(_delta):
 #		player_holding_me
 #	)
 	if player_holding_me != "":
-		var players_parent := get_tree().get_root().get_node("Main/Players")
-		var player_to_follow = players_parent.get_node_or_null(player_holding_me)
+		var players_parent: Node = get_tree().get_root().get_node("Main/Players")
+		var player_to_follow: Node = players_parent.get_node_or_null(player_holding_me)
 		if player_to_follow:
 			var transform_hold_obj = player_to_follow.get_global_transform()
-			var some_distance_between_you_and_object = 1
+			var some_distance_between_you_and_object: int = 1
 			transform_hold_obj.origin = (
 				transform_hold_obj.origin
 				- transform_hold_obj.basis.z * some_distance_between_you_and_object

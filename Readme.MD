@@ -2,7 +2,11 @@ You can play the game right now at https://voidshipephemeral.space
 
 # Space Game - A 3D Online Space
 
-# Play the Game!
+It is closer to a "doll house" than a game at the moment.  
+There isn't really much here yet, but you can see it all live.  I will continue to deploy my work as I expand it.  
+All of the source is MIT licensed, so you can use this to help make your own game and copy code as much as you like.
+
+# Play the Game Now!
 
 Go to https://voidshipephemeral.space where the game is up and running live now.  
 This is the preferred method.
@@ -15,7 +19,9 @@ or
 [Download the latest Linux Binary Release Here](https://voidshipephemeral.space/release/Space-Game-Linux-Binary.tar.gz)  
 
 You will probably have to tell Windows to allow the binary to run as it is unsigned.  
-Use Alt+F4 to close the game if it seems like it won't let you out.
+Use Alt+F4 to close the game if it seems like it won't let you out.  
+
+These releases still connect to and depend on the server.
 
 # About the Code
 
@@ -75,13 +81,17 @@ The client has the server URL hard coded.
 To make your own instance you must edit the URL in the code before building.
 
 ## Deploy
-A release build, when run will just assume it is a client.
+
+### Cause a Build to act as a Server
+A release build, when run, will assume that it is a client.
 
 You must pass command line arguments to an instance when running it to force it to be a Server.
 
 Use the arguments `--headless -- server` just like that. Be careful with the spacing, as there is a space between `--` and `server` to signify that `server` is being passed into the Godot code, not used by the Godot engine.
 
 The script I use is at `export-helpers\server\run-space-game-server.sh` which is always up to date, so use that as an example for running the server. Note that this one us used on Linux, so it has the `.x86_64` extension on the built file, but you can edit the name. The important part is the arguments after the binary name.
+
+If you are running the server on a host with a screen and video card, you do not have to include the `--headless` part. The server will display the camera in the primary scene, which can be interesting and assist with debugging client connections and network interactions.
 
 ### Nginx Setup
 TODO: Document this.

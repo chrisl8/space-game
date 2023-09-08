@@ -1,9 +1,9 @@
 extends RigidBody3D
 
-@export var bounds_distance = 100
+@export var bounds_distance: int = 100
 @export var Leafs: Array[Node3D] = []
 
-@export var push_factor = 0.8
+@export var push_factor: float = 0.8
 
 
 # Called when the node enters the scene tree for the first time.
@@ -31,14 +31,14 @@ func _process(delta):
 var LeafStates: Array[bool] = []
 
 
-func ProcessLeaves(delta):
-	var Count = 0
+func ProcessLeaves(delta) -> void:
+	var Count: int = 0
 	for Leaf in Leafs:
 		var RotVal = 0.03 * RandomNumberGenerator.new().randf_range(0.5, 1.5)
 		if LeafStates[Count]:
 			RotVal *= -1
 
-		var Variance = 0.99
+		var Variance: float = 0.99
 
 		if (
 			Leaf.get_rotation().z * 180 / 3.14 > 75

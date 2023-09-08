@@ -1,30 +1,30 @@
 extends MultiplayerSynchronizer
 
-@export var input_axis := Vector2()
+@export var input_axis: Vector2 = Vector2()
 
 # Set via RPC to simulate is_action_just_pressed.
-@export var jumping := false
-@export var interacting := false
+@export var jumping: bool = false
+@export var interacting: bool = false
 @export var selected_thing_name: String
 
-@export var camera_rotation_y := 0.0
+@export var camera_rotation_y: float = 0.0
 
 # Source: https://github.com/Whimfoome/godot-FirstPersonStarter
 
 var cam: Camera3D
 
-@export var mouse_sensitivity := 2.0
-@export var y_limit := 80.0
+@export var mouse_sensitivity: float = 2.0
+@export var y_limit: float = 80.0
 
-var mouse_axis := Vector2()
-var rot := Vector3()
+var mouse_axis: Vector2 = Vector2()
+var rot: Vector3 = Vector3()
 
-@export var speed := 10
+@export var speed: int = 10
 var normal_fov: float
-@export var fov_multiplier := 1.05
-var is_sprinting := false
-var normal_speed := speed
-var sprint_speed := 25
+@export var fov_multiplier: float = 1.05
+var is_sprinting: bool = false
+var normal_speed: int = speed
+var sprint_speed: int = 25
 
 
 func _ready():
@@ -62,7 +62,7 @@ func _input(event: InputEvent) -> void:
 
 
 func _physics_process(delta: float) -> void:
-	var joystick_axis := Input.get_vector(&"look_left", &"look_right", &"look_down", &"look_up")
+	var joystick_axis: Vector2 = Input.get_vector(&"look_left", &"look_right", &"look_down", &"look_up")
 
 	if joystick_axis != Vector2.ZERO:
 		mouse_axis = joystick_axis * 1000.0 * delta

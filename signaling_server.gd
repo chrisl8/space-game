@@ -15,13 +15,13 @@ var server_id: int = 1
 
 class Connection:
 	extends RefCounted
-	var id := -1
-	var ws = WebSocketPeer.new()
+	var id: int = -1
+	var ws: WebSocketPeer = WebSocketPeer.new()
 	var user_name: String = ""
 
 	func _init(connection_id, tcp):
 		id = connection_id
-		var error = ws.accept_stream(tcp)
+		var error: int = ws.accept_stream(tcp)
 		if error != OK:
 			User.log_print("Signal Server: ERROR! Can not accept stream from a connection request!")
 		else:
@@ -29,7 +29,7 @@ class Connection:
 				str("Signal Server: Connection connection successfully accepted for ", id)
 			)
 
-	func send_msg(type: int, msg_id: int, data := ""):
+	func send_msg(type: int, msg_id: int, data = "") -> int:
 		return (
 			ws
 			. send_text(
@@ -107,7 +107,7 @@ func parse_msg(peer: Connection) -> bool:
 		print(parsed)
 		return false
 
-	var accepted_msg = {
+	var accepted_msg: Dictionary = {
 		"type": str(parsed.type).to_int(), "id": str(parsed.id).to_int(), "data": parsed.data
 	}
 
@@ -115,8 +115,8 @@ func parse_msg(peer: Connection) -> bool:
 		User.log_print(parsed)
 		return false
 
-	var type := str(accepted_msg.type).to_int()
-	#var src_id := str(accepted_msg.id).to_int()
+	var type: int = str(accepted_msg.type).to_int()
+	#var src_id = str(accepted_msg.id).to_int()
 	var data: String = str(accepted_msg.data)
 
 	if type == Message.OFFER:
@@ -219,8 +219,8 @@ func clean_up():
 				)
 
 
-func find_player_by_id(id):
-	# The socket connection ID and the "player ID" are not garunteed to be the same.
+func find_player_by_id(id) -> Variant:
+	# The socket connection ID and the "player ID" are not guaranteed to be the same.
 	# Currently they are the same in every case except for the server.
 	for connection_id in connections.keys():
 		if id == connections[connection_id].id:

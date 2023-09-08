@@ -1,8 +1,8 @@
 extends RigidBody3D
 
-@export var bounds_distance = 100
+@export var bounds_distance: int = 100
 
-@export var push_factor = 0.05
+@export var push_factor: float = 0.05
 
 
 func _ready():

@@ -2,8 +2,8 @@ extends Node
 
 enum Message { USER_INFO, PLAYER_JOINED, PLAYER_LEFT, OFFER, ANSWER, ICE }
 
-var ws := WebSocketPeer.new()
-var url := "wss://voidshipephemeral.space/signal/"
+var ws: WebSocketPeer = WebSocketPeer.new()
+var url: String = "wss://voidshipephemeral.space/signal/"
 var websocket_client_connected: bool = false
 var websocket_close_reason: String = ""
 
@@ -15,12 +15,12 @@ signal close_popup
 
 var connection_list: Dictionary = {}
 var user_name: String = ""
-var ready_to_connect := false
-var server_message_sent := false
-var username_sent := false
+var ready_to_connect: bool = false
+var server_message_sent: bool = false
+var username_sent: bool = false
 var server_id_string: String
-var ID := -1
-var server_id := -1:
+var ID: int = -1
+var server_id: int = -1:
 	set(value):
 		server_id = value
 		get_tree().get_root().get_node("Main/LevelSpawner").set_multiplayer_authority(value)
@@ -29,10 +29,10 @@ var server_id := -1:
 
 # Check if this is the first instance of a debug run, so only one attempts to be the server
 # https://gist.github.com/CrankyBunny/71316e7af809d7d4cf5ec6e2369a30b9
-var local_debug_instance_number := -1
+var local_debug_instance_number: int = -1
 
 var peers: Dictionary
-var peer_count := -1
+var peer_count: int = -1
 var is_server: bool = false
 var network_initialized: bool = false
 var game_started: bool = false
@@ -45,7 +45,7 @@ var level_scene: PackedScene = preload("res://spaceship/spaceship.tscn")
 
 var rtc_peer: WebRTCMultiplayerPeer
 
-@export var player_spawn_point := Vector3(4, 1, -4)
+@export var player_spawn_point: Vector3 = Vector3(4, 1, -4)
 
 
 func _init():
@@ -53,7 +53,7 @@ func _init():
 		url = "ws://127.0.0.1:9090"
 
 
-func _process(_delta):
+func _process(_delta) -> void:
 	if not ready_to_connect:
 		return
 
@@ -62,7 +62,7 @@ func _process(_delta):
 		return
 
 	ws.poll()
-	var state = ws.get_ready_state()
+	var state: int = ws.get_ready_state()
 	if state == WebSocketPeer.STATE_OPEN:
 		websocket_close_reason = ""
 		while ws.get_available_packet_count():
@@ -74,8 +74,8 @@ func _process(_delta):
 		# Keep polling to achieve proper close.
 		pass
 	elif state == WebSocketPeer.STATE_CLOSED:
-		var code = ws.get_close_code()
-		var reason = ws.get_close_reason()
+		var code: int = ws.get_close_code()
+		var reason: String = ws.get_close_reason()
 		print("WebSocket closed with code: %d, reason %s. Clean: %s" % [code, reason, code != -1])
 		update_title_message.emit("Server Socket Connection failed.")
 		overlay_message.emit("Connection Failed", "e6223c", 2)
@@ -139,9 +139,9 @@ func log_print(text):
 
 
 func generate_random_string(length):
-	var characters := "abcdefghijklmnopqrstuvwxyz0123456789"
+	var characters: String = "abcdefghijklmnopqrstuvwxyz0123456789"
 	var word: String = ""
-	var n_char = len(characters)
+	var n_char: int = len(characters)
 	for i in range(length):
 		word += characters[randi() % n_char]
 	return word
@@ -149,7 +149,7 @@ func generate_random_string(length):
 
 func load_level(scene: PackedScene):
 	log_print("Loading Scene")
-	var level_parent := get_tree().get_root().get_node("Main/Level")
+	var level_parent: Node = get_tree().get_root().get_node("Main/Level")
 	for c in level_parent.get_children():
 		level_parent.remove_child(c)
 		c.queue_free()
@@ -165,8 +165,8 @@ func _peer_connected(id):
 		var character = player_character_template.instantiate()
 		character.player = id  # Set player id.
 		# Randomize character position.
-		var pos := Vector2.from_angle(randf() * 2 * PI)
-		const SPAWN_RANDOM := 2.0
+		var pos: Vector2 = Vector2.from_angle(randf() * 2 * PI)
+		const SPAWN_RANDOM: float = 2.0
 		character.position = Vector3(
 			player_spawn_point.x + (pos.x * SPAWN_RANDOM * randf()),
 			player_spawn_point.y,
@@ -180,7 +180,7 @@ func _peer_disconnected(id) -> void:
 	log_print(str("Peer ", id, " Disconnected."))
 	if not is_server:
 		return
-	var player_spawner_node := get_node_or_null("../Main/Players")
+	var player_spawner_node: Node = get_node_or_null("../Main/Players")
 	if player_spawner_node and player_spawner_node.has_node(str(id)):
 		player_spawner_node.get_node(str(id)).queue_free()
 
@@ -221,10 +221,10 @@ func reset_connection():
 
 func spawn_things():
 	# Ball
-	var thing_name_to_spawn := "Ball01"
-	var things_spawning_node := get_node("../Main/Things")
-	var beach_ball := preload("res://things/beach_ball/beach_ball.tscn")
-	var existing_thing := things_spawning_node.get_node_or_null(thing_name_to_spawn)
+	var thing_name_to_spawn: String = "Ball01"
+	var things_spawning_node: Node = get_node("../Main/Things")
+	var beach_ball: Resource = preload("res://things/beach_ball/beach_ball.tscn")
+	var existing_thing: Node = things_spawning_node.get_node_or_null(thing_name_to_spawn)
 	if not existing_thing:
 		var new_thing = beach_ball.instantiate()
 		new_thing.name = str(thing_name_to_spawn)
@@ -243,7 +243,7 @@ func spawn_things():
 
 	thing_name_to_spawn = "Chair01"
 	existing_thing = things_spawning_node.get_node_or_null(thing_name_to_spawn)
-	var chair := preload("res://things/chair/chair.tscn")
+	var chair: Resource = preload("res://things/chair/chair.tscn")
 	if not existing_thing:
 		var new_thing = chair.instantiate()
 		new_thing.name = str(thing_name_to_spawn)
@@ -251,9 +251,9 @@ func spawn_things():
 
 	#Spawn randomization bounds configured for 3
 	#Will generate somewhat reasonably up to 20
-	var PlantsToSpawn = 3
+	var PlantsToSpawn: int = 3
 
-	var plant_a := preload("res://things/plant_a/plant_a.tscn")
+	var plant_a: Resource = preload("res://things/plant_a/plant_a.tscn")
 	while PlantsToSpawn > 0:
 		thing_name_to_spawn = "Plant_A" + str(PlantsToSpawn)
 		existing_thing = things_spawning_node.get_node_or_null(thing_name_to_spawn)
@@ -264,7 +264,7 @@ func spawn_things():
 		PlantsToSpawn -= 1
 
 
-func parse_msg():
+func parse_msg() -> bool:
 	var parsed = JSON.parse_string(ws.get_packet().get_string_from_utf8())
 
 	if (
@@ -275,15 +275,15 @@ func parse_msg():
 	):
 		return false
 
-	var msg = {
+	var msg: Dictionary = {
 		"type": str(parsed.type).to_int(), "id": str(parsed.id).to_int(), "data": parsed.data
 	}
 
 	if not str(msg.type).is_valid_int() or not str(msg.id).is_valid_int():
 		return false
 
-	var type := str(msg.type).to_int()
-	var id := str(msg.id).to_int()
+	var type: int = str(msg.type).to_int()
+	var id: int = str(msg.id).to_int()
 	var data: String = str(msg.data)
 
 	if type == Message.USER_INFO:
@@ -304,7 +304,7 @@ func parse_msg():
 			)
 		)
 		init_rtc_peer()
-		return
+		return true
 
 	if type == Message.ICE:
 		var str_arr = data.split("***", true, 3)
@@ -313,7 +313,7 @@ func parse_msg():
 		var _name: String = str_arr[2]
 		var sender_id = id
 		_ice_received(media, index, _name, sender_id)
-		return
+		return true
 
 	if type == Message.ANSWER:
 		var str_arr = data.split("***", true, 2)
@@ -322,7 +322,7 @@ func parse_msg():
 		var sender_id = id
 		#print("ANSWER from ", id)
 		_answer_received(_type, sdp, sender_id)
-		return
+		return true
 
 	if type == Message.OFFER:
 		var str_arr = data.split("***", true, 2)
@@ -332,14 +332,14 @@ func parse_msg():
 		#print("OFFER from ", id)
 #		offer_received.emit(_type, sdp, sender_id)
 		_offer_received(_type, sdp, sender_id)
-		return
+		return true
 
 	if type == Message.PLAYER_JOINED:
 		if id != ID and id not in peers:
 			peers[id] = data
 			log_print("Peer name: %s with ID # %s added to the peer list." % [peers[id], id])
 			init_connections()
-		return
+		return true
 
 	if type == Message.PLAYER_LEFT:
 		# There seems to be a delay between a websocket disconnect sending and the WebRTC disconnect,
@@ -348,7 +348,9 @@ func parse_msg():
 		if peers.has(id):
 			peers.erase(id)
 			log_print("Peer name: %s with ID # %s erased from the list" % [data, id])
-		return
+		return true
+
+	return false
 
 
 func send_user_name(_name: String):
@@ -396,7 +398,7 @@ func init_connections():
 			if connection_list.has(peer_id):
 				continue  # This peer has already been initiated, skipping
 			log_print(str("init_connections new peer ", peer_id))
-			var connection := WebRTCPeerConnection.new()
+			var connection = WebRTCPeerConnection.new()
 			connection.initialize({"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]})
 			connection.session_description_created.connect(session_created.bind(connection))
 			connection.ice_candidate_created.connect(ice_created.bind(connection))
@@ -414,7 +416,7 @@ func init_rtc_peer():
 		rtc_peer.create_client(ID)
 		# Clients ONLY connect TO the Server, not each other, as this is a client/server
 		# setup, not a Mesh.
-		var connection := WebRTCPeerConnection.new()
+		var connection = WebRTCPeerConnection.new()
 		connection.initialize({"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]})
 		connection.session_description_created.connect(session_created.bind(connection))
 		connection.ice_candidate_created.connect(ice_created.bind(connection))
