@@ -1,6 +1,6 @@
 You can play the game right now at https://voidshipephemeral.space
 
-# Spaceship Game
+# Space Game - A 3D Online Space
 
 # Play the Game!
 
