@@ -1,7 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://ceod3svxuy34r"]
+[gd_scene load_steps=7 format=3 uid="uid://ceod3svxuy34r"]
 
 [ext_resource type="Material" uid="uid://dhg3oi0ha82e6" path="res://things/beach_ball/beach_ball_material.tres" id="1_7jvyi"]
 [ext_resource type="Script" path="res://things/beach_ball/beach_ball_rigid_body.gd" id="1_nuosv"]
+[ext_resource type="AudioStream" uid="uid://cj3o8fhjd1mb6" path="res://things/beach_ball/ball_bounce.ogg" id="3_84ceu"]
 
 [sub_resource type="SphereMesh" id="SphereMesh_te1ch"]
 
@@ -43,3 +44,6 @@ shape = SubResource("SphereShape3D_1db3a")
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="RigidBody3D"]
 replication_config = SubResource("SceneReplicationConfig_qlywd")
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="RigidBody3D"]
+stream = ExtResource("3_84ceu")
