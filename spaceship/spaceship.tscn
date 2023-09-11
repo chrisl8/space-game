@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://cbs4s4ea2n473"]
+[gd_scene load_steps=5 format=3 uid="uid://cbs4s4ea2n473"]
 
 [ext_resource type="Script" path="res://spaceship/spaceship.gd" id="1_e1est"]
 [ext_resource type="PackedScene" uid="uid://bywfoekpnmak5" path="res://spaceship/room_02/room_02.tscn" id="2_xjddl"]
 [ext_resource type="PackedScene" uid="uid://c4lai1ecyvqnu" path="res://posters/data_flow_poster/data_flow_poster.tscn" id="3_5q6ig"]
+[ext_resource type="AudioStream" uid="uid://byj2ogpqy27gg" path="res://spaceship/intro_melo_01.ogg" id="4_wc1ck"]
 
 [node name="Spaceship" type="Node3D"]
 script = ExtResource("1_e1est")
@@ -25,3 +26,7 @@ fov = 56.8
 
 [node name="data_flow_poster" parent="." instance=ExtResource("3_5q6ig")]
 transform = Transform3D(-2, 0, 1.74846e-07, 0, 2, 0, -1.74846e-07, 0, -2, 2.25, 2.25, -10.51)
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_wc1ck")
+autoplay = true
