@@ -19,6 +19,7 @@ var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity") *
 	set(id):
 		player = id
 		# Give authority over the player input to the appropriate peer.
+		#$ServerSynchronizer.set_multiplayer_authority(id)
 		$PlayerInput.set_multiplayer_authority(id)
 		$Head.set_multiplayer_authority(id)
 
@@ -28,21 +29,6 @@ var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity") *
 var previous_thing: float
 var character_trimmed: bool = false
 
-
-func _ready():
-	# TODO: This is not perfect, but better.
-	# 		Before this, the player would "rewind" constantly.
-	#		Now they get "stuck" sometimes, but then can move.
-	#		This is superior, but I'd rather that not happen either, but it will take some experimentation.
-	# Only processing Physics on the authority, which is the SERVER.
-	# This prevents the local palyer from jittering around when the network is slow.
-	# The local player will only see themselves move to where they expect if the network is working,
-	# but others may see them behind if the network lags for them.
-	# Without this, the local player will find themselves being snapped back to where the server THOUGHT they were
-	# and then forward in time to where they thought they were before.
-	set_physics_process(get_multiplayer_authority() == multiplayer.get_unique_id())
-	# Note: Do NOT set this on _process, as that relates to the player's local body and camera.
-	# If you take _process away, their camera will be stuck in their visible head and they won't be able to look around.
 
 
 func _process(
@@ -99,14 +85,14 @@ func _physics_process(delta: float) -> void:
 	# through walls, so this is the way.
 	# NOTE: Do call this in the character/player's script BEFORE move_and_slide()
 	# or else your velocity may be 0 at this moment (because you already bumped into the thing) and hence no
-	# impulse will be telegraphed. If youc all move_and_slide() first you will see that you run up to something
+	# impulse will be telegraphed. If you call move_and_slide() first you will see that you run up to something
 	# and just immediately stop and the object doesn't move.
 	for index in range(get_slide_collision_count()):
 		# We get one of the collisions with the player
 		var collision: KinematicCollision3D = get_slide_collision(index)
 
-		if collision.get_collider().has_method("push"):
-			collision.get_collider().push(collision.get_normal(), velocity.length())
+		# if collision.get_collider().has_method("push"):
+		# 	collision.get_collider().push(collision.get_normal(), velocity.length())
 
 	move_and_slide()
 
