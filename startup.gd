@@ -97,3 +97,8 @@ func force_close_popup():
 	if pop_up and is_instance_valid(pop_up):
 		pop_up.queue_free()
 		pop_up = null
+
+
+func _on_players_spawner_spawned(node: Node) -> void:
+	User.log_print(str("_on_players_spawner_spawned ", node.name))
+	node.set_multiplayer_authority(str(node.name).to_int())

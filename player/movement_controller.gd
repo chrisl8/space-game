@@ -30,7 +30,6 @@ var previous_thing: float
 var character_trimmed: bool = false
 
 
-
 func _process(
 	_delta: float,
 ) -> void:

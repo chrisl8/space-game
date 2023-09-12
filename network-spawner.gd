@@ -174,6 +174,7 @@ func _peer_connected(id):
 		)
 		character.name = str(id)
 		get_node("../Main/Players").add_child(character, true)
+		character.set_multiplayer_authority(character.player)
 
 
 func _peer_disconnected(id) -> void:
@@ -335,7 +336,7 @@ func parse_msg() -> bool:
 		return true
 
 	if type == Message.PLAYER_JOINED:
-		if id != ID and ! peers.has(id):
+		if id != ID and !peers.has(id):
 			peers[id] = data
 			log_print("Peer name: %s with ID # %s added to the peer list." % [peers[id], id])
 			init_connections()
