@@ -27,18 +27,21 @@ These releases still connect to and depend on the server.
 
 This is a Godot multi-player "game" (more like a doll house) that uses WebRTC for communication to allow creating a Web build and playing it in a web browser.
 
-### WebRTC
-https://docs.godotengine.org/en/stable/tutorials/networking/webrtc.html
-
-WebRTC requires a "signaling server" for the game instances to find each other, as WebRTC alone has no "listener." This code includes a GDScript Websocket signaling server to allow for the entire project to run in Godot with no external services and no non-Godot dependencies. The Server instance of the game automatically starts the Signaling Server, and the non-server instances connect to it. Only the Server will run the signaling server.
+## Networking
+This code currently uses WebSocket communication to communicate between the clients and the server. I find this to be the most reliable form of networking for HTML clients at the moment.
 
 ### OS Native Builds
 
-OS Native based clients can also connect to the web-based server and interact with web-based players.
+Native Windows and Linux clients can also connect to the web-based server and interact with web-based players.
 
 ### Etc.
 
 There is currently no concept of "lobbies" or "shards." Everyone just joins the same server.
+
+#### WebRTC Experiments
+**You do not need to do this!**  
+At one time I tried WebRTC, and the WebRTC code still exists, but it is not currently functioning.  
+If someone wanted to try using WebRTC you must make some code changes which are documented at the top of `startup.gd`.
 
 # Development
 
@@ -71,7 +74,7 @@ When a Debug build (in the Editor) is run, the code also defaults to using your 
  see:  https://github.com/godotengine/godot/issues/66247
 
 ### OS Native and Web
-To deploy, you **must** build at least one OS Native build as the browser-based Web version cannot host the Signalling Server.
+To deploy, you **must** build at least one OS Native build as the browser-based Web version cannot host the Server.
 
 So the Server will always be an OS Native build, either Windows or Linux should work.
 
@@ -94,7 +97,59 @@ The script I use is at `export-helpers\server\run-space-game-server.sh` which is
 If you are running the server on a host with a screen and video card, you do not have to include the `--headless` part. The server will display the camera in the primary scene, which can be interesting and assist with debugging client connections and network interactions.
 
 ### Nginx Setup
-TODO: Document this.
+You need to serve the files up via a web server to allow uses to download and run the game in the browser.  
+You also need to open up the server's websocket listener to the network.  
+
+I typically do both of these with Nginx on a Digital Ocean droplet.  
+
+Here is my nginx config:
+```
+server {
+    root /home/chrisl8/space-game/web;
+    server_name voidshipephemeral.space;
+
+    location ~* .(png|ico|gif|jpg|jpeg|css|js|html|webmanifest|map|mp3|ogg|svg|xml|pck|wasm)$ {
+      try_files $uri $uri/ =404;
+      add_header 'Cross-Origin-Opener-Policy' 'same-origin';
+      add_header 'Cross-Origin-Embedder-Policy' 'require-corp';
+    }
+
+    location /server/ {
+        proxy_pass http://localhost:9090;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-NginX-Proxy true;
+        proxy_ssl_session_reuse off;
+        proxy_cache_bypass $http_upgrade;
+        proxy_redirect off;
+        proxy_read_timeout 86400s;
+        proxy_send_timeout 86400s;
+    }
+
+    listen 80;
+    listen [::]:80;
+}
+```
+
+Note that the game itself, the server instance, must be running on the same server as Nginx and listening on port 9090 (which is also hard coded in the code at the moment).
+
+Notice that it is serving a list of file types directly if you ask for them, so it will respond to requests for the files users need.  
+Then notice that if someone goes to /server/ it proxies their connection to the local 9090 port that your Godot game instance runs on.  
+
+The primary reason for proxying instead of just opening a direct port is that Nginx can now provide SSL for Websocket using the same certificate as the rest of the site.  
+
+Some other important ingredients are:
+ - The Cross-Origin.. headers that are required.
+ - The proxy timeouts are set long so that it doesn't arbitrarily cut us off.
+ - There are some lines there to attempt to forward the "real ip" of the client to the Godot Engine so it can get the IP if it wants to.
+
+This example is not using SSL and is running on port 80, which is how you would start,  
+then I suggest using letsencrypt to then set up SSL certificates using certbot.  
+https://www.nginx.com/blog/using-free-ssltls-certificates-from-lets-encrypt-with-nginx/
 
 ### My Deploy Script
 TODO: Copy it into this repo and explain it.

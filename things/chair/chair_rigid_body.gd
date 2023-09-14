@@ -10,8 +10,8 @@ var player_focused: String
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	set_physics_process(User.is_server)
-	if User.is_server:
+	set_physics_process(Globals.is_server)
+	if Globals.is_server:
 		position = Vector3(8, 1, -8)
 		rotation.y = -45.0
 
@@ -19,7 +19,7 @@ func _ready():
 func _physics_process(_delta):
 #	print(
 #		"grabbing|",
-#		User.local_debug_instance_number,
+#		Globals.local_debug_instance_number,
 #		"|",
 #		multiplayer.get_unique_id(),
 #		"|",
@@ -88,7 +88,7 @@ func grab(other_name) -> void:
 		player_holding_me = other_name
 	print(
 		"grabbed|",
-		User.local_debug_instance_number,
+		Globals.local_debug_instance_number,
 		"|",
 		multiplayer.get_unique_id(),
 		"|",

@@ -23,9 +23,9 @@ class Connection:
 		id = connection_id
 		var error: int = ws.accept_stream(tcp)
 		if error != OK:
-			User.log_print("Signal Server: ERROR! Can not accept stream from a connection request!")
+			Helpers.log_print("Signal Server: ERROR! Can not accept stream from a connection request!")
 		else:
-			User.log_print(
+			Helpers.log_print(
 				str("Signal Server: Connection connection successfully accepted for ", id)
 			)
 
@@ -53,11 +53,11 @@ class Connection:
 func start():
 	var error = server.listen(hard_coded_port)
 	if error != OK:
-		User.log_print(
+		Helpers.log_print(
 			"Signal Server: ERROR! Can not create signalling server! ERROR CODE = %d" % error
 		)
 	else:
-		User.log_print("Signal Server: Signalling Server created successfully!")
+		Helpers.log_print("Signal Server: Signalling Server created successfully!")
 		started = true
 
 
@@ -79,10 +79,10 @@ func poll():
 			if parse_msg(p):
 				pass
 			else:
-				User.log_print("Signal Server: Message received! ERROR can not parse! ")
+				Helpers.log_print("Signal Server: Message received! ERROR can not parse! ")
 
 		if p.ws.get_ready_state() == WebSocketPeer.STATE_CLOSED:
-			User.log_print(
+			Helpers.log_print(
 				str(
 					"Signal Server: Player ",
 					p.user_name,
@@ -112,7 +112,7 @@ func parse_msg(peer: Connection) -> bool:
 	}
 
 	if not str(accepted_msg.type).is_valid_int() or not str(accepted_msg.id).is_valid_int():
-		User.log_print(parsed)
+		Helpers.log_print(parsed)
 		return false
 
 	var type: int = str(accepted_msg.type).to_int()
@@ -125,10 +125,10 @@ func parse_msg(peer: Connection) -> bool:
 		var receiver_peer = find_player_by_id(send_to_id)
 		if receiver_peer:
 			receiver_peer.send_msg(type, peer.id, data)
-			User.log_print("Signal Server: Sending received OFFER! to peer %d" % peer.id)
+			Helpers.log_print("Signal Server: Sending received OFFER! to peer %d" % peer.id)
 			return true
 		else:
-			User.log_print(
+			Helpers.log_print(
 				"Signal Server: ERROR: OFFER received but ID do not match with any peer!"
 			)
 			return false
@@ -139,10 +139,10 @@ func parse_msg(peer: Connection) -> bool:
 		var receiver_peer = find_player_by_id(send_to_id)
 		if receiver_peer:
 			receiver_peer.send_msg(type, peer.id, data)
-			User.log_print("Signal Server: Sending received ANSWER! to peer %d" % peer.id)
+			Helpers.log_print("Signal Server: Sending received ANSWER! to peer %d" % peer.id)
 			return true
 		else:
-			User.log_print(
+			Helpers.log_print(
 				"Signal Server: ERROR: ANSWER received but ID do not match with any peer!"
 			)
 			return false
@@ -153,10 +153,10 @@ func parse_msg(peer: Connection) -> bool:
 		var receiver_peer = find_player_by_id(send_to_id)
 		if receiver_peer:
 			receiver_peer.send_msg(type, peer.id, data)
-			User.log_print("Signal Server: Sending received ICE! to peer %d" % peer.id)
+			Helpers.log_print("Signal Server: Sending received ICE! to peer %d" % peer.id)
 			return true
 		else:
-			User.log_print("Signal Server: ERROR: ICE received but ID do not match with any peer!")
+			Helpers.log_print("Signal Server: ERROR: ICE received but ID do not match with any peer!")
 			return false
 
 	if type == Message.USER_INFO:
@@ -166,18 +166,18 @@ func parse_msg(peer: Connection) -> bool:
 			or not parsed_user_data.has("name")
 			or not parsed_user_data.has("server_id_string")
 		):
-			User.log_print(parsed_user_data)
+			Helpers.log_print(parsed_user_data)
 			return false
 
 		# Every client generates a random string,
 		# But only the same client that is running this signalling server
 		# will have a string that matches
-		if parsed_user_data.server_id_string == User.server_id_string:
-			User.log_print(str("Signal Server: Player ", parsed_user_data.name, " is Server."))
+		if parsed_user_data.server_id_string == Network.server_id_string:
+			Helpers.log_print(str("Signal Server: Player ", parsed_user_data.name, " is Server."))
 			peer.id = server_id
 
 		peer.user_name = parsed_user_data.name
-		User.log_print(str("Signal Server: New player ", peer.user_name, " ID ", peer.id))
+		Helpers.log_print(str("Signal Server: New player ", peer.user_name, " ID ", peer.id))
 
 		# The server ID is always 1, as Godot likes this better.
 		# Strange bugs creep in if one tries to set it to something else.
@@ -191,7 +191,7 @@ func parse_msg(peer: Connection) -> bool:
 
 		return true
 
-	User.log_print(parsed)
+	Helpers.log_print(parsed)
 	return false
 
 
@@ -201,7 +201,7 @@ func clean_up():
 		if connections.has(player.id):
 			connections.erase(player.id)
 			temp_arr.push_back(player)
-			User.log_print(
+			Helpers.log_print(
 				str(
 					"Signal Server: Player ",
 					player.user_name,

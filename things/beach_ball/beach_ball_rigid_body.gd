@@ -6,8 +6,8 @@ extends RigidBody3D
 
 
 func _ready():
-	set_physics_process(User.is_server)
-	if User.is_server:
+	set_physics_process(Globals.is_server)
+	if Globals.is_server:
 		position = Vector3(4, 1, -2)
 
 

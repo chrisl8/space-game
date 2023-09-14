@@ -54,7 +54,7 @@ func _physics_process(delta: float) -> void:
 
 	if input.interacting:
 		print(
-			User.local_debug_instance_number, " ", name, " ", input.selected_thing_name, " Interact"
+			Globals.local_debug_instance_number, " ", name, " ", input.selected_thing_name, " Interact"
 		)
 		if input.selected_thing_name != "":
 			var things_parent: Node = get_tree().get_root().get_node("Main/Things")

@@ -36,7 +36,7 @@ func _ready():
 	set_physics_process(get_multiplayer_authority() == multiplayer.get_unique_id())
 	set_process_input(get_multiplayer_authority() == multiplayer.get_unique_id())
 
-	if User.is_server:
+	if Globals.is_server:
 		# Ensure server has no player cameras
 		cam.clear_current()
 	elif get_parent().player == multiplayer.get_unique_id():
@@ -106,7 +106,7 @@ func camera_rotation() -> void:
 
 @rpc() func select_thing(thing_name):
 	print(
-		User.local_debug_instance_number,
+		Globals.local_debug_instance_number,
 		" select_thing ",
 		thing_name,
 		" ",

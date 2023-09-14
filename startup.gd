@@ -1,46 +1,59 @@
 extends Node
 
-@export var run_server_in_debug: bool = false
+@export var run_server_in_debug: bool = true
 
 var pop_up_template: Resource = preload("res://menus/pop_up/pop_up.tscn")
 
 var pop_up: Node
 
-# Check if this is the first instance of a debug run, so only one attempts to be the server
-# https://gist.github.com/CrankyBunny/71316e7af809d7d4cf5ec6e2369a30b9
+# If you want to try running with WebRTC instead of WebSocket:
+# 1. Change this variable:
+var network_type: String = "WebSocket"  # WebSocket or WebRTC
+# 2. Change this line in project.godot:
+#Network="*res://network_websocket.gd"
+# to
+#Network="*res://network_webrtc.gd"
+# 4. Download the WebRTC Native Plugin from https://github.com/godotengine/webrtc-native
+#    and put the webrtc folder it generates in the root of this godot code folder.
+
+# This has to be here so that it isn't removed after _init() runs,
+# which will cause all instances to look like 0.
 var _instance_socket: TCPServer
 
 
 func _init():
-	# Check if this is the first instance of a debug run, so only one attempts to be the server
-	# https://gist.github.com/CrankyBunny/71316e7af809d7d4cf5ec6e2369a30b9
 	if OS.is_debug_build():
+		# Check if this is the first instance of a debug run, so only one attempts to be the server
+		# It also provides us with a unique "instance number" for each debug instance of the game run by the editor
+		# https://gist.github.com/CrankyBunny/71316e7af809d7d4cf5ec6e2369a30b9
 		_instance_socket = TCPServer.new()
-		for n in range(0, 4):
+		for n in range(0, 4):  # Godot Editor only creates up to 4 instances maximum.
 			if _instance_socket.listen(5000 + n) == OK:
-				User.local_debug_instance_number = n
+				Globals.local_debug_instance_number = n
 				break
-		if User.local_debug_instance_number < 0:
+		if Globals.local_debug_instance_number < 0:
 			print("Unable to determine instance number. Seems like all TCP ports are in use")
 		else:
-			print("We are instance number ", User.local_debug_instance_number)
+			print("We are instance number ", Globals.local_debug_instance_number)
 
 	if OS.get_cmdline_user_args().size() > 0:
 		for arg in OS.get_cmdline_user_args():
 			var arg_array = arg.split("=")
 			if arg_array[0] == "server":
 				print("Setting as server based on command line argument.")
-				User.is_server = true
+				Globals.is_server = true
 
 
 func _ready():
-	User.reset.connect(connection_reset)
-	User.close_popup.connect(force_close_popup)
-	if OS.is_debug_build() and run_server_in_debug and User.local_debug_instance_number < 1:
-		print("Setting as server based on run_server_in_debug and being first instance to run.")
-		User.is_server = true
+	Network.reset.connect(connection_reset)
+	Network.close_popup.connect(force_close_popup)
+	if OS.is_debug_build() and run_server_in_debug and Globals.local_debug_instance_number < 1:
+		print(
+			"Setting as server based being a debug build and run_server_in_debug and being first instance to run."
+		)
+		Globals.is_server = true
 
-	if User.is_server:
+	if network_type == "WebRTC" and Globals.is_server:
 		SignalingServer.start()
 
 	force_close_popup()
@@ -54,14 +67,14 @@ func start_connection():
 	force_close_popup()
 	pop_up = pop_up_template.instantiate()
 	add_child(pop_up)
-	if OS.is_debug_build() and User.local_debug_instance_number > 0 and not User.is_server:
-		var debug_delay: int = User.local_debug_instance_number
+	if OS.is_debug_build() and Globals.local_debug_instance_number > 0 and not Globals.is_server:
+		var debug_delay: int = Globals.local_debug_instance_number
 		while debug_delay > 0:
 			pop_up.set_msg("Debug delay " + str(debug_delay))
 			debug_delay = debug_delay - 1
 			await get_tree().create_timer(1).timeout
 	pop_up.set_msg("Connecting...")
-	User.ready_to_connect = true
+	Network.ready_to_connect = true
 
 
 func connection_reset(delay):
@@ -100,5 +113,5 @@ func force_close_popup():
 
 
 func _on_players_spawner_spawned(node: Node) -> void:
-	User.log_print(str("_on_players_spawner_spawned ", node.name))
+	Helpers.log_print(str("_on_players_spawner_spawned ", node.name))
 	node.set_multiplayer_authority(str(node.name).to_int())

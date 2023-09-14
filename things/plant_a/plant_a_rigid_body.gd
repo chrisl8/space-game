@@ -8,8 +8,8 @@ extends RigidBody3D
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	set_physics_process(User.is_server)
-	if User.is_server:
+	set_physics_process(Globals.is_server)
+	if Globals.is_server:
 		position = Vector3(
 			2.274 + RandomNumberGenerator.new().randf_range(-1.0, 1.0),
 			0.5,

@@ -17,8 +17,11 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-User="*res://network-spawner.gd"
+Globals="*res://global_variables.gd"
+Helpers="*res://helper_functions.gd"
+Network="*res://network_websocket.gd"
 SignalingServer="*res://signaling_server.gd"
+Spawner="*res://spawner.gd"
 
 [filesystem]
 

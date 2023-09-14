@@ -3,7 +3,7 @@ extends Node
 enum Message { USER_INFO, PLAYER_JOINED, PLAYER_LEFT, OFFER, ANSWER, ICE }
 
 var ws: WebSocketPeer = WebSocketPeer.new()
-var url: String = "wss://voidshipephemeral.space/signal/"
+var url: String = "wss://voidshipephemeral.space/server/"
 var websocket_client_connected: bool = false
 var websocket_close_reason: String = ""
 
@@ -14,26 +14,18 @@ signal reset
 signal close_popup
 
 var connection_list: Dictionary = {}
-var user_name: String = ""
 var ready_to_connect: bool = false
 var server_message_sent: bool = false
 var username_sent: bool = false
 var server_id_string: String
-var ID: int = -1
 var server_id: int = -1:
 	set(value):
 		server_id = value
 		get_tree().get_root().get_node("Main/LevelSpawner").set_multiplayer_authority(value)
 		get_tree().get_root().get_node("Main/PlayersSpawner").set_multiplayer_authority(value)
 		get_tree().get_root().get_node("Main/ThingSpawner").set_multiplayer_authority(value)
-
-# Check if this is the first instance of a debug run, so only one attempts to be the server
-# https://gist.github.com/CrankyBunny/71316e7af809d7d4cf5ec6e2369a30b9
-var local_debug_instance_number: int = -1
-
 var peers: Dictionary
 var peer_count: int = -1
-var is_server: bool = false
 var network_initialized: bool = false
 var game_started: bool = false
 var game_scene_initialize_in_progress: bool = false
@@ -68,7 +60,7 @@ func _process(_delta) -> void:
 		while ws.get_available_packet_count():
 			parse_msg()
 		if not websocket_client_connected:
-			log_print("Websocket just connected.")
+			Helpers.log_print("Websocket just connected.")
 		websocket_client_connected = true
 	elif state == WebSocketPeer.STATE_CLOSING:
 		# Keep polling to achieve proper close.
@@ -91,14 +83,14 @@ func _process(_delta) -> void:
 
 	if not username_sent:
 		username_sent = true
-		if is_server:
+		if Globals.is_server:
 			send_user_name("Server")
 		else:
 			# In the future we can have per-player names if we want to.
 			send_user_name("Nobody")
 		return
 
-	if ID < 0:
+	if Globals.player_id < 0:
 		return
 
 	if not network_initialized:
@@ -106,23 +98,23 @@ func _process(_delta) -> void:
 
 	if peers.size() != peer_count:
 		peer_count = peers.size()
-		log_print(str("New peer count is: ", peer_count))
+		Helpers.log_print(str("New peer count is: ", peer_count))
 
-	if not is_server:
+	if not Globals.is_server:
 		# Only server adds and removes objects
 		return
 
 	# Initialize the Level if it isn't yet
 	if not game_scene_initialized:
 		if not game_scene_initialize_in_progress:
-			log_print("Load level")
+			Helpers.log_print("Load level")
 			game_scene_initialize_in_progress = true
 			load_level.call_deferred(level_scene)
 		elif get_node_or_null("../Main/Level/game_scene"):
 			game_scene_initialized = true
 		return
 
-	spawn_things()
+	Spawner.things()
 
 
 func _ready():
@@ -133,22 +125,8 @@ func _ready():
 	multiplayer.server_disconnected.connect(_server_disconnected)
 
 
-func log_print(text):
-	if is_server or OS.is_debug_build():
-		print(User.local_debug_instance_number, " ", User.ID, " ", text)
-
-
-func generate_random_string(length):
-	var characters: String = "abcdefghijklmnopqrstuvwxyz0123456789"
-	var word: String = ""
-	var n_char: int = len(characters)
-	for i in range(length):
-		word += characters[randi() % n_char]
-	return word
-
-
 func load_level(scene: PackedScene):
-	log_print("Loading Scene")
+	Helpers.log_print("Loading Scene")
 	var level_parent: Node = get_tree().get_root().get_node("Main/Level")
 	for c in level_parent.get_children():
 		level_parent.remove_child(c)
@@ -160,8 +138,8 @@ func load_level(scene: PackedScene):
 
 
 func _peer_connected(id):
-	log_print(str("Peer ", id, " connected."))
-	if is_server and id > 1:
+	Helpers.log_print(str("Peer ", id, " connected."))
+	if Globals.is_server and id > 1:
 		var character = player_character_template.instantiate()
 		character.player = id  # Set player id.
 		# Randomize character position.
@@ -178,8 +156,8 @@ func _peer_connected(id):
 
 
 func _peer_disconnected(id) -> void:
-	log_print(str("Peer ", id, " Disconnected."))
-	if not is_server:
+	Helpers.log_print(str("Peer ", id, " Disconnected."))
+	if not Globals.is_server:
 		return
 	var player_spawner_node: Node = get_node_or_null("../Main/Players")
 	if player_spawner_node and player_spawner_node.has_node(str(id)):
@@ -187,17 +165,17 @@ func _peer_disconnected(id) -> void:
 
 
 func _connected_to_server():
-	log_print("I connected to the server!")
+	Helpers.log_print("I connected to the server!")
 	close_popup.emit()
 
 
 func _connection_failed():
-	log_print("My connection failed. =(")
+	Helpers.log_print("My connection failed. =(")
 	reset_connection()
 
 
 func _server_disconnected():
-	log_print("Server Disconnected")
+	Helpers.log_print("Server Disconnected")
 	reset_connection()
 
 
@@ -213,56 +191,10 @@ func reset_connection():
 	for connection in connection_list.values():
 		connection.close()
 
-#	client.queue_free()
-	user_name = ""
-	ID = -1
+	Globals.user_name = ""
+	Globals.player_id = -1
 	peers.clear()
 	reset.emit(5)
-
-
-func spawn_things():
-	# Ball
-	var thing_name_to_spawn: String = "Ball01"
-	var things_spawning_node: Node = get_node("../Main/Things")
-	var beach_ball: Resource = preload("res://things/beach_ball/beach_ball.tscn")
-	var existing_thing: Node = things_spawning_node.get_node_or_null(thing_name_to_spawn)
-	if not existing_thing:
-		var new_thing = beach_ball.instantiate()
-		new_thing.name = str(thing_name_to_spawn)
-		log_print(str("spawning ", thing_name_to_spawn))
-		things_spawning_node.add_child(new_thing)
-
-	thing_name_to_spawn = "Ball02"
-	existing_thing = things_spawning_node.get_node_or_null(thing_name_to_spawn)
-	if not existing_thing:
-		var new_thing = beach_ball.instantiate()
-		new_thing.name = str(thing_name_to_spawn)
-
-		log_print(str("spawning ", thing_name_to_spawn))
-
-		things_spawning_node.add_child(new_thing)
-
-	thing_name_to_spawn = "Chair01"
-	existing_thing = things_spawning_node.get_node_or_null(thing_name_to_spawn)
-	var chair: Resource = preload("res://things/chair/chair.tscn")
-	if not existing_thing:
-		var new_thing = chair.instantiate()
-		new_thing.name = str(thing_name_to_spawn)
-		things_spawning_node.add_child(new_thing)
-
-	#Spawn randomization bounds configured for 3
-	#Will generate somewhat reasonably up to 20
-	var PlantsToSpawn: int = 3
-
-	var plant_a: Resource = preload("res://things/plant_a/plant_a.tscn")
-	while PlantsToSpawn > 0:
-		thing_name_to_spawn = "Plant_A" + str(PlantsToSpawn)
-		existing_thing = things_spawning_node.get_node_or_null(thing_name_to_spawn)
-		if not existing_thing:
-			var new_thing = plant_a.instantiate()
-			new_thing.name = str(thing_name_to_spawn)
-			things_spawning_node.add_child(new_thing)
-		PlantsToSpawn -= 1
 
 
 func parse_msg() -> bool:
@@ -296,12 +228,17 @@ func parse_msg() -> bool:
 		):
 			print(parsed_user_data)
 			return false
-		user_name = parsed_user_data.name
-		ID = id
+		Globals.user_name = parsed_user_data.name
+		Globals.player_id = id
 		server_id = parsed_user_data.server_id
-		log_print(
+		Helpers.log_print(
 			str(
-				"Received User name: ", user_name, ", Received ID: ", id, ", Server ID: ", server_id
+				"Received User name: ",
+				Globals.user_name,
+				", Received player_id: ",
+				id,
+				", Server player_id: ",
+				server_id
 			)
 		)
 		init_rtc_peer()
@@ -331,14 +268,15 @@ func parse_msg() -> bool:
 		var sdp: String = str_arr[1]
 		var sender_id = id
 		#print("OFFER from ", id)
-#		offer_received.emit(_type, sdp, sender_id)
 		_offer_received(_type, sdp, sender_id)
 		return true
 
 	if type == Message.PLAYER_JOINED:
-		if id != ID and !peers.has(id):
+		if id != Globals.player_id and !peers.has(id):
 			peers[id] = data
-			log_print("Peer name: %s with ID # %s added to the peer list." % [peers[id], id])
+			Helpers.log_print(
+				"Peer name: %s with player_id # %s added to the peer list." % [peers[id], id]
+			)
 			init_connections()
 		return true
 
@@ -348,26 +286,19 @@ func parse_msg() -> bool:
 		_peer_disconnected(id)
 		if peers.has(id):
 			peers.erase(id)
-			log_print("Peer name: %s with ID # %s erased from the list" % [data, id])
+			Helpers.log_print("Peer name: %s with player_id # %s erased from the list" % [data, id])
 		return true
 
 	return false
 
 
 func send_user_name(_name: String):
-	print(
-		local_debug_instance_number,
-		" ",
-		ID,
-		" sending user name ",
-		_name,
-	)
-
+	Helpers.log_print(str(" sending user name ", _name))
 	# Every client generates a random string,
 	# But only the same client that is running this signalling server
 	# will have a string that matches
 	if not server_id_string:
-		server_id_string = generate_random_string(32)
+		server_id_string = Helpers.generate_random_string(32)
 
 	send_msg(
 		Message.USER_INFO, 0, JSON.stringify({"name": _name, "server_id_string": server_id_string})
@@ -394,11 +325,11 @@ func init_connections():
 	# This is a client/server setup, NOT a Mesh.
 	# The clients already added the server as a peer in init_rtc_peer
 	# Now only the server must connect to the clients.
-	if is_server:
+	if Globals.is_server:
 		for peer_id in peers.keys():
 			if connection_list.has(peer_id):
 				continue  # This peer has already been initiated, skipping
-			log_print(str("init_connections new peer ", peer_id))
+			Helpers.log_print(str("init_connections new peer ", peer_id))
 			var connection: WebRTCPeerConnection = WebRTCPeerConnection.new()
 			connection.initialize({"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]})
 			connection.session_description_created.connect(session_created.bind(connection))
@@ -411,10 +342,10 @@ func init_connections():
 func init_rtc_peer():
 	rtc_peer = WebRTCMultiplayerPeer.new()
 	# This is a client/server setup, NOT a Mesh.
-	if is_server:
+	if Globals.is_server:
 		rtc_peer.create_server()
 	else:
-		rtc_peer.create_client(ID)
+		rtc_peer.create_client(Globals.player_id)
 		# Clients ONLY connect TO the Server, not each other, as this is a client/server
 		# setup, not a Mesh.
 		var connection: WebRTCPeerConnection = WebRTCPeerConnection.new()
@@ -423,14 +354,13 @@ func init_rtc_peer():
 		connection.ice_candidate_created.connect(ice_created.bind(connection))
 		connection_list[1] = connection
 		rtc_peer.add_peer(connection, 1)
-		#connection.create_offer()
 	get_tree().get_multiplayer().multiplayer_peer = rtc_peer
 	close_popup.emit()
 	network_initialized = true
 
 
 func session_created(type: String, sdp: String, connection):
-	#log_print(str("session_created ", type, " ", sdp))
+	#Helpers.log_print(str("session_created ", type, " ", sdp))
 	connection.set_local_description(type, sdp)
 	if type == "offer":
 		send_offer(type, sdp, connection_list.find_key(connection))
@@ -439,22 +369,22 @@ func session_created(type: String, sdp: String, connection):
 
 
 func ice_created(media: String, index: int, _name: String, connection):
-	#log_print(str("ice_created ", media, " ", index, " ", _name))
+	#Helpers.log_print(str("ice_created ", media, " ", index, " ", _name))
 	send_ice(media, index, _name, connection_list.find_key(connection))
 
 
 func _ice_received(media: String, index: int, _name: String, sender_id):
-	#log_print(str("_ice_received ", media, " ", index, " ", _name))
+	#Helpers.log_print(str("_ice_received ", media, " ", index, " ", _name))
 	if connection_list.has(sender_id):
 		connection_list.get(sender_id).add_ice_candidate(media, index, _name)
 
 
 func _offer_received(type: String, sdp: String, sender_id):
-	#log_print(str("_offer_received ", type, " ", sdp, " ", sender_id))
+	#Helpers.log_print(str("_offer_received ", type, " ", sdp, " ", sender_id))
 	if connection_list.has(sender_id):
 		connection_list.get(sender_id).set_remote_description(type, sdp)
 
 
 func _answer_received(type: String, sdp: String, sender_id):
-	#log_print(str("_answer_received ", type, " ", sdp, " ", sender_id))
+	#Helpers.log_print(str("_answer_received ", type, " ", sdp, " ", sender_id))
 	connection_list.get(sender_id).set_remote_description(type, sdp)

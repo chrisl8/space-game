@@ -4,7 +4,6 @@
 
 [node name="Main" type="Node"]
 script = ExtResource("1_0mo3b")
-run_server_in_debug = true
 
 [node name="Level" type="Node" parent="."]
 
