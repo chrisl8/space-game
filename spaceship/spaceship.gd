@@ -1,38 +1,39 @@
 extends Node3D
 
-#-----------------SCENE--SCRIPT------------------#
-#    Close your game faster by clicking 'Esc'    #
-#   Change mouse mode by clicking 'Shift + F1'   #
-#------------------------------------------------#
-# Source: https://github.com/Whimfoome/godot-FirstPersonStarter
+@export var capture_mouse_on_startup: bool = false  # This is actually annoying so I never turn it on.
 
-@export var fast_close: bool = true
-@export var capture_mouse: bool = false
+var release_mouse_text: String = "ESC to Release Mouse"
+var how_to_end_game_text: String = "END key to Close Game"
 
 
-# Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	if capture_mouse and not Globals.is_server:
+	if capture_mouse_on_startup and not Globals.is_server:
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
-	if !OS.is_debug_build():
-		fast_close = false
+	if OS.is_debug_build():
+		release_mouse_text = "F1 to Release Mouse"
+		how_to_end_game_text = "ESC to Close Game"
 
-	if fast_close:
-		var toast = Toast.new("ESC to close", 2.0)
+	if OS.get_name() != "Web":
+		await get_tree().create_timer(5).timeout
+		var toast = Toast.new(how_to_end_game_text, 2.0)
 		get_node("/root").add_child(toast)
 		toast.show()
-		# print("** Fast Close enabled in the Main scene **")
-		# print("** 'Esc' to close 'F1' to release mouse **")
-
-	set_process_input(fast_close)
 
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed(&"ui_cancel"):
-		get_tree().quit()  # Quits the game
+		if OS.is_debug_build():
+			get_tree().quit()  # Quits the game in debug mode
+		else:  # Releases mouse in normal build
+			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 
-	if event.is_action_pressed(&"change_mouse_input"):
+	if event.is_action_pressed(&"ui_end") and OS.get_name() != "Web":
+		# "Closing" the game in web has no meaning and just freezes it in your browser window.
+		get_tree().quit()
+
+	# Only in Debug Mode: Use F1 to both Release and Capture the mouse for testing
+	if event.is_action_pressed(&"change_mouse_input") and OS.is_debug_build():
 		match Input.get_mouse_mode():
 			Input.MOUSE_MODE_CAPTURED:
 				Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
@@ -40,12 +41,20 @@ func _input(event: InputEvent) -> void:
 				Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 
-# Capture mouse if clicked on the game, needed for HTML5
+# Capture mouse if clicked on the game
 # Called when an InputEvent hasn't been consumed by _input() or any GUI item
 func _unhandled_input(event: InputEvent) -> void:
 	if not Globals.is_server and event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT && event.pressed:
 			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-			var toast = Toast.new("F1 to release mouse", 2.0)
+			await get_tree().create_timer(0.5).timeout
+			#print("Mouse Mode: ", Input.get_mouse_mode())
+			var text_to_toast: String = release_mouse_text
+			if Input.get_mouse_mode() == 0:
+				# Browsers have a cool down on capturing the mouse,
+				# So users may click, Esc, and then Click again too fast and it does not capture the mouse
+				# This will let the user know that happened
+				text_to_toast = "Oops, too fast, try again"
+			var toast = Toast.new(text_to_toast, 2.0)
 			get_node("/root").add_child(toast)
 			toast.show()
