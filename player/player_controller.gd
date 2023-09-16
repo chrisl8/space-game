@@ -1,5 +1,5 @@
 extends CharacterBody3D
-class_name MovementController
+class_name PlayerController
 
 # Source: https://github.com/Whimfoome/godot-FirstPersonStarter
 
@@ -54,7 +54,12 @@ func _physics_process(delta: float) -> void:
 
 	if input.interacting:
 		print(
-			Globals.local_debug_instance_number, " ", name, " ", input.selected_thing_name, " Interact"
+			Globals.local_debug_instance_number,
+			" ",
+			name,
+			" ",
+			input.selected_thing_name,
+			" Interact"
 		)
 		if input.selected_thing_name != "":
 			var things_parent: Node = get_tree().get_root().get_node("Main/Things")
