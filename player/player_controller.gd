@@ -24,7 +24,7 @@ var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity") *
 		$Head.set_multiplayer_authority(id)
 
 # Player synchronized input.
-@onready var input = $PlayerInput
+@onready var input: MultiplayerSynchronizer = $PlayerInput
 
 var previous_thing: float
 var character_trimmed: bool = false

@@ -39,7 +39,7 @@ func _ready():
 	#Setting the label
 	label = Label.new()
 
-	var styleBoxParser = StyleBoxFlat.new()
+	var styleBoxParser: StyleBoxFlat = StyleBoxFlat.new()
 	styleBoxParser.bg_color = style.backgroundColor
 	styleBoxParser.content_margin_bottom = style.contentMarginBottom
 	styleBoxParser.content_margin_left = style.contentMarginLeft
@@ -98,7 +98,7 @@ func _ready():
 
 	#Setting the animation
 	animation = AnimationPlayer.new()
-	var toast_animations = AnimationLibrary.new()
+	var toast_animations: AnimationLibrary = AnimationLibrary.new()
 	toast_animations.add_animation("start", load("res://addons/toast/animations/start.anim"))
 	toast_animations.add_animation("end", load("res://addons/toast/animations/end.anim"))
 	animation.add_animation_library("toast_animations", toast_animations)

@@ -41,7 +41,7 @@ There is currently no concept of "lobbies" or "shards." Everyone just joins the 
 #### WebRTC Experiments
 **You do not need to do this!**  
 At one time I tried WebRTC, and the WebRTC code still exists, but it is not currently functioning.  
-If someone wanted to try using WebRTC you must make some code changes which are documented at the top of `startup.gd`.
+If someone wanted to try using WebRTC, you must make some code changes which are documented at the top of `startup.gd`.
 
 # Development
 
@@ -97,7 +97,7 @@ The script I use is at `export-helpers\server\run-space-game-server.sh` which is
 If you are running the server on a host with a screen and video card, you do not have to include the `--headless` part. The server will display the camera in the primary scene, which can be interesting and assist with debugging client connections and network interactions.
 
 ### Nginx Setup
-You need to serve the files up via a web server to allow uses to download and run the game in the browser.  
+You need to serve the files up via a web server to allow users to download and run the game in the browser.  
 You also need to open up the server's websocket listener to the network.  
 
 I typically do both of these with Nginx on a Digital Ocean droplet.  
@@ -143,9 +143,9 @@ Then notice that if someone goes to /server/ it proxies their connection to the 
 The primary reason for proxying instead of just opening a direct port is that Nginx can now provide SSL for Websocket using the same certificate as the rest of the site.  
 
 Some other important ingredients are:
- - The Cross-Origin.. headers that are required.
+ - The Cross-Origin- headers that are required.
  - The proxy timeouts are set long so that it doesn't arbitrarily cut us off.
- - There are some lines there to attempt to forward the "real ip" of the client to the Godot Engine so it can get the IP if it wants to.
+ - There are some lines there to attempt to forward the "real ip" of the client to the Godot Engine, so it can get the IP if it wants to.
 
 This example is not using SSL and is running on port 80, which is how you would start,  
 then I suggest using letsencrypt to then set up SSL certificates using certbot.  
