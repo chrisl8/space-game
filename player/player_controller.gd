@@ -81,23 +81,6 @@ func _physics_process(delta: float) -> void:
 	input.jumping = false
 	var direction: Vector3 = direction_input()
 	accelerate(delta, direction)
-
-	# Apply impulses to rigid bodies that we encounter to make them move.
-	# https://kidscancode.org/godot_recipes/3.x/physics/kinematic_to_rigidbody/index.html
-	# https://github.com/godotengine/godot/issues/74804
-	# There are other ways, but that results in pushing these things
-	# through walls, so this is the way.
-	# NOTE: Do call this in the character/player's script BEFORE move_and_slide()
-	# or else your velocity may be 0 at this moment (because you already bumped into the thing) and hence no
-	# impulse will be telegraphed. If you call move_and_slide() first you will see that you run up to something
-	# and just immediately stop and the object doesn't move.
-	for index in range(get_slide_collision_count()):
-		# We get one of the collisions with the player
-		var collision: KinematicCollision3D = get_slide_collision(index)
-
-		# if collision.get_collider().has_method("push"):
-		# 	collision.get_collider().push(collision.get_normal(), velocity.length())
-
 	move_and_slide()
 
 

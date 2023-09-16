@@ -44,7 +44,7 @@ properties/2/watch = false
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_sd7go"]
 radius = 1.0
 
-[node name="Player" type="CharacterBody3D"]
+[node name="Player" type="CharacterBody3D" groups=["players"]]
 collision_layer = 2
 collision_mask = 3
 script = ExtResource("1_5i51a")

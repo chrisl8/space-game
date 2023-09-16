@@ -10,6 +10,16 @@ func _ready():
 	if Globals.is_server:
 		position = Vector3(4, 1, -2)
 
+	# Remember to turn on "Contact Monitor"
+	# and set the "Max Contacts Reported" to be more than 0
+	# 1 seems to always work for me
+	body_entered.connect(_on_Area_body_entered)
+
+
+func _on_Area_body_entered(body: Node) -> void:
+	if body.is_in_group("players"):
+		$AudioStreamPlayer3D.play()
+
 
 func _physics_process(_delta):
 	# Only the server should act on this object, as the server owns it,
@@ -21,16 +31,3 @@ func _physics_process(_delta):
 		get_parent().queue_free()
 	if abs(position.z) > bounds_distance:
 		get_parent().queue_free()
-
-
-# Apply impulses to rigid bodies that we encounter to make them move.
-# https://kidscancode.org/godot_recipes/3.x/physics/kinematic_to_rigidbody/index.html
-# https://github.com/godotengine/godot/issues/74804
-# There are other ways, but that results in pushing these things
-# through walls, so this is the way.
-# NOTE: Do call this in the character/player's script BEFORE move_and_slide()
-# or else your velocity may be 0 at this moment (because you bumped into the thing) and hence no
-# impulse will be telegraphed.
-func push(collision_get_normal, velocity_length):
-	$AudioStreamPlayer3D.play()
-	self.apply_central_impulse(-collision_get_normal * velocity_length * push_factor)
