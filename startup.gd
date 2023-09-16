@@ -31,10 +31,10 @@ func _init():
 			if _instance_socket.listen(5000 + n) == OK:
 				Globals.local_debug_instance_number = n
 				break
-		if Globals.local_debug_instance_number < 0:
-			print("Unable to determine instance number. Seems like all TCP ports are in use")
-		else:
-			print("We are instance number ", Globals.local_debug_instance_number)
+		# if Globals.local_debug_instance_number < 0:
+		# 	print("Unable to determine instance number. Seems like all TCP ports are in use")
+		# else:
+		# 	print("We are instance number ", Globals.local_debug_instance_number)
 
 	if OS.get_cmdline_user_args().size() > 0:
 		for arg in OS.get_cmdline_user_args():
@@ -78,8 +78,10 @@ func start_connection():
 
 
 func connection_reset(delay):
-#	for i in get_children():
-#		i.queue_free()
+	if OS.is_debug_build():
+		# Exit when the server closes in debug mode
+		get_tree().quit()  # Quits the game
+
 	var game_scene_node: Node = get_node_or_null("../Main/game_scene")
 	if game_scene_node and is_instance_valid(game_scene_node):
 		game_scene_node.queue_free()
