@@ -29,4 +29,4 @@ transform = Transform3D(-2, 0, 1.74846e-07, 0, 2, 0, -1.74846e-07, 0, -2, 2.25, 
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("4_wc1ck")
-autoplay = true
+volume_db = -7.381
