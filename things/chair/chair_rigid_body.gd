@@ -70,19 +70,6 @@ func unselect(other_name):
 	$SpotLight3D.visible = false
 
 
-# Apply impulses to rigid bodies that we encounter to make them move.
-# https://kidscancode.org/godot_recipes/3.x/physics/kinematic_to_rigidbody/index.html
-# https://github.com/godotengine/godot/issues/74804
-# There are other ways, but that results in pushing these things
-# through walls, so this is the way.
-# NOTE: Do call this in the character/player's script BEFORE move_and_slide()
-# or else your velocity may be 0 at this moment (because you bumped into the thing) and hence no
-# impulse will be telegraphed.
-func push(collision_get_normal, velocity_length):
-	if player_holding_me == "":
-		self.apply_central_impulse(-collision_get_normal * velocity_length * push_factor)
-
-
 func grab(other_name) -> void:
 	if player_holding_me == "":
 		player_holding_me = other_name

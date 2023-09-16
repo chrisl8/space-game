@@ -67,15 +67,3 @@ func _physics_process(_delta):
 		get_parent().queue_free()
 	if abs(position.z) > bounds_distance:
 		get_parent().queue_free()
-
-
-# Apply impulses to rigid bodies that we encounter to make them move.
-# https://kidscancode.org/godot_recipes/3.x/physics/kinematic_to_rigidbody/index.html
-# https://github.com/godotengine/godot/issues/74804
-# There are other ways, but that results in pushing these things
-# through walls, so this is the way.
-# NOTE: Do call this in the character/player's script BEFORE move_and_slide()
-# or else your velocity may be 0 at this moment (because you bumped into the thing) and hence no
-# impulse will be telegraphed.
-func push(collision_get_normal, velocity_length):
-	self.apply_central_impulse(-collision_get_normal * velocity_length * push_factor)
