@@ -27,7 +27,6 @@ var server_id: int = -1:
 var peers: Dictionary
 var peer_count: int = -1
 var network_initialized: bool = false
-var game_started: bool = false
 var game_scene_initialize_in_progress: bool = false
 var game_scene_initialized: bool = false
 var signalling_server_connection

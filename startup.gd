@@ -56,10 +56,6 @@ func _ready():
 	if network_type == "WebRTC" and Globals.is_server:
 		SignalingServer.start()
 
-	force_close_popup()
-	pop_up = pop_up_template.instantiate()
-	pop_up.set_msg("Welcome!", Color(0, 0, 1))
-	add_child(pop_up)  # add_child(main_menu.instantiate())
 	start_connection()
 
 

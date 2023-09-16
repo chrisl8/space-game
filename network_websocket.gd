@@ -2,31 +2,17 @@ extends Node
 
 var ws: WebSocketPeer = WebSocketPeer.new()
 var url: String = "wss://voidshipephemeral.space/server/"
-var websocket_client_connected: bool = false
-var websocket_close_reason: String = ""
 
 signal reset
 signal close_popup
 
-var connection_list: Dictionary = {}
 var ready_to_connect: bool = false
-var server_message_sent: bool = false
-var username_sent: bool = false
-var server_id_string: String
-var server_id: int = -1:
-	set(value):
-		server_id = value
-		get_tree().get_root().get_node("Main/LevelSpawner").set_multiplayer_authority(value)
-		get_tree().get_root().get_node("Main/PlayersSpawner").set_multiplayer_authority(value)
-		get_tree().get_root().get_node("Main/ThingSpawner").set_multiplayer_authority(value)
 var peers: Dictionary
 var peer_count: int = -1
 var peers_have_connected: bool = false
 var network_initialized: bool = false
-var game_started: bool = false
 var game_scene_initialize_in_progress: bool = false
 var game_scene_initialized: bool = false
-var signalling_server_connection
 var network_connection_initiated: bool = false
 
 var player_character_template: PackedScene = preload("res://player/player.tscn")
@@ -37,6 +23,7 @@ var websocket_multiplayer_peer: WebSocketMultiplayerPeer
 @export var player_spawn_point: Vector3 = Vector3(4, 1, -4)
 
 
+# Comment this out if you want your debug instance to connect to the online production server
 func _init():
 	if OS.is_debug_build():
 		url = "ws://127.0.0.1:9090"
@@ -60,7 +47,8 @@ func _process(_delta) -> void:
 		Helpers.log_print(str("New peer count is: ", peer_count))
 
 	if not Globals.is_server:
-		# Only server adds and removes objects
+		# Only server proceeds past this point,
+		# adding and removing objects, etc.
 		return
 
 	# In Debug mode, exit server if everyone disconnects
@@ -97,7 +85,6 @@ func load_level(scene: PackedScene):
 	for c in level_parent.get_children():
 		level_parent.remove_child(c)
 		c.queue_free()
-	#level_parent.set_multiplayer_authority(server_id, true)
 	var game_scene = scene.instantiate()
 	game_scene.name = "game_scene"
 	level_parent.add_child(game_scene)
@@ -151,17 +138,14 @@ func _server_disconnected():
 
 func reset_connection():
 	Helpers.log_print("Reset Connection")
+	ready_to_connect = false
+	network_connection_initiated = false
 	network_initialized = false
 	game_scene_initialized = false
 	game_scene_initialize_in_progress = false
 	multiplayer.multiplayer_peer = null
 	websocket_multiplayer_peer = null
-	peers.clear()
 	peer_count = -1
-
-	for connection in connection_list.values():
-		connection.close()
-
 	Globals.user_name = ""
 	Globals.player_id = -1
 	peers.clear()
