@@ -55,7 +55,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			#print("Mouse Mode: ", Input.get_mouse_mode())
 			var text_to_toast: String = release_mouse_text
 			if Input.get_mouse_mode() == 0:
-				# Browsers have a cool down on capturing the mouse,
+				# Browsers have a cool down on capturing the mouse.
+				# https://discourse.threejs.org/t/how-to-avoid-pointerlockcontrols-error/33017/4
 				# So users may click, Esc, and then Click again too fast and it does not capture the mouse
 				# This will let the user know that happened
 				text_to_toast = "Oops, too fast, try again"
