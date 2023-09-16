@@ -1,15 +1,10 @@
 extends Node
 
-enum Message { USER_INFO, PLAYER_JOINED, PLAYER_LEFT, OFFER, ANSWER, ICE }
-
 var ws: WebSocketPeer = WebSocketPeer.new()
 var url: String = "wss://voidshipephemeral.space/server/"
 var websocket_client_connected: bool = false
 var websocket_close_reason: String = ""
 
-signal update_title_message
-signal overlay_message
-signal retry_connection
 signal reset
 signal close_popup
 
@@ -37,7 +32,7 @@ var network_connection_initiated: bool = false
 var player_character_template: PackedScene = preload("res://player/player.tscn")
 var level_scene: PackedScene = preload("res://spaceship/spaceship.tscn")
 
-var rtc_peer: WebSocketMultiplayerPeer
+var websocket_multiplayer_peer: WebSocketMultiplayerPeer
 
 @export var player_spawn_point: Vector3 = Vector3(4, 1, -4)
 
@@ -53,7 +48,7 @@ func _process(_delta) -> void:
 
 	if not network_connection_initiated:
 		network_connection_initiated = true
-		init_rtc_peer()
+		init_network()
 
 	if not network_initialized:
 		return
@@ -78,7 +73,7 @@ func _process(_delta) -> void:
 	# Initialize the Level if it isn't yet
 	if not game_scene_initialized:
 		if not game_scene_initialize_in_progress:
-			Helpers.log_print("Load level")
+			# Helpers.log_print("Load level")
 			game_scene_initialize_in_progress = true
 			load_level.call_deferred(level_scene)
 		elif get_node_or_null("../Main/Level/game_scene"):
@@ -97,7 +92,7 @@ func _ready():
 
 
 func load_level(scene: PackedScene):
-	Helpers.log_print("Loading Scene")
+	# Helpers.log_print("Loading Scene")
 	var level_parent: Node = get_tree().get_root().get_node("Main/Level")
 	for c in level_parent.get_children():
 		level_parent.remove_child(c)
@@ -109,6 +104,7 @@ func load_level(scene: PackedScene):
 
 
 func _peer_connected(id):
+	# In WebSocket this only happens on the server.
 	Helpers.log_print(str("Peer ", id, " connected."))
 	peers[id] = {}
 	if Globals.is_server and id > 1:
@@ -154,11 +150,12 @@ func _server_disconnected():
 
 
 func reset_connection():
+	Helpers.log_print("Reset Connection")
 	network_initialized = false
 	game_scene_initialized = false
 	game_scene_initialize_in_progress = false
 	multiplayer.multiplayer_peer = null
-	rtc_peer = null
+	websocket_multiplayer_peer = null
 	peers.clear()
 	peer_count = -1
 
@@ -171,109 +168,16 @@ func reset_connection():
 	reset.emit(5)
 
 
-func send_user_name(_name: String):
-	print(
-		Globals.local_debug_instance_number,
-		" ",
-		Globals.player_id,
-		" sending user name ",
-		_name,
-	)
-
-	# Every client generates a random string,
-	# But only the same client that is running this signalling server
-	# will have a string that matches
-	if not server_id_string:
-		server_id_string = Helpers.generate_random_string(32)
-
-	send_msg(
-		Message.USER_INFO, 0, JSON.stringify({"name": _name, "server_id_string": server_id_string})
-	)
-
-
-func send_msg(type: int, id: int, data: String) -> int:
-	return ws.send_text(JSON.stringify({"type": type, "id": id, "data": data}))
-
-
-func send_offer(type: String, sdp: String, id):
-	send_msg(Message.OFFER, 0, type + "***" + sdp + "***" + str(id))
-
-
-func send_answer(type: String, sdp: String, id):
-	send_msg(Message.ANSWER, 0, type + "***" + sdp + "***" + str(id))
-
-
-func send_ice(media: String, index: int, _name: String, id):
-	send_msg(Message.ICE, 0, media + "***" + str(index) + "***" + _name + "***" + str(id))
-
-
-func init_connections():
-	# This is a client/server setup, NOT a Mesh.
-	# The clients already added the server as a peer in init_rtc_peer
-	# Now only the server must connect to the clients.
-	if Globals.is_server:
-		for peer_id in peers.keys():
-			if connection_list.has(peer_id):
-				continue  # This peer has already been initiated, skipping
-			Helpers.log_print(str("init_connections new peer ", peer_id))
-			var connection: WebRTCPeerConnection = WebRTCPeerConnection.new()
-			connection.initialize({"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]})
-			connection.session_description_created.connect(session_created.bind(connection))
-			connection.ice_candidate_created.connect(ice_created.bind(connection))
-			connection_list[peer_id] = connection
-			rtc_peer.add_peer(connection, peer_id)
-			connection.create_offer()
-
-
-func init_rtc_peer():
-	rtc_peer = WebSocketMultiplayerPeer.new()
+func init_network():
+	Helpers.log_print("Init Network")
+	websocket_multiplayer_peer = WebSocketMultiplayerPeer.new()
 	# This is a client/server setup, NOT a Mesh.
 	if Globals.is_server:
-		rtc_peer.create_server(9090)
+		websocket_multiplayer_peer.create_server(9090)
 	else:
-		var error: int = rtc_peer.create_client(url)  # WebSocket
+		var error: int = websocket_multiplayer_peer.create_client(url)  # WebSocket
 		if error:
 			Helpers.log_print(error)
-		# Clients ONLY connect TO the Server, not each other, as this is a client/server
-		# setup, not a Mesh.
-		# var connection: WebRTCPeerConnection = WebRTCPeerConnection.new()
-		# connection.initialize({"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]})
-		# connection.session_description_created.connect(session_created.bind(connection))
-		# connection.ice_candidate_created.connect(ice_created.bind(connection))
-		# connection_list[1] = connection
-		# rtc_peer.add_peer(connection, 1)
-		#connection.create_offer()
-	get_tree().get_multiplayer().multiplayer_peer = rtc_peer
+	get_tree().get_multiplayer().multiplayer_peer = websocket_multiplayer_peer
 	close_popup.emit()
 	network_initialized = true
-
-
-func session_created(type: String, sdp: String, connection):
-	#Helpers.log_print(str("session_created ", type, " ", sdp))
-	connection.set_local_description(type, sdp)
-	if type == "offer":
-		send_offer(type, sdp, connection_list.find_key(connection))
-	else:
-		send_answer(type, sdp, connection_list.find_key(connection))
-
-
-func ice_created(media: String, index: int, _name: String, connection):
-	#Helpers.log_print(str("ice_created ", media, " ", index, " ", _name))
-	send_ice(media, index, _name, connection_list.find_key(connection))
-
-
-func _ice_received(media: String, index: int, _name: String, sender_id):
-	#Helpers.log_print(str("_ice_received ", media, " ", index, " ", _name))
-	if connection_list.has(sender_id):
-		connection_list.get(sender_id).add_ice_candidate(media, index, _name)
-
-
-func _offer_received(type: String, sdp: String, sender_id):
-	#Helpers.log_print(str("_offer_received ", type, " ", sdp, " ", sender_id))
-	if connection_list.has(sender_id):
-		connection_list.get(sender_id).set_remote_description(type, sdp)
-
-
-func _answer_received(type: String, sdp: String, sender_id):
-	#Helpers.log_print(str("_answer_received ", type, " ", sdp, " ", sender_id))
-	connection_list.get(sender_id).set_remote_description(type, sdp)
