@@ -19,8 +19,11 @@ func _ready() -> void:
 		fast_close = false
 
 	if fast_close:
-		print("** Fast Close enabled in the Main scene **")
-		print("** 'Esc' to close 'F1' to release mouse **")
+		var toast = Toast.new("ESC to close", 2.0)
+		get_node("/root").add_child(toast)
+		toast.show()
+		# print("** Fast Close enabled in the Main scene **")
+		# print("** 'Esc' to close 'F1' to release mouse **")
 
 	set_process_input(fast_close)
 
@@ -43,3 +46,6 @@ func _unhandled_input(event: InputEvent) -> void:
 	if not Globals.is_server and event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT && event.pressed:
 			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+			var toast = Toast.new("F1 to release mouse", 2.0)
+			get_node("/root").add_child(toast)
+			toast.show()
