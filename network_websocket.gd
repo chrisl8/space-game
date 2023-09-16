@@ -26,6 +26,7 @@ var server_id: int = -1:
 		get_tree().get_root().get_node("Main/ThingSpawner").set_multiplayer_authority(value)
 var peers: Dictionary
 var peer_count: int = -1
+var peers_have_connected: bool = false
 var network_initialized: bool = false
 var game_started: bool = false
 var game_scene_initialize_in_progress: bool = false
@@ -59,11 +60,20 @@ func _process(_delta) -> void:
 
 	if peers.size() != peer_count:
 		peer_count = peers.size()
+		if peer_count > 0:
+			peers_have_connected = true
 		Helpers.log_print(str("New peer count is: ", peer_count))
 
 	if not Globals.is_server:
 		# Only server adds and removes objects
 		return
+
+	# In Debug mode, exit server if everyone disconnects
+	if OS.is_debug_build() and peers_have_connected and peer_count < 1:
+		Helpers.log_print(
+			"Closing server due to all clients disconnecting and this running in Debug mode."
+		)
+		get_tree().quit()  # Quits the game
 
 	# Initialize the Level if it isn't yet
 	if not game_scene_initialized:
@@ -100,6 +110,7 @@ func load_level(scene: PackedScene):
 
 func _peer_connected(id):
 	Helpers.log_print(str("Peer ", id, " connected."))
+	peers[id] = {}
 	if Globals.is_server and id > 1:
 		var character = player_character_template.instantiate()
 		character.player = id  # Set player id.
@@ -118,6 +129,8 @@ func _peer_connected(id):
 
 func _peer_disconnected(id) -> void:
 	Helpers.log_print(str("Peer ", id, " Disconnected."))
+	if peers.has(id):
+		peers.erase(id)
 	if not Globals.is_server:
 		return
 	var player_spawner_node: Node = get_node_or_null("../Main/Players")
