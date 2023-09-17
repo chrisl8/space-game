@@ -5,8 +5,6 @@ class_name Toast
 
 signal done
 
-enum { LENGTH_SHORT, LENGTH_LONG }
-
 var labelText
 var toastDuration
 var style
@@ -20,12 +18,12 @@ var animation
 func _init(
 	text: String = "",
 	duration: float = 1,
-	mstyle: ToastStyle = preload("style_resource/default.tres")
+	toast_style: ToastStyle = preload("style_resource/default.tres")
 ):
 	labelText = text
 	toastDuration = duration
-	if mstyle is ToastStyle:
-		style = mstyle
+	if toast_style is ToastStyle:
+		style = toast_style
 	else:
 		printerr("Expected ToastStyle resource. Using default style")
 
@@ -51,7 +49,7 @@ func _ready():
 	styleBoxParser.corner_radius_top_right = style.cornerRadius
 	label.add_theme_stylebox_override("normal", styleBoxParser)
 
-	label.set("custom_colors/font_color", style.fontColor)
+	label.add_theme_color_override("font_color", style.fontColor)
 	label.text = labelText
 	match style.position:
 		ToastStyle.Position.Bottom:
@@ -86,23 +84,12 @@ func _ready():
 	label.horizontal_alignment = 1
 	add_child(label)
 
-	#Setting the timer
-	timer = Timer.new()
-	timer.one_shot = true
-	match toastDuration:
-		LENGTH_SHORT:
-			timer.wait_time = 0.5
-		LENGTH_LONG:
-			timer.wait_time = 2
-	add_child(timer)
-
 	#Setting the animation
 	animation = AnimationPlayer.new()
 	var toast_animations: AnimationLibrary = AnimationLibrary.new()
 	toast_animations.add_animation("start", load("res://addons/toast/animations/start.anim"))
 	toast_animations.add_animation("end", load("res://addons/toast/animations/end.anim"))
 	animation.add_animation_library("toast_animations", toast_animations)
-	#animation.add_animation_library("end", load("res://addons/toast/animations/end.anim"))
 	add_child(animation)
 
 
@@ -112,16 +99,13 @@ func show():
 	visible = true
 
 
-func _animationEnded(whichAnimation):  #_a ignores the argument passed from the animation player
+func _animationEnded(whichAnimation):
 	#Helpers.log_print(str("_animationEnded ", whichAnimation))
 	if whichAnimation == "toast_animations/start":
-		#timer.start()
 		await get_tree().create_timer(toastDuration).timeout
 		animation.play("toast_animations/end")
-		#timer.connect("timeout", self, "_animationEnded", [null, "endAnimation"])
 	elif whichAnimation == "endAnimation":
 		animation.play("toast_animations/end")
-		# warning-ignore:return_value_discarded
 		animation.disconnect("animation_finished", self, "_animationEnded")
 		animation.connect("animation_finished", self, "_done")
 
