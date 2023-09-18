@@ -52,6 +52,9 @@ enum { WALKING, CROUCHING, SPRINTING }  # Possible values for posture
 
 var cam: Camera3D
 
+## Object Interaction vars
+@export var selected_thing_name: String
+
 
 ### Godot notification functions ###
 func _ready():
@@ -450,9 +453,34 @@ func relative_input():
 	return move.normalized()
 
 
-#
 func grow_capsule(_is_done_shrinking, player_scale, move_camera):
 	_is_done_shrinking = false
 	if capsule.height < original_height:
 		capsule.height += player_scale
 		camera.position.y += move_camera
+
+
+func select_thing(thing_name):
+	print(
+		Globals.local_debug_instance_number,
+		" select_thing ",
+		thing_name,
+		" ",
+		multiplayer.get_unique_id()
+	)
+	selected_thing_name = thing_name
+
+
+func _on_personal_space_body_entered(body):
+	if body.has_method("select"):
+		if body.has_method("my_name"):
+			select_thing(body.my_name())
+		if get_multiplayer_authority() == multiplayer.get_unique_id():
+			body.select(name)
+
+
+func _on_personal_space_body_exited(body):
+	if body.has_method("unselect"):
+		select_thing("")
+		if get_multiplayer_authority() == multiplayer.get_unique_id():
+			body.unselect(name)

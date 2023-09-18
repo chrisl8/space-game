@@ -6,7 +6,6 @@ extends MultiplayerSynchronizer
 # Set via RPC to simulate is_action_just_pressed.
 @export var jumping: bool = false
 @export var interacting: bool = false
-@export var selected_thing_name: String
 
 @export var camera_rotation_y: float = 0.0
 
@@ -103,29 +102,3 @@ func camera_rotation() -> void:
 	# Vertical mouse look.
 	rot.x = clamp(rot.x - mouse_axis.y * mouse_sensitivity, -y_limit, y_limit)
 	cam.rotation.x = rot.x
-
-
-@rpc() func select_thing(thing_name):
-	print(
-		Globals.local_debug_instance_number,
-		" select_thing ",
-		thing_name,
-		" ",
-		multiplayer.get_unique_id()
-	)
-	selected_thing_name = thing_name
-
-
-func _on_personal_space_body_entered(body):
-	if body.has_method("select"):
-		if body.has_method("my_name"):
-			select_thing(body.my_name())
-		if get_multiplayer_authority() == multiplayer.get_unique_id():
-			body.select(name)
-
-
-func _on_personal_space_body_exited(body):
-	if body.has_method("unselect"):
-		select_thing("")
-		if get_multiplayer_authority() == multiplayer.get_unique_id():
-			body.unselect(name)
