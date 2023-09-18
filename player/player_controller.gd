@@ -8,7 +8,6 @@ extends RigidBody3D
 ### Use the GodotPhysics physics engine
 
 ### Global
-@export var debug: bool
 var is_grounded: bool  # Whether the player is considered to be touching a walkable slope
 @onready var capsule: Shape3D = $Collision.shape  # Capsule collision shape of the player
 @onready var head: Node3D = $Head  # y-axis rotation node (look left and right)
@@ -51,9 +50,6 @@ var current_speed_limit: float  # Current speed limit to use. For standing or cr
 var posture  # Current posture state
 enum { WALKING, CROUCHING, SPRINTING }  # Possible values for posture
 
-### Misc
-var ld: Node2D = preload("res://Scripts//DrawLine3D.gd").new()
-
 var cam: Camera3D
 
 
@@ -69,7 +65,6 @@ func _ready():
 	# Get capsule variables
 	original_height = capsule.height
 	crouching_height = capsule.height / 2
-	add_child(ld)  # Add line drawer
 
 
 func _input(event):
@@ -422,15 +417,11 @@ func move_player(move, state):
 			use_normal = lower_slope_normal
 
 		move = cross4(move, use_normal)  # Get slope to move along based on contact
-		if debug:
-			ld.DrawLine(draw_start, draw_start + move * capsule.radius, Color(1, 0, 0), 2)  # debug
 		state.apply_central_force(move * accel)
 		# Account for equal and opposite reaction when accelerating on ground
 		if contacted_body != null:
 			contacted_body.apply_force(state.get_contact_collider_position(0), move * -accel)
 	else:
-		if debug:
-			ld.DrawLine(draw_start, draw_start + move * capsule.radius, Color(0, 0, 1), 2)  # debug
 		state.apply_central_force(move * air_control)
 
 
