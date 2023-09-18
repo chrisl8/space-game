@@ -1,16 +1,11 @@
 extends RigidBody3D
 
+# The entire Rigidbody based Character Controller here is based on code found at https://github.com/FreeFlyFall/RigidBodyController
+
 # Set by the authority, synchronized on spawn.
-@export var player: int = 1:
-	set(id):
-		player = id
-		# Give authority over the player input to the appropriate peer.
-		$Head.set_multiplayer_authority(id)
+@export var player: int = -1
 
 ### Use the GodotPhysics physics engine
-
-#DevNotes to-do:
-# Newton's third law eventually breaks. Wondering whether it's a physics engine bug.
 
 ### Global
 @export var debug: bool
@@ -74,7 +69,6 @@ func _ready():
 	# Get capsule variables
 	original_height = capsule.height
 	crouching_height = capsule.height / 2
-	#Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)  # Capture and hide mouse
 	add_child(ld)  # Add line drawer
 
 
@@ -87,14 +81,14 @@ func _input(event):
 	):
 		# Rotate entire head on y axis
 		head.rotate_y(deg_to_rad(-event.relative.x * mouse_sensitivity))
-		var camear_head_x_rotation: float = deg_to_rad(-event.relative.y * mouse_sensitivity)
+		var camera_head_x_rotation: float = deg_to_rad(-event.relative.y * mouse_sensitivity)
 		# Rotate camera on x axis
 		# Limit to prevent flipping camera/head
-		camera.rotate_x(camear_head_x_rotation)
+		camera.rotate_x(camera_head_x_rotation)
 		camera.rotation.x = clamp(camera.rotation.x, deg_to_rad(-50), deg_to_rad(50))
 		# Also rotate head on x axis for visual
 		# Limit so head doesn't clip into body
-		head_mesh.rotate_x(camear_head_x_rotation)
+		head_mesh.rotate_x(camera_head_x_rotation)
 		head_mesh.rotation.x = clamp(head_mesh.rotation.x, deg_to_rad(-25), deg_to_rad(25))
 	# Capture and release mouse
 	# This is already done at the scene level, although maybe we could move it here?

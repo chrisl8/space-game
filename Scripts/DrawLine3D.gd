@@ -33,7 +33,7 @@ func _draw():
 		var ScreenPointStart = Cam.unproject_position(Lines[i].Start)
 		var ScreenPointEnd = Cam.unproject_position(Lines[i].End)
 
-		#Dont draw line if either start or end is considered behind the camera
+		#Don't draw line if either start or end is considered behind the camera
 		#this causes the line to not be drawn sometimes but avoids a bug where the
 		#line is drawn incorrectly
 		# if Cam.is_position_behind(Lines[i].Start) || Cam.is_position_behind(Lines[i].End):
