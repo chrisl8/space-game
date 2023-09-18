@@ -34,6 +34,8 @@ properties/4/watch = false
 collision_layer = 8
 collision_mask = 11
 mass = 10.0
+linear_damp = 1.0
+angular_damp = 1.0
 script = ExtResource("1_xr6d1")
 
 [node name="chair" parent="RigidBody3D" instance=ExtResource("1_awrcu")]

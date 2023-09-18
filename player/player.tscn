@@ -1,11 +1,10 @@
 [gd_scene load_steps=11 format=3 uid="uid://cnckqfxi8eyk8"]
 
+[ext_resource type="PhysicsMaterial" uid="uid://u55tuef0hp46" path="res://Physics/player.tres" id="1_2we4p"]
 [ext_resource type="Script" path="res://player/player_controller.gd" id="1_5i51a"]
-[ext_resource type="Script" path="res://player/player_input.gd" id="2_b7s6w"]
-[ext_resource type="PackedScene" uid="uid://cqgo3o7mf7fma" path="res://player/head.tscn" id="2_l45q4"]
-[ext_resource type="PackedScene" uid="uid://don84nc4fo8xc" path="res://assets/character/head.gltf" id="5_mnpm1"]
-[ext_resource type="PackedScene" uid="uid://b87td660isajr" path="res://assets/character/body.gltf" id="6_7cdlo"]
-[ext_resource type="PackedScene" uid="uid://dol1pdrb20swb" path="res://assets/character/foot.gltf" id="7_56uny"]
+[ext_resource type="PackedScene" uid="uid://ditdr2v1mtk6k" path="res://player/head.glb" id="3_ofsyb"]
+[ext_resource type="PackedScene" uid="uid://dxonwuumka06" path="res://player/foot.glb" id="6_30yss"]
+[ext_resource type="PackedScene" uid="uid://dvyp8uqkqbx3t" path="res://player/body.glb" id="6_40ddh"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_ir062"]
 properties/0/path = NodePath(".:player")
@@ -16,60 +15,96 @@ properties/1/path = NodePath(".:position")
 properties/1/spawn = true
 properties/1/sync = true
 properties/1/watch = false
-properties/2/path = NodePath(".:velocity")
+properties/2/path = NodePath(".:linear_velocity")
 properties/2/spawn = true
 properties/2/sync = true
 properties/2/watch = false
-properties/3/path = NodePath(".:rotation")
+properties/3/path = NodePath(".:angular_velocity")
 properties/3/spawn = true
 properties/3/sync = true
 properties/3/watch = false
 
-[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_l3b2l"]
-properties/0/path = NodePath(".:input_axis")
-properties/0/spawn = false
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_y4d10"]
+properties/0/path = NodePath("Head:rotation")
+properties/0/spawn = true
 properties/0/sync = true
 properties/0/watch = false
-properties/1/path = NodePath(".:camera_rotation_y")
-properties/1/spawn = false
+properties/1/path = NodePath("Head/HeadMesh:rotation")
+properties/1/spawn = true
 properties/1/sync = true
 properties/1/watch = false
-properties/2/path = NodePath(".:speed")
-properties/2/spawn = false
-properties/2/sync = true
-properties/2/watch = false
 
-[sub_resource type="CylinderShape3D" id="CylinderShape3D_wrqe5"]
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_0konm"]
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_f3jdq"]
+properties/0/path = NodePath("Character:rotation")
+properties/0/spawn = true
+properties/0/sync = true
+properties/0/watch = false
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_sd7go"]
 radius = 1.0
 
-[node name="Player" type="CharacterBody3D" groups=["players"]]
+[node name="Player" type="RigidBody3D" groups=["players"]]
 collision_layer = 2
-collision_mask = 3
+collision_mask = 11
+axis_lock_angular_x = true
+axis_lock_angular_y = true
+axis_lock_angular_z = true
+mass = 0.94
+physics_material_override = ExtResource("1_2we4p")
+continuous_cd = true
+max_contacts_reported = 5
+contact_monitor = true
+can_sleep = false
+linear_damp = 10.0
+angular_damp = 10.0
 script = ExtResource("1_5i51a")
+accel = 120
+jump = 10
+air_control = 5
+turning_scale = 45.0
+walkable_normal = 0.35
+speed_to_crouch = 8
+speed_limit = 8.0
+crouching_speed_limit = 4.0
+sprinting_speed_limit = 12.0
+danger_speed_limit = 100.0
+friction_divider = 4
+JUMP_THROTTLE = 0.1
+landing_assist = 1.5
+anti_slide_force = 4.0
 
-[node name="ServerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+[node name="PlayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_ir062")
 
-[node name="PlayerInput" type="MultiplayerSynchronizer" parent="."]
-root_path = NodePath(".")
-replication_config = SubResource("SceneReplicationConfig_l3b2l")
-script = ExtResource("2_b7s6w")
+[node name="Head" type="Node3D" parent="."]
 
-[node name="Head" parent="." instance=ExtResource("2_l45q4")]
+[node name="HeadSynchronizer" type="MultiplayerSynchronizer" parent="Head"]
+root_path = NodePath("../..")
+replication_config = SubResource("SceneReplicationConfig_y4d10")
+
+[node name="Camera3D" type="Camera3D" parent="Head"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7, 0)
+
+[node name="HeadMesh" parent="Head" instance=ExtResource("3_ofsyb")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7, 0)
 
 [node name="Collision" type="CollisionShape3D" parent="."]
-shape = SubResource("CylinderShape3D_wrqe5")
+shape = SubResource("CylinderShape3D_0konm")
 
 [node name="Character" type="Node3D" parent="."]
-transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, -1, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
 
-[node name="Head" parent="Character" instance=ExtResource("5_mnpm1")]
+[node name="CharacterSynchronizer" type="MultiplayerSynchronizer" parent="Character"]
+root_path = NodePath("../..")
+replication_config = SubResource("SceneReplicationConfig_f3jdq")
 
-[node name="Body" parent="Character" instance=ExtResource("6_7cdlo")]
+[node name="Body" parent="Character" instance=ExtResource("6_40ddh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 
-[node name="Foot" parent="Character" instance=ExtResource("7_56uny")]
+[node name="Foot" parent="Character" instance=ExtResource("6_30yss")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.04, 0)
 
 [node name="PersonalSpace" type="Area3D" parent="."]
 collision_layer = 2
@@ -77,6 +112,3 @@ collision_mask = 10
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="PersonalSpace"]
 shape = SubResource("CylinderShape3D_sd7go")
-
-[connection signal="body_entered" from="PersonalSpace" to="PlayerInput" method="_on_personal_space_body_entered"]
-[connection signal="body_exited" from="PersonalSpace" to="PlayerInput" method="_on_personal_space_body_exited"]

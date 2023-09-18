@@ -1,4 +1,5 @@
 extends MultiplayerSynchronizer
+# TODO: Delete this file, none of it is used anymore.
 
 @export var input_axis: Vector2 = Vector2()
 

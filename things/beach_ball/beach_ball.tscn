@@ -1,8 +1,11 @@
-[gd_scene load_steps=7 format=3 uid="uid://ceod3svxuy34r"]
+[gd_scene load_steps=8 format=3 uid="uid://ceod3svxuy34r"]
 
 [ext_resource type="Material" uid="uid://dhg3oi0ha82e6" path="res://things/beach_ball/beach_ball_material.tres" id="1_7jvyi"]
 [ext_resource type="Script" path="res://things/beach_ball/beach_ball_rigid_body.gd" id="1_nuosv"]
 [ext_resource type="AudioStream" uid="uid://cj3o8fhjd1mb6" path="res://things/beach_ball/ball_bounce.ogg" id="3_84ceu"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_ehc2e"]
+bounce = 0.1
 
 [sub_resource type="SphereMesh" id="SphereMesh_te1ch"]
 
@@ -31,10 +34,13 @@ properties/3/watch = false
 [node name="RigidBody3D" type="RigidBody3D" parent="."]
 collision_layer = 8
 collision_mask = 11
-mass = 0.02
+mass = 0.2
+physics_material_override = SubResource("PhysicsMaterial_ehc2e")
 continuous_cd = true
 max_contacts_reported = 1
 contact_monitor = true
+linear_damp = 1.0
+angular_damp = 1.0
 script = ExtResource("1_nuosv")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="RigidBody3D"]

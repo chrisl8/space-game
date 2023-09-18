@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://don84nc4fo8xc"
-path="res://.godot/imported/head.gltf-31dca4c74bcecb7be00ce39dfba75e91.scn"
+uid="uid://dxonwuumka06"
+path="res://.godot/imported/foot.glb-3dd9823ae88b53a317666ab8b7b46ed3.scn"
 
 [deps]
 
-source_file="res://assets/character/head.gltf"
-dest_files=["res://.godot/imported/head.gltf-31dca4c74bcecb7be00ce39dfba75e91.scn"]
+source_file="res://player/foot.glb"
+dest_files=["res://.godot/imported/foot.glb-3dd9823ae88b53a317666ab8b7b46ed3.scn"]
 
 [params]
 

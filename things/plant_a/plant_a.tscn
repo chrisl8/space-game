@@ -47,6 +47,8 @@ size = Vector3(0.602258, 0.601718, 0.608129)
 [node name="RigidBody3D" type="RigidBody3D" parent="." node_paths=PackedStringArray("Leafs")]
 collision_layer = 8
 collision_mask = 11
+linear_damp = 1.0
+angular_damp = 1.0
 script = ExtResource("1_1mur0")
 Leafs = [NodePath("Leaf4"), NodePath("Leaf9"), NodePath("Leaf10"), NodePath("Leaf11"), NodePath("Leaf5"), NodePath("Leaf6"), NodePath("Leaf7"), NodePath("Leaf8")]
 

@@ -37,7 +37,11 @@ func _input(event: InputEvent) -> void:
 		get_tree().quit()
 
 	# Only in Debug Mode: Use F1 to both Release and Capture the mouse for testing
-	if event.is_action_pressed(&"change_mouse_input") and OS.is_debug_build():
+	if (
+		not Globals.is_server
+		and event.is_action_pressed(&"change_mouse_input")
+		and OS.is_debug_build()
+	):
 		match Input.get_mouse_mode():
 			Input.MOUSE_MODE_CAPTURED:
 				Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
