@@ -393,7 +393,6 @@ func is_player_below_danger_speed_limit(vel) -> bool:
 
 # Move the player
 func move_player(move, state):
-	var draw_start = self.position - Vector3(0, capsule.height / 2, 0) + move  # debug
 	if is_grounded:
 		var direct_state: PhysicsDirectSpaceState3D = get_world_3d().direct_space_state
 
