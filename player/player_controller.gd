@@ -3,7 +3,10 @@ extends RigidBody3D
 # The entire Rigidbody based Character Controller here is based on code found at https://github.com/FreeFlyFall/RigidBodyController
 
 # Set by the authority, synchronized on spawn.
-@export var player: int = -1
+@export var player: int = -1:
+	set(id):
+		player = id
+		Globals.player_id = id
 
 ### Use the GodotPhysics physics engine
 

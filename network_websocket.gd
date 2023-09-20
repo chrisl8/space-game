@@ -157,6 +157,7 @@ func init_network():
 	websocket_multiplayer_peer = WebSocketMultiplayerPeer.new()
 	# This is a client/server setup, NOT a Mesh.
 	if Globals.is_server:
+		Globals.player_id = 1
 		websocket_multiplayer_peer.create_server(9090)
 	else:
 		var error: int = websocket_multiplayer_peer.create_client(url)  # WebSocket
