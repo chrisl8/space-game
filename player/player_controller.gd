@@ -56,7 +56,7 @@ enum { WALKING, CROUCHING, SPRINTING }  # Possible values for posture
 var cam: Camera3D
 
 ## Object Interaction vars
-@export var selected_thing_name: String
+var is_interacting: bool = false
 
 
 ### Godot notification functions ###
@@ -115,11 +115,28 @@ func _process(_delta: float) -> void:
 		character_trimmed = true
 		get_node("./Head/HeadMesh").visible = false  # Only make invisible so that we can rotate it and sync to other players
 		get_node("./Character/Body").queue_free()
+
+	if (
+		get_multiplayer_authority() == multiplayer.get_unique_id()
+		and Input.is_action_just_pressed(&"interact")
+	):
+		is_interacting = true
+
+	# Grabbing Things
+	if is_interacting:
+		_grab_or_drop()
+	is_interacting = false
+
 	# Synchronize Character rotation with head (camera) rotation
-	character_meshes.rotation.y = head.rotation.y
+	#character_meshes.rotation.y = head.rotation.y
 
 
 func _physics_process(delta):
+	### Synchronize Joint rotation with head (camera) rotation
+	# if get_multiplayer_authority() == multiplayer.get_unique_id():
+	# 	Helpers.log_print(str(head.rotation.y, " ", rotation.y))
+	# 	rotation.y = head.rotation.y
+
 	### Player posture FSM
 	if Input.is_action_pressed("crouch"):
 		posture = CROUCHING
@@ -463,27 +480,53 @@ func grow_capsule(_is_done_shrinking, player_scale, move_camera):
 		camera.position.y += move_camera
 
 
-func select_thing(thing_name):
-	print(
-		Globals.local_debug_instance_number,
-		" select_thing ",
-		thing_name,
-		" ",
-		multiplayer.get_unique_id()
-	)
-	selected_thing_name = thing_name
+var selected_node: Node3D
 
 
-func _on_personal_space_body_entered(body):
+func _on_personal_space_body_entered(body: Node3D):
 	if body.has_method("select"):
-		if body.has_method("my_name"):
-			select_thing(body.my_name())
+		selected_node = body
 		if get_multiplayer_authority() == multiplayer.get_unique_id():
 			body.select(name)
 
 
 func _on_personal_space_body_exited(body):
 	if body.has_method("unselect"):
-		select_thing("")
+		selected_node = null
 		if get_multiplayer_authority() == multiplayer.get_unique_id():
 			body.unselect(name)
+
+
+@onready var holding_things_joint: Node = get_node("./Joint")
+
+var held_item: Node
+
+@rpc("call_local") func _spawn_me_a_chair() -> void:
+	# Spawn a local version for myself
+	var chair: Resource = preload("res://things/held/chair/chair.tscn")
+	held_item = chair.instantiate()
+	holding_things_joint.add_child(held_item)
+	holding_things_joint.node_a = NodePath("..")
+	holding_things_joint.node_b = held_item.get_path()
+
+
+@rpc("call_local") func _drop_chair() -> void:
+	Helpers.log_print("Let go")
+	holding_things_joint.node_a = NodePath("")
+	holding_things_joint.node_b = NodePath("")
+	held_item.queue_free()
+	held_item = null
+
+
+func _grab_or_drop() -> void:
+	# TODO: The server should TELL the player to do this after it got the signal and despawned the server side thing.
+
+	if selected_node and not held_item:
+		# Tell the server version to delete itself
+		if selected_node.has_method("grab"):
+			selected_node.grab.rpc()
+		_spawn_me_a_chair.rpc()
+	elif held_item:
+		# Let Go
+		_drop_chair.rpc()
+		Spawner.place_chair.rpc()

@@ -1,9 +1,8 @@
-[gd_scene load_steps=10 format=3 uid="uid://cnckqfxi8eyk8"]
+[gd_scene load_steps=9 format=3 uid="uid://cnckqfxi8eyk8"]
 
 [ext_resource type="PhysicsMaterial" uid="uid://u55tuef0hp46" path="res://Physics/player.tres" id="1_2we4p"]
 [ext_resource type="Script" path="res://player/player_controller.gd" id="1_5i51a"]
 [ext_resource type="PackedScene" uid="uid://ditdr2v1mtk6k" path="res://player/head.glb" id="3_ofsyb"]
-[ext_resource type="PackedScene" uid="uid://bdepomwl46305" path="res://things/held/chair/chair.tscn" id="6_3rqni"]
 [ext_resource type="PackedScene" uid="uid://dxonwuumka06" path="res://player/foot.glb" id="6_30yss"]
 [ext_resource type="PackedScene" uid="uid://dvyp8uqkqbx3t" path="res://player/body.glb" id="6_40ddh"]
 
@@ -108,17 +107,7 @@ collision_mask = 10
 shape = SubResource("CylinderShape3D_sd7go")
 
 [node name="Joint" type="Generic6DOFJoint3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
-node_a = NodePath("..")
-node_b = NodePath("Chair")
-angular_limit_y/softness = 0.01
-angular_limit_y/restitution = 16.0
-angular_limit_y/damping = 16.0
-
-[node name="Chair" parent="Joint" instance=ExtResource("6_3rqni")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.7)
-mass = 0.01
-freeze_mode = 1
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, -0.7)
 
 [node name="PlayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_ir062")
