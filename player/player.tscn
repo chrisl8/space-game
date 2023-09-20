@@ -1,10 +1,16 @@
-[gd_scene load_steps=11 format=3 uid="uid://cnckqfxi8eyk8"]
+[gd_scene load_steps=10 format=3 uid="uid://cnckqfxi8eyk8"]
 
 [ext_resource type="PhysicsMaterial" uid="uid://u55tuef0hp46" path="res://Physics/player.tres" id="1_2we4p"]
 [ext_resource type="Script" path="res://player/player_controller.gd" id="1_5i51a"]
 [ext_resource type="PackedScene" uid="uid://ditdr2v1mtk6k" path="res://player/head.glb" id="3_ofsyb"]
+[ext_resource type="PackedScene" uid="uid://bdepomwl46305" path="res://things/held/chair/chair.tscn" id="6_3rqni"]
 [ext_resource type="PackedScene" uid="uid://dxonwuumka06" path="res://player/foot.glb" id="6_30yss"]
 [ext_resource type="PackedScene" uid="uid://dvyp8uqkqbx3t" path="res://player/body.glb" id="6_40ddh"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_0konm"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_sd7go"]
+radius = 1.0
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_ir062"]
 properties/0/path = NodePath(".:player")
@@ -23,27 +29,26 @@ properties/3/path = NodePath(".:angular_velocity")
 properties/3/spawn = true
 properties/3/sync = true
 properties/3/watch = false
-
-[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_y4d10"]
-properties/0/path = NodePath("Head:rotation")
-properties/0/spawn = true
-properties/0/sync = true
-properties/0/watch = false
-properties/1/path = NodePath("Head/HeadMesh:rotation")
-properties/1/spawn = true
-properties/1/sync = true
-properties/1/watch = false
-
-[sub_resource type="CylinderShape3D" id="CylinderShape3D_0konm"]
-
-[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_f3jdq"]
-properties/0/path = NodePath("Character:rotation")
-properties/0/spawn = true
-properties/0/sync = true
-properties/0/watch = false
-
-[sub_resource type="CylinderShape3D" id="CylinderShape3D_sd7go"]
-radius = 1.0
+properties/4/path = NodePath("Character:rotation")
+properties/4/spawn = true
+properties/4/sync = true
+properties/4/watch = false
+properties/5/path = NodePath("Head:rotation")
+properties/5/spawn = true
+properties/5/sync = true
+properties/5/watch = false
+properties/6/path = NodePath("Head/HeadMesh:rotation")
+properties/6/spawn = true
+properties/6/sync = true
+properties/6/watch = false
+properties/7/path = NodePath("Joint:rotation")
+properties/7/spawn = true
+properties/7/sync = true
+properties/7/watch = false
+properties/8/path = NodePath(".:rotation")
+properties/8/spawn = true
+properties/8/sync = true
+properties/8/watch = false
 
 [node name="Player" type="RigidBody3D" groups=["players"]]
 collision_layer = 2
@@ -75,14 +80,7 @@ JUMP_THROTTLE = 0.1
 landing_assist = 1.5
 anti_slide_force = 4.0
 
-[node name="PlayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
-replication_config = SubResource("SceneReplicationConfig_ir062")
-
 [node name="Head" type="Node3D" parent="."]
-
-[node name="HeadSynchronizer" type="MultiplayerSynchronizer" parent="Head"]
-root_path = NodePath("../..")
-replication_config = SubResource("SceneReplicationConfig_y4d10")
 
 [node name="Camera3D" type="Camera3D" parent="Head"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7, 0)
@@ -96,10 +94,6 @@ shape = SubResource("CylinderShape3D_0konm")
 [node name="Character" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
 
-[node name="CharacterSynchronizer" type="MultiplayerSynchronizer" parent="Character"]
-root_path = NodePath("../..")
-replication_config = SubResource("SceneReplicationConfig_f3jdq")
-
 [node name="Body" parent="Character" instance=ExtResource("6_40ddh")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 
@@ -112,6 +106,22 @@ collision_mask = 10
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="PersonalSpace"]
 shape = SubResource("CylinderShape3D_sd7go")
+
+[node name="Joint" type="Generic6DOFJoint3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+node_a = NodePath("..")
+node_b = NodePath("Chair")
+angular_limit_y/softness = 0.01
+angular_limit_y/restitution = 16.0
+angular_limit_y/damping = 16.0
+
+[node name="Chair" parent="Joint" instance=ExtResource("6_3rqni")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.7)
+mass = 0.01
+freeze_mode = 1
+
+[node name="PlayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_ir062")
 
 [connection signal="body_entered" from="PersonalSpace" to="." method="_on_personal_space_body_entered"]
 [connection signal="body_exited" from="PersonalSpace" to="." method="_on_personal_space_body_exited"]
