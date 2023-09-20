@@ -81,7 +81,7 @@ func _input(event):
 		and get_multiplayer_authority() == multiplayer.get_unique_id()
 	):
 		# Rotate entire head on y axis
-		head.rotate_y(deg_to_rad(-event.relative.x * mouse_sensitivity))
+		rotate_y(deg_to_rad(-event.relative.x * mouse_sensitivity))
 		var camera_head_x_rotation: float = deg_to_rad(-event.relative.y * mouse_sensitivity)
 		# Rotate camera on x axis
 		# Limit to prevent flipping camera/head
