@@ -206,7 +206,8 @@ func _physics_process(delta):
 		# The player is grounded if any of the raycasts hit
 		if collision and is_walkable(collision.normal.y):
 			is_grounded = true
-		DebugDraw3D.draw_line(params.from, params.to, array[2])  #$"Lines/2".global_transform.origin,  #target.global_transform.origin,
+		# WARNING: You MUST comment the DebugDraw3D calls out for web builds to work!
+		#DebugDraw3D.draw_line(params.from, params.to, array[2])  #$"Lines/2".global_transform.origin,  #target.global_transform.origin,
 
 	### Sprinting & Crouching
 	var crouch_scale = delta * speed_to_crouch  # Amount to change capsule height up or down
@@ -431,7 +432,8 @@ func move_player(move, state):
 		params.to = end
 		params.exclude = [self]
 		var hit = direct_state.intersect_ray(params)
-		DebugDraw3D.draw_line(params.from, params.to, Color.GREEN)  #$"Lines/2".global_transform.origin,  #target.global_transform.origin,
+		# WARNING: You MUST comment the DebugDraw3D calls out for web builds to work!
+		#DebugDraw3D.draw_line(params.from, params.to, Color.GREEN)  #$"Lines/2".global_transform.origin,  #target.global_transform.origin,
 		var use_normal: Vector3
 		# If the slope in front of the player movement direction is steeper than the
 		# shallowest contact, use the steepest contact normal to calculate the movement slope
