@@ -81,7 +81,7 @@ func _input(event):
 		and get_multiplayer_authority() == multiplayer.get_unique_id()
 	):
 		# Rotate entire head on y axis
-		rotate_y(deg_to_rad(-event.relative.x * mouse_sensitivity))
+		apply_torque(Vector3(0, -event.relative.x * mouse_sensitivity * 10, 0))
 		var camera_head_x_rotation: float = deg_to_rad(-event.relative.y * mouse_sensitivity)
 		# Rotate camera on x axis
 		# Limit to prevent flipping camera/head
@@ -126,9 +126,6 @@ func _process(_delta: float) -> void:
 	if is_interacting:
 		_grab_or_drop()
 	is_interacting = false
-
-	# Synchronize Character rotation with head (camera) rotation
-	#character_meshes.rotation.y = head.rotation.y
 
 
 func _physics_process(delta):
@@ -301,10 +298,10 @@ func _integrate_forces(state):
 		is_jumping = false
 
 	### Movement
-	var move = relative_input()  # Get movement vector relative to player orientation
+	var move: Vector3 = relative_input()  # Get movement vector relative to player orientation
 	var move2: Vector2 = Vector2(move.x, move.z)  # Convert movement for Vector2 methods
 
-	set_friction(move)
+	# set_friction(move)
 
 	# Get the player velocity, relative to the contacting body if there is one
 	var vel: Vector3 = Vector3()
@@ -320,7 +317,7 @@ func _integrate_forces(state):
 		vel = Vector3(state.get_linear_velocity().x, 0, state.get_linear_velocity().z)
 		vel -= Vector3(contacted_body_vel_at_point.x, 0, contacted_body_vel_at_point.z)
 	# Get a normalized player velocity
-	var nvel = vel.normalized()
+	var nvel: Vector3 = vel.normalized()
 	var nvel2: Vector2 = Vector2(nvel.x, nvel.z)  # 2D velocity vector to use with angle_to and dot methods
 
 	## If below the speed limit, or above the limit but facing away from the velocity,
@@ -329,7 +326,7 @@ func _integrate_forces(state):
 	## it based on where the player is moving in relation to the velocity.
 	##
 	# Get the angle between the velocity and current movement vector and convert it to degrees
-	var angle = nvel2.angle_to(move2)
+	var angle: float = nvel2.angle_to(move2)
 	var theta: float = rad_to_deg(angle)  # Angle between 2D look and velocity vectors
 	var is_below_speed_limit: bool = is_player_below_speed_limit(nvel, vel)
 	var is_below_danger_speed_limit: bool = is_player_below_danger_speed_limit(vel)
@@ -339,11 +336,11 @@ func _integrate_forces(state):
 		var move_scale: float  # Scaled from 0 to 1. Used for both turn assist interpolation and vector scaling
 		# If the angle is to the right of the velocity
 		if theta > 0 and theta < 90:
-			direction = nvel.cross(head.transform.basis.y)  # Vecor 90 degrees to the right of velocity
+			direction = nvel.cross(transform.basis.y)  # Vecor 90 degrees to the right of velocity
 			move_scale = clamp(theta / turning_scale, 0, 1)  # Turn assist scale
 		# If the angle is to the left of the velocity
 		elif theta < 0 and theta > -90:
-			direction = head.transform.basis.y.cross(nvel)  # Vecor 90 degrees to the left of velocity
+			direction = transform.basis.y.cross(nvel)  # Vecor 90 degrees to the left of velocity
 			move_scale = clamp(-theta / turning_scale, 0, 1)
 		# Prevent continuous sliding down steep walkable slopes when the player isn't moving. Could be made better with
 		# debouncing because too high of a force also affects stopping distance noticeably when not on a slope.
@@ -434,6 +431,7 @@ func move_player(move, state):
 		params.to = end
 		params.exclude = [self]
 		var hit = direct_state.intersect_ray(params)
+		DebugDraw3D.draw_line(params.from, params.to, Color.GREEN)  #$"Lines/2".global_transform.origin,  #target.global_transform.origin,
 		var use_normal: Vector3
 		# If the slope in front of the player movement direction is steeper than the
 		# shallowest contact, use the steepest contact normal to calculate the movement slope
@@ -460,7 +458,7 @@ func set_friction(_move):
 
 
 # Get movement vector based on input, relative to the player's head transform
-func relative_input():
+func relative_input() -> Vector3:
 	# Initialize the movement vector
 	var move: Vector3 = Vector3()
 	# Get cumulative input on axes
@@ -471,8 +469,8 @@ func relative_input():
 		input.x += int(Input.is_action_pressed("move_right"))
 		input.x -= int(Input.is_action_pressed("move_left"))
 		# Add input vectors to movement relative to the direction the head is facing
-		move += input.z * -head.transform.basis.z
-		move += input.x * head.transform.basis.x
+		move += input.z * -transform.basis.z
+		move += input.x * transform.basis.x
 	# Normalize to prevent stronger diagonal forces
 	return move.normalized()
 
