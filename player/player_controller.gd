@@ -192,8 +192,11 @@ func _physics_process(delta):
 		# Copy the current location below the capsule and subtract from it
 		var loc2 = loc
 		loc2.y -= bottom
+		var debug_color: Color = Color.BLUE
+		if i > 3:
+			debug_color = Color.RED
 		# Add the two points for this iteration to the list for the raycast
-		raycast_list.append([loc, loc2])
+		raycast_list.append([loc, loc2, debug_color])
 	# Check each raycast for collision, ignoring the capsule itself
 	for array in raycast_list:
 		# Some Godot 3 to 4 conversion information can be found at:
@@ -206,6 +209,7 @@ func _physics_process(delta):
 		# The player is grounded if any of the raycasts hit
 		if collision and is_walkable(collision.normal.y):
 			is_grounded = true
+		DebugDraw3D.draw_line(params.from, params.to, array[2])  #$"Lines/2".global_transform.origin,  #target.global_transform.origin,
 
 	### Sprinting & Crouching
 	var crouch_scale = delta * speed_to_crouch  # Amount to change capsule height up or down
