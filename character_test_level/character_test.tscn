@@ -1,0 +1,58 @@
+[gd_scene load_steps=10 format=3 uid="uid://caohp7jxd7y6l"]
+
+[ext_resource type="Script" path="res://character_test_level/character_test.gd" id="1_t7oan"]
+[ext_resource type="Texture2D" uid="uid://du3ngv3xwu74a" path="res://assets/textures/wood_tiles_dirty_and_mossy_albedo.png" id="2_dw2jx"]
+[ext_resource type="Texture2D" uid="uid://bjn2gmr1vbgjl" path="res://assets/textures/wood_tiles_dirty_and_mossy_heightmap.png" id="3_rwl10"]
+[ext_resource type="Texture2D" uid="uid://c3mnoph51dej8" path="res://assets/textures/wood_tiles_dirty_and_mossy_normal.png" id="4_pspc5"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ptq7u"]
+size = Vector3(2000, 1, 2000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_p4h4o"]
+size = Vector3(1000, 1, 1000)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7jx3l"]
+albedo_texture = ExtResource("2_dw2jx")
+normal_enabled = true
+normal_texture = ExtResource("4_pspc5")
+heightmap_enabled = true
+heightmap_texture = ExtResource("3_rwl10")
+uv1_scale = Vector3(1000, 1000, 1000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_70nfc"]
+size = Vector3(10, 1, 10)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_g7nqb"]
+points = PackedVector3Array(-5, -0.5, -5, -5, 0.5, -5, 5, -0.5, -5, -5, -0.5, 5, -5, 0.5, 5, 5, 0.5, -5, 5, -0.5, 5, 5, 0.5, 5)
+
+[node name="character_test" type="Node3D"]
+script = ExtResource("1_t7oan")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+shape = SubResource("BoxShape3D_ptq7u")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.15926, -0.354825, -0.435079)
+mesh = SubResource("BoxMesh_p4h4o")
+skeleton = NodePath("../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_7jx3l")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 181.201, 0)
+omni_range = 4015.68
+omni_attenuation = 0.000690533
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(0.939693, 0, -0.34202, 0, 1, 0, 0.34202, 0, 0.939693, 0, 1, 0)
+
+[node name="StaticBody3D2" type="StaticBody3D" parent="."]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D2"]
+transform = Transform3D(1, 0, 0, 0, 0.428998, 0.903305, 0, -0.903305, 0.428998, 0, 1.27232, 7.19184)
+mesh = SubResource("BoxMesh_70nfc")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D2"]
+transform = Transform3D(1, 0, 0, 0, 0.428998, 0.903305, 0, -0.903305, 0.428998, 0, 1.27232, 7.19184)
+shape = SubResource("ConvexPolygonShape3D_g7nqb")

@@ -8,7 +8,7 @@ script = ExtResource("1_0mo3b")
 [node name="Level" type="Node" parent="."]
 
 [node name="LevelSpawner" type="MultiplayerSpawner" parent="."]
-_spawnable_scenes = PackedStringArray("res://spaceship/spaceship.tscn")
+_spawnable_scenes = PackedStringArray("res://spaceship/spaceship.tscn", "res://character_test_level/character_test.tscn")
 spawn_path = NodePath("../Level")
 
 [node name="Players" type="Node" parent="."]

@@ -17,6 +17,8 @@ var network_connection_initiated: bool = false
 
 var player_character_template: PackedScene = preload("res://player/player.tscn")
 var level_scene: PackedScene = preload("res://spaceship/spaceship.tscn")
+# A big open area for testing stuff.
+#var level_scene: PackedScene = preload("res://character_test_level/character_test.tscn")
 
 var websocket_multiplayer_peer: WebSocketMultiplayerPeer
 
