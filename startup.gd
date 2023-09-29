@@ -1,6 +1,8 @@
 extends Node
 
 @export var run_server_in_debug: bool = true
+@export var debug_server_url: String = "ws://127.0.0.1:9090"
+@export var production_server_url: String = "wss://voidshipephemeral.space/server/"
 
 var pop_up_template: Resource = preload("res://menus/pop_up/pop_up.tscn")
 
@@ -22,6 +24,10 @@ var _instance_socket: TCPServer
 
 
 func _init():
+	if OS.is_debug_build() and run_server_in_debug:
+		Globals.url = debug_server_url
+	else:
+		Globals.url = production_server_url
 	if OS.is_debug_build():
 		# Check if this is the first instance of a debug run, so only one attempts to be the server
 		# It also provides us with a unique "instance number" for each debug instance of the game run by the editor
@@ -55,6 +61,68 @@ func _ready():
 
 	if network_type == "WebRTC" and Globals.is_server:
 		SignalingServer.start()
+
+	if Globals.is_server:
+		# Load or generate server config data
+		var server_config_file_name: String = "user://server_config.dat"
+		var server_config: Dictionary = {}
+		var server_config_file_data: String = Helpers.load_data_from_file(server_config_file_name)
+		if server_config_file_data == "":
+			Helpers.log_print("Generating new config data for server")
+			var jwt_secret: String = Helpers.generate_random_string(64)
+			server_config["jwt_secret"] = jwt_secret
+		else:
+			var json: JSON = JSON.new()
+			var error = json.parse(server_config_file_data)
+			if error != OK:
+				print(
+					"JSON Parse Error: ",
+					json.get_error_message(),
+					" in ",
+					server_config_file_data,
+					" at line ",
+					json.get_error_line()
+				)
+				get_tree().quit()  # Quits the game due to bad server config data
+
+			server_config = json.data
+			if typeof(server_config) != TYPE_DICTIONARY or not server_config.has("jwt_secret"):
+				print("Data error in: ", server_config)
+				get_tree().quit()  # Quits the game due to bad server config data
+
+		Globals.server_config = server_config
+
+		# Save config back out to file, even if we imported it from the file.
+		Helpers.save_data_to_file(server_config_file_name, JSON.stringify(Globals.server_config))
+
+		# Load or generate player data
+		print("----------------------")
+		var player_save_data: Dictionary = {}
+		var player_save_data_file_data: String = Helpers.load_data_from_file(
+			Globals.server_player_save_data_file_name
+		)
+		if player_save_data_file_data == "":
+			Helpers.log_print("Generating new player save data file for server")
+		else:
+			var json: JSON = JSON.new()
+			var error = json.parse(player_save_data_file_data)
+			if error != OK:
+				print(
+					"JSON Parse Error: ",
+					json.get_error_message(),
+					" in ",
+					player_save_data_file_data,
+					" at line ",
+					json.get_error_line()
+				)
+				get_tree().quit()  # Quits the game due to bad server config data
+			player_save_data = json.data
+			if typeof(player_save_data) != TYPE_DICTIONARY:
+				print("Data error in: ", server_config)
+				get_tree().quit()  # Quits the game due to bad server config data
+		Globals.player_save_data = player_save_data
+		# Save config back out to file, even if we imported it from the file.
+		Helpers.save_server_player_save_data_to_file()
 
 	start_connection()
 
