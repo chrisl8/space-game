@@ -191,7 +191,6 @@ func reset_connection():
 		connection.close()
 
 	Globals.user_name = ""
-	Globals.player_id = -1
 	peers.clear()
 	reset.emit(5)
 
@@ -271,7 +270,7 @@ func parse_msg() -> bool:
 		return true
 
 	if type == Message.PLAYER_JOINED:
-		if id != Globals.player_id and !peers.has(id):
+		if id != multiplayer.get_unique_id() and !peers.has(id):
 			peers[id] = data
 			Helpers.log_print(
 				"Peer name: %s with player_id # %s added to the peer list." % [peers[id], id]
@@ -344,7 +343,7 @@ func init_rtc_peer():
 	if Globals.is_server:
 		rtc_peer.create_server()
 	else:
-		rtc_peer.create_client(Globals.player_id)
+		rtc_peer.create_client(multiplayer.get_unique_id())
 		# Clients ONLY connect TO the Server, not each other, as this is a client/server
 		# setup, not a Mesh.
 		var connection: WebRTCPeerConnection = WebRTCPeerConnection.new()
