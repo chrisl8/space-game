@@ -25,10 +25,11 @@ These releases still connect to and depend on the server.
 
 # About the Code
 
-This is a Godot multi-player "game" (more like a doll house) that uses WebRTC for communication to allow creating a Web build and playing it in a web browser.
+This is a Godot multi-player "game" (more like a doll house) that uses WebSocket for communication to allow creating a Web build and playing it in a web browser.
 
 ## Networking
-This code currently uses WebSocket communication to communicate between the clients and the server. I find this to be the most reliable form of networking for HTML clients at the moment.
+This code currently uses WebSocket communication to communicate between the clients and the server. I find this to be the most reliable form of networking for HTML clients at the moment.  
+In theory WebRTC would be faster and lower latency, but it is highly complex to create connections and my experience is that in Server->Client setup, WebRTC connections silently die consistently after some time.
 
 ### OS Native Builds
 
@@ -41,7 +42,8 @@ There is currently no concept of "lobbies" or "shards." Everyone just joins the 
 #### WebRTC Experiments
 **You do not need to do this!**  
 At one time I tried WebRTC, and the WebRTC code still exists, but it is not currently functioning.  
-If someone wanted to try using WebRTC, you must make some code changes which are documented at the top of `startup.gd`.
+If someone wanted to try using WebRTC, you must make some code changes which are documented at the top of `startup.gd`.  
+My experience is that WebRTC connections silently stop sending data after 5 or 10 minutes, rendering players in a "read only" mode with no way to detect or fix it.
 
 # Development
 
