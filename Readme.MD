@@ -27,6 +27,16 @@ These releases still connect to and depend on the server.
 
 This is a Godot multi-player "game" (more like a doll house) that uses WebSocket for communication to allow creating a Web build and playing it in a web browser.
 
+## Goals
+This is entirely a hobby project for me, with no desire to monetize it, so there is no target for a launch or desire to publish with a big game distributor. I'm just having fun here.
+
+## Target Architecture
+My primary target is HTML export, because I find that the best way to get new people to try out my work. It only takes them a few seconds or minutes at most to be in my game and see what is there. It is also super easy for them to come back and see updates.
+
+## Character Controller
+The Character Controller is a Rigid Body controller where the user's input all causes physics inputs to the body. This is not the typical way that a character controller works in a 3D game, and has many draw-backs, however it works perfectly for my goals here.  
+All of the code for the Character Controller is based on the [FreeFlyFall's RigidBodyController](https://github.com/FreeFlyFall/RigidBodyController) although I have modified it a lot to fit my goals.
+
 ## Networking
 This code currently uses WebSocket communication to communicate between the clients and the server. I find this to be the most reliable form of networking for HTML clients at the moment.  
 In theory WebRTC would be faster and lower latency, but it is highly complex to create connections and my experience is that in Server->Client setup, WebRTC connections silently die consistently after some time.
@@ -155,3 +165,9 @@ https://www.nginx.com/blog/using-free-ssltls-certificates-from-lets-encrypt-with
 
 ### My Deploy Script
 TODO: Copy it into this repo and explain it.
+
+# Help
+
+The best place to get help with Godot in real time is the [Godot Discord Server](https://godotengine.org/community/) because it is fast, live, and there are always many people there who are smarter than me.  
+
+If you would like to ask questions or talk about this code specifically jump over to the Discussions tab at the top and start a new thread. I'll see it and try to respond as soon as I have time. I'm always happy to chat about my code.
