@@ -63,3 +63,11 @@ func things():
 			new_thing.name = str(thing_name_to_spawn)
 			things_spawning_node.add_child(new_thing)
 		PlantsToSpawn -= 1
+		
+	thing_name_to_spawn = "Floater"
+	existing_thing = things_spawning_node.get_node_or_null(thing_name_to_spawn)
+	var Floater: Resource = preload("res://things/Floater/Floater.tscn")
+	if not existing_thing:
+		var new_thing = Floater.instantiate()
+		new_thing.name = str(thing_name_to_spawn)
+		things_spawning_node.add_child(new_thing)

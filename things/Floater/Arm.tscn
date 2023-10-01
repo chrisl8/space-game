@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=3 uid="uid://b4qlphbtsblby"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_8r7dx"]
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_b3wmw"]
+
+[node name="Arm" type="Node3D"]
+
+[node name="Rot Point" type="Node3D" parent="."]
+transform = Transform3D(0.0877421, 0, 0, 0, -3.83533e-09, -0.0877421, 0, 0.0877421, -3.83533e-09, 0, 0, 0.217485)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Rot Point"]
+mesh = SubResource("SphereMesh_8r7dx")
+skeleton = NodePath("../..")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="Rot Point"]
+transform = Transform3D(0.946136, 0, 0, 0, -2.25929e-08, 0.946136, 0, -0.516864, -4.1357e-08, 0, 0, 0.404541)
+mesh = SubResource("CylinderMesh_b3wmw")
+skeleton = NodePath("../..")
