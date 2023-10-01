@@ -170,4 +170,4 @@ TODO: Copy it into this repo and explain it.
 
 The best place to get help with Godot in real time is the [Godot Discord Server](https://godotengine.org/community/) because it is fast, live, and there are always many people there who are smarter than me.  
 
-If you would like to ask questions or talk about this code specifically jump over to the Discussions tab at the top and start a new thread. I'll see it and try to respond as soon as I have time. I'm always happy to chat about my code.
+If you would like to ask questions or talk about this code specifically jump over to the [Discussions](https://github.com/chrisl8/space-game/discussions) tab at the top and start a new thread. I'll see it and try to respond as soon as I have time. I'm always happy to chat about my code.
