@@ -14,20 +14,20 @@ bounce = 0.1
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_qlywd"]
 properties/0/path = NodePath(".:linear_velocity")
 properties/0/spawn = true
-properties/0/sync = true
-properties/0/watch = false
+properties/0/sync = false
+properties/0/watch = true
 properties/1/path = NodePath(".:angular_velocity")
 properties/1/spawn = true
-properties/1/sync = true
-properties/1/watch = false
+properties/1/sync = false
+properties/1/watch = true
 properties/2/path = NodePath(".:position")
 properties/2/spawn = true
-properties/2/sync = true
-properties/2/watch = false
+properties/2/sync = false
+properties/2/watch = true
 properties/3/path = NodePath(".:rotation")
 properties/3/spawn = true
-properties/3/sync = true
-properties/3/watch = false
+properties/3/sync = false
+properties/3/watch = true
 
 [node name="Beach Ball" type="Node3D"]
 
@@ -50,9 +50,9 @@ mesh = SubResource("SphereMesh_te1ch")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBody3D"]
 shape = SubResource("SphereShape3D_1db3a")
 
-[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="RigidBody3D"]
-replication_config = SubResource("SceneReplicationConfig_qlywd")
-
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="RigidBody3D"]
 stream = ExtResource("3_84ceu")
 volume_db = -18.581
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="RigidBody3D"]
+replication_config = SubResource("SceneReplicationConfig_qlywd")

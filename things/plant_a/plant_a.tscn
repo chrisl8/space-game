@@ -21,26 +21,26 @@ _surfaces = [{
 [sub_resource type="BoxShape3D" id="BoxShape3D_j5wk6"]
 size = Vector3(0.415949, 0.875053, 0.509458)
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_xjm5c"]
+size = Vector3(0.602258, 0.601718, 0.608129)
+
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_14qyn"]
 properties/0/path = NodePath(".:linear_velocity")
 properties/0/spawn = false
-properties/0/sync = true
-properties/0/watch = false
+properties/0/sync = false
+properties/0/watch = true
 properties/1/path = NodePath(".:angular_velocity")
 properties/1/spawn = false
-properties/1/sync = true
-properties/1/watch = false
+properties/1/sync = false
+properties/1/watch = true
 properties/2/path = NodePath(".:position")
 properties/2/spawn = false
-properties/2/sync = true
-properties/2/watch = false
+properties/2/sync = false
+properties/2/watch = true
 properties/3/path = NodePath(".:rotation")
 properties/3/spawn = false
-properties/3/sync = true
-properties/3/watch = false
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_xjm5c"]
-size = Vector3(0.602258, 0.601718, 0.608129)
+properties/3/sync = false
+properties/3/watch = true
 
 [node name="plant_a" type="Node3D"]
 
@@ -67,9 +67,6 @@ skeleton = NodePath("../../..")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBody3D"]
 transform = Transform3D(0.999998, 0, 0.00197222, 0, 1, 0, -0.00197222, 0, 0.999998, -0.0239495, 0.925291, -0.0141093)
 shape = SubResource("BoxShape3D_j5wk6")
-
-[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="RigidBody3D"]
-replication_config = SubResource("SceneReplicationConfig_14qyn")
 
 [node name="CollisionShape3D2" type="CollisionShape3D" parent="RigidBody3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.298094, 0)
@@ -98,3 +95,6 @@ transform = Transform3D(0.141487, -0.593337, -0.792422, 0.977038, 0.212516, 0.01
 
 [node name="Leaf8" parent="RigidBody3D" instance=ExtResource("7_arjwr")]
 transform = Transform3D(0.179535, -0.859873, 0.477897, 0.977037, 0.212516, 0.0153266, -0.11474, 0.464172, 0.878282, 0, 0.540578, 0)
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="RigidBody3D"]
+replication_config = SubResource("SceneReplicationConfig_14qyn")

@@ -5,7 +5,6 @@ extends RigidBody3D
 @export var push_factor: float = 0.9
 
 var player_focused: String
-@export var player_holding_me: String
 
 
 func _ready():
