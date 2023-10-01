@@ -1,0 +1,73 @@
+[gd_scene load_steps=7 format=3 uid="uid://c6cch0gwb0s8b"]
+
+[ext_resource type="Script" path="res://things/Floater/FloaterController.gd" id="1_f5aan"]
+[ext_resource type="ArrayMesh" uid="uid://mejsea0kdkvb" path="res://things/Floater/SG Floater.obj" id="2_c7hbd"]
+[ext_resource type="PackedScene" uid="uid://b4qlphbtsblby" path="res://things/Floater/Arm.tscn" id="3_4ij4q"]
+[ext_resource type="Material" uid="uid://bjend7ys5muxd" path="res://things/Floater/Floater 1.tres" id="3_pg8al"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_j5wk6"]
+size = Vector3(0.39615, 0.210989, 0.389975)
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_14qyn"]
+properties/0/path = NodePath(".:linear_velocity")
+properties/0/spawn = false
+properties/0/sync = true
+properties/0/watch = false
+properties/1/path = NodePath(".:angular_velocity")
+properties/1/spawn = false
+properties/1/sync = true
+properties/1/watch = false
+properties/2/path = NodePath(".:position")
+properties/2/spawn = false
+properties/2/sync = true
+properties/2/watch = false
+properties/3/path = NodePath(".:rotation")
+properties/3/spawn = false
+properties/3/sync = true
+properties/3/watch = false
+
+[node name="Floater" type="Node3D"]
+
+[node name="Scaler" type="Node3D" parent="."]
+transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0, 0)
+
+[node name="RigidBody3D" type="RigidBody3D" parent="Scaler" node_paths=PackedStringArray("Arms")]
+collision_layer = 8
+collision_mask = 11
+linear_damp = 1.0
+angular_damp = 1.0
+script = ExtResource("1_f5aan")
+Arms = [NodePath("Arm"), NodePath("Arm2"), NodePath("Arm3"), NodePath("Arm4")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Scaler/RigidBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0498042, 0)
+shape = SubResource("BoxShape3D_j5wk6")
+
+[node name="SpotLight3D" type="SpotLight3D" parent="Scaler/RigidBody3D"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, -0.0041272, 1.25189, -0.000420503)
+visible = false
+light_color = Color(0.752941, 0.780392, 0, 1)
+light_energy = 16.0
+spot_range = 2.003
+spot_angle = 10.64
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="Scaler/RigidBody3D"]
+replication_config = SubResource("SceneReplicationConfig_14qyn")
+
+[node name="Arm" parent="Scaler/RigidBody3D" instance=ExtResource("3_4ij4q")]
+transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, 0, 0, 0)
+
+[node name="Arm2" parent="Scaler/RigidBody3D" instance=ExtResource("3_4ij4q")]
+transform = Transform3D(-0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, -0.707107, 0, 0, 0)
+
+[node name="Arm3" parent="Scaler/RigidBody3D" instance=ExtResource("3_4ij4q")]
+transform = Transform3D(-0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, -0.707107, 0, 0, 0)
+
+[node name="Arm4" parent="Scaler/RigidBody3D" instance=ExtResource("3_4ij4q")]
+transform = Transform3D(0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, 0.707107, 0, 0, 0)
+
+[node name="SgFloater" type="MeshInstance3D" parent="Scaler/RigidBody3D"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
+material_override = ExtResource("3_pg8al")
+mesh = ExtResource("2_c7hbd")
+skeleton = NodePath("../../..")
