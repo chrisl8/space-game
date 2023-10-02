@@ -1,4 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://b4qlphbtsblby"]
+[gd_scene load_steps=5 format=3 uid="uid://b4qlphbtsblby"]
+
+[ext_resource type="Material" uid="uid://by2ir1sfc2yx6" path="res://things/Floater/Floater 3.tres" id="1_7lr2j"]
+[ext_resource type="Material" uid="uid://31gnrgt2rikm" path="res://things/Floater/Floater 4.tres" id="2_7ly41"]
 
 [sub_resource type="SphereMesh" id="SphereMesh_8r7dx"]
 
@@ -7,13 +10,20 @@
 [node name="Arm" type="Node3D"]
 
 [node name="Rot Point" type="Node3D" parent="."]
-transform = Transform3D(0.0877421, 0, 0, 0, -3.83533e-09, -0.0877421, 0, 0.0877421, -3.83533e-09, 0, 0, 0.217485)
+transform = Transform3D(0.0877421, 0, 0, 0, -3.83533e-09, -0.0877421, 0, 0.0877421, -3.83533e-09, 0, 0, 0)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Rot Point"]
+material_override = ExtResource("1_7lr2j")
 mesh = SubResource("SphereMesh_8r7dx")
 skeleton = NodePath("../..")
 
 [node name="MeshInstance3D2" type="MeshInstance3D" parent="Rot Point"]
-transform = Transform3D(0.946136, 0, 0, 0, -2.25929e-08, 0.946136, 0, -0.516864, -4.1357e-08, 0, 0, 0.404541)
+transform = Transform3D(0.946136, 0, 0, 0, -1.35037e-08, 0.946136, 0, -0.308927, -4.1357e-08, 0, -8.92936e-09, 0.200261)
+material_override = ExtResource("2_7ly41")
 mesh = SubResource("CylinderMesh_b3wmw")
 skeleton = NodePath("../..")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="Rot Point"]
+transform = Transform3D(11.397, 0, 0, 0, 11.397, 5.68434e-14, 0, -5.68434e-14, 11.397, 0, 2.6021e-08, 0.59529)
+light_color = Color(0.2, 1, 1, 1)
+omni_range = 0.0366285
