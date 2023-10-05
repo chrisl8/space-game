@@ -10,7 +10,7 @@ func _ready() -> void:
 	if capture_mouse_on_startup and not Globals.is_server:
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
-	if OS.is_debug_build():
+	if OS.is_debug_build() and OS.get_name() != "Web":
 		release_mouse_text = "F1 to Release Mouse"
 		how_to_end_game_text = "ESC to Close Game"
 
