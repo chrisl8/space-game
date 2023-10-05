@@ -53,7 +53,12 @@ func _init():
 func _ready():
 	Network.reset.connect(connection_reset)
 	Network.close_popup.connect(force_close_popup)
-	if OS.is_debug_build() and run_server_in_debug and Globals.local_debug_instance_number < 1:
+	if (
+		OS.is_debug_build()
+		and run_server_in_debug
+		and Globals.local_debug_instance_number < 1
+		and OS.get_name() != "Web"
+	):
 		print(
 			"Setting as server based being a debug build and run_server_in_debug and being first instance to run."
 		)
