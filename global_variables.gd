@@ -8,3 +8,8 @@ var user_name: String = ""
 var local_debug_instance_number: int = -1
 var intro_music_has_played: bool = false
 var url: String
+var click_mode: bool = false
+
+# Text for use in game
+var release_mouse_text: String = "ESC to Release Mouse"
+var how_to_end_game_text: String = "END key to Close Game"

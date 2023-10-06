@@ -4,6 +4,8 @@ extends Node
 @export var debug_server_url: String = "ws://127.0.0.1:9090"
 @export var production_server_url: String = "wss://voidshipephemeral.space/server/"
 
+@export var capture_mouse_on_startup: bool = false  # This is actually annoying so I never turn it on.
+
 var pop_up_template: Resource = preload("res://menus/pop_up/pop_up.tscn")
 
 var pop_up: Node
@@ -51,6 +53,13 @@ func _init():
 
 
 func _ready():
+	if capture_mouse_on_startup and not Globals.is_server:
+		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+
+	if OS.is_debug_build() and OS.get_name() != "Web":
+		Globals.release_mouse_text = "F1 to Release Mouse"
+		Globals.how_to_end_game_text = "ESC to Close Game"
+
 	Network.reset.connect(connection_reset)
 	Network.close_popup.connect(force_close_popup)
 	if (
@@ -172,9 +181,54 @@ func connection_reset(delay):
 
 
 func _input(event: InputEvent) -> void:
+	if event.is_action_pressed(&"ui_cancel"):
+		if OS.is_debug_build():
+			get_tree().quit()  # Quits the game in debug mode
+		else:  # Releases mouse in normal build
+			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+
+	if event.is_action_pressed(&"ui_end") and OS.get_name() != "Web":
+		# "Closing" the game in web has no meaning and just freezes it in your browser window.
+		get_tree().quit()
+
+	# Only in Debug Mode: Use F1 to both Release and Capture the mouse for testing
+	if (
+		not Globals.is_server
+		and event.is_action_pressed(&"change_mouse_input")
+		and OS.is_debug_build()
+	):
+		match Input.get_mouse_mode():
+			Input.MOUSE_MODE_CAPTURED:
+				Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+			Input.MOUSE_MODE_VISIBLE:
+				Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+
 	if event.is_action_pressed(&"dump_tree"):
 		print(multiplayer.get_unique_id())
 		get_tree().root.print_tree_pretty()
+	if event.is_action_pressed(&"click_mode"):
+		Globals.click_mode = !Globals.click_mode
+		Helpers.log_print(str("click_mode = ", Globals.click_mode))
+
+
+# Capture mouse if clicked on the game
+# Called when an InputEvent hasn't been consumed by _input() or any GUI item
+func _unhandled_input(event: InputEvent) -> void:
+	if not Globals.is_server and event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed and not Globals.click_mode:
+			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+			await get_tree().create_timer(0.5).timeout
+			#print("Mouse Mode: ", Input.get_mouse_mode())
+			var text_to_toast: String = Globals.release_mouse_text
+			if Input.get_mouse_mode() == 0:
+				# Browsers have a cool down on capturing the mouse.
+				# https://discourse.threejs.org/t/how-to-avoid-pointerlockcontrols-error/33017/4
+				# So users may click, Esc, and then Click again too fast and it does not capture the mouse
+				# This will let the user know that happened
+				text_to_toast = "Oops, too fast, try again"
+			var toast = Toast.new(text_to_toast, 2.0)
+			get_node("/root").add_child(toast)
+			toast.show()
 
 
 func force_close_popup():
