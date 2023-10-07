@@ -6,17 +6,12 @@ extends RigidBody3D
 # and perhaps by others via the MultiplayerSynchronizer, but I'm not sure on that.
 @export var player: int = -1
 
-### Use the GodotPhysics physics engine
-
-### Global
 var is_grounded: bool  # Whether the player is considered to be touching a walkable slope
 @onready var capsule: Shape3D = $Collision.shape  # Capsule collision shape of the player
 @onready var head: Node3D = $Head  # y-axis rotation node (look left and right)
 @onready var camera: Node = get_node("./Head/Camera3D")  # Camera3D node
 @onready var head_mesh: Node = get_node("./Head/HeadMesh")  # x-axis rotation node (look up and down)
 @onready var character_meshes: Node3D = $Character
-
-### Input vars
 
 ### Integrate forces vars
 @export var accel: int  # Player acceleration force
@@ -35,8 +30,10 @@ var upper_slope_normal: Vector3  # Stores the lowest (steepest) slope normal
 var lower_slope_normal: Vector3  # Stores the highest (flattest) slope normal
 var slope_normal: Vector3  # Stores normals of contact points for iteration
 var contacted_body: RigidBody3D  # Rigid body the player is currently contacting, if there is one
+@onready var local_accel: int = accel
 var player_physics_material: Resource = load("res://Physics/player.tres")
 var local_friction = player_physics_material.friction  # Editor friction value
+var local_linear_damp: float = linear_damp
 var is_landing: bool = true  # Whether the player has jumped and let go of jump
 var is_jumping: bool = false  # Whether the player has jumped
 @export var JUMP_THROTTLE: float  # 0.1 # Stores preference for time before the player can jump again # (float,0.01,1,0.01)
@@ -49,7 +46,7 @@ var original_height: float
 var crouching_height: float
 var current_speed_limit: float  # Current speed limit to use. For standing or crouching.
 var posture  # Current posture state
-enum { WALKING, CROUCHING, SPRINTING }  # Possible values for posture
+enum { TIPTOEING, WALKING, CROUCHING, SPRINTING }  # Possible values for posture
 
 ## Object Interaction vars
 var is_interacting: bool = false
@@ -83,18 +80,11 @@ func _input(event):
 		# Rotate camera on x axis
 		# Limit to prevent flipping camera/head
 		camera.rotate_x(camera_head_x_rotation)
-		camera.rotation.x = clamp(camera.rotation.x, deg_to_rad(-50), deg_to_rad(50))
+		camera.rotation.x = clamp(camera.rotation.x, deg_to_rad(-60), deg_to_rad(50))
 		# Also rotate head on x axis for visual
-		# Limit so head doesn't clip into body
+		# Limit more strictly so head doesn't clip into body
 		head_mesh.rotate_x(camera_head_x_rotation)
 		head_mesh.rotation.x = clamp(head_mesh.rotation.x, deg_to_rad(-25), deg_to_rad(25))
-	# Capture and release mouse
-	# This is already done at the scene level, although maybe we could move it here?
-	# if event.is_action_pressed("ui_cancel"):
-	# 	if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
-	# 		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)  # Free the mouse
-	# 	else:
-	# 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 
 var is_done_shrinking: bool  # temporary # Whether the player is currently shrinking towards being crouched
@@ -126,16 +116,13 @@ func _process(_delta: float) -> void:
 
 
 func _physics_process(delta):
-	### Synchronize Joint rotation with head (camera) rotation
-	# if get_multiplayer_authority() == multiplayer.get_unique_id():
-	# 	Helpers.log_print(str(head.rotation.y, " ", rotation.y))
-	# 	rotation.y = head.rotation.y
-
 	### Player posture FSM
 	if Input.is_action_pressed("crouch"):
 		posture = CROUCHING
 	elif Input.is_action_pressed("sprint"):
 		posture = SPRINTING
+	elif Input.is_action_pressed("tiptoe"):
+		posture = TIPTOEING
 	else:
 		posture = WALKING
 
@@ -193,8 +180,6 @@ func _physics_process(delta):
 		raycast_list.append([loc, loc2, debug_color])
 	# Check each raycast for collision, ignoring the capsule itself
 	for array in raycast_list:
-		# Some Godot 3 to 4 conversion information can be found at:
-		# https://www.reddit.com/r/godot/comments/u0fboh/comment/idtoz30/?utm_source=share&utm_medium=web2x&context=3
 		var params: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.new()
 		params.from = array[0]
 		params.to = array[1]
@@ -211,9 +196,13 @@ func _physics_process(delta):
 	var move_camera = delta / 2 * speed_to_crouch  # Amount to move camera while crouching
 	match posture:
 		SPRINTING:
+			accel = local_accel
+			linear_damp = local_linear_damp
 			current_speed_limit = sprinting_speed_limit
 			grow_capsule(is_done_shrinking, crouch_scale, move_camera)
 		CROUCHING:  # Shrink
+			accel = local_accel / 2
+			linear_damp = local_linear_damp * 10
 			current_speed_limit = crouching_speed_limit
 			if capsule.height > crouching_height:
 				capsule.height -= crouch_scale
@@ -224,7 +213,14 @@ func _physics_process(delta):
 				self.apply_central_force(look_direction * mass * 100)
 				is_done_shrinking = true
 		WALKING:  # Grow
+			accel = local_accel
+			linear_damp = local_linear_damp
 			current_speed_limit = speed_limit
+			grow_capsule(is_done_shrinking, crouch_scale, move_camera)
+		TIPTOEING:
+			accel = local_accel / 2
+			linear_damp = local_linear_damp * 10
+			current_speed_limit = speed_limit / 2
 			grow_capsule(is_done_shrinking, crouch_scale, move_camera)
 
 	# Setup jump throttle for integrate_forces
