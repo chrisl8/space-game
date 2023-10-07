@@ -47,11 +47,16 @@ func _process(_delta) -> void:
 		return
 
 	# In Debug mode, exit server if everyone disconnects in order to speed up debugging sessions (less windows to close)
-	if OS.is_debug_build() and peers_have_connected and peer_count < 1:
+	if (
+		OS.is_debug_build()
+		and peers_have_connected
+		and peer_count < 1
+		and !Globals.shutdown_in_progress
+	):
 		Helpers.log_print(
 			"Closing server due to all clients disconnecting and this running in Debug mode."
 		)
-		get_tree().quit()  # Quits the game
+		Helpers.quit_gracefully()
 
 	# Initialize the Level if it isn't yet
 	if not game_scene_initialized:
@@ -61,6 +66,7 @@ func _process(_delta) -> void:
 			load_level.call_deferred(level_scene)
 		elif get_node_or_null("../Main/Level/game_scene"):
 			game_scene_initialized = true
+			close_popup.emit()
 		return
 
 	Spawner.things()
@@ -126,20 +132,19 @@ func _peer_disconnected(id) -> void:
 		peers.erase(id)
 	if not Globals.is_server:
 		return
-	# TODO: Save player's position so we can use it if they join again.
 
 	var player_spawner_node: Node = get_node_or_null("../Main/Players")
 	if player_spawner_node and player_spawner_node.has_node(str(id)):
 		var player: Node = player_spawner_node.get_node(str(id))
-		Helpers.log_print(
-			str(
-				"Player ",
-				id,
-				" disconnected while at position ",
-				player.position,
-				" rotation ",
-				player.rotation
-			)
+		print(
+			"Server: Player ",
+			id,
+			" ",
+			player_uuid,
+			" disconnected while at position ",
+			player.position,
+			" rotation ",
+			player.rotation
 		)
 		if player_uuid != "":
 			Globals.player_save_data[player_uuid]["position"] = {
@@ -161,7 +166,6 @@ func player_save_data_filename() -> String:
 
 func _connected_to_server():
 	Helpers.log_print("I connected to the server!")
-	close_popup.emit()
 
 	#TODO: Testing data read/write
 	#save_player_data("doot!")
@@ -173,16 +177,25 @@ func _connected_to_server():
 
 func _connection_failed():
 	Helpers.log_print("My connection failed. =(")
+	Globals.connection_failed_message = "Connection Failed!"
 	reset_connection()
 
 
 func _server_disconnected():
 	Helpers.log_print("Server Disconnected")
+	Globals.connection_failed_message = "Connection Interrupted!"
 	reset_connection()
 
 
+func shutdown_server():
+	if Globals.is_server and peers.size() > 0:
+		for key in peers:
+			Helpers.log_print(str(key, " ", peers[key]))
+			websocket_multiplayer_peer.disconnect_peer(key)
+
+
 func reset_connection():
-	Helpers.log_print("Reset Connection")
+	Helpers.log_print("Resetting Connection")
 	ready_to_connect = false
 	network_connection_initiated = false
 	network_initialized = false
@@ -207,7 +220,6 @@ func init_network():
 		if error:
 			Helpers.log_print(error)
 	get_tree().get_multiplayer().multiplayer_peer = websocket_multiplayer_peer
-	close_popup.emit()
 	network_initialized = true
 
 
@@ -259,6 +271,7 @@ enum Message { PLAYER_JOINED, PLAYER_TOKEN }
 
 	if parsed_message.type == Message.PLAYER_TOKEN:
 		Helpers.save_data_to_file(player_save_data_filename(), parsed_message.data)
+		close_popup.emit()
 		return
 
 	print("Unknown Message Type in: ", parsed_message, " from ", sender_id)

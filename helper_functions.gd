@@ -33,3 +33,17 @@ func save_server_player_save_data_to_file() -> void:
 	save_data_to_file(
 		Globals.server_player_save_data_file_name, JSON.stringify(Globals.player_save_data)
 	)
+
+
+func quit_gracefully() -> void:
+	# Quitting in Web just stops the game but leaves it stalled in the browser window, so it really should never happen.
+	if !Globals.shutdown_in_progress and OS.get_name() != "Web":
+		Globals.shutdown_in_progress = true
+		if Globals.is_server:
+			# TODO: If server disconnect all clients so that their data is saved before shutting down.
+			print("Disconnecting clients and saving data before shutting down server...")
+			Network.shutdown_server()
+			while Network.peers.size() > 0:
+				print("...server still clearing clients...")
+				await get_tree().create_timer(1).timeout
+		get_tree().quit()

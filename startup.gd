@@ -52,7 +52,24 @@ func _init():
 				Globals.is_server = true
 
 
+func _notification(what):
+	# This catches the quit command and acts on it,
+	# since we negated it in the _ready() function.
+	# https://docs.godotengine.org/en/stable/tutorials/inputs/handling_quit_requests.html
+	if what == NOTIFICATION_WM_CLOSE_REQUEST:
+		Helpers.quit_gracefully()
+
+
 func _ready():
+	force_open_popup()
+	pop_up.set_msg("Booting Universe...")
+
+	# Disable auto-quit so that we can catch it ourselves elsewhere
+	# Note that this alone will defeat Windows X or Alt+F4
+	# See helper_functions.gd quit_gracefully()
+	# https://docs.godotengine.org/en/stable/tutorials/inputs/handling_quit_requests.html
+	get_tree().set_auto_accept_quit(false)
+
 	if capture_mouse_on_startup and not Globals.is_server:
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
@@ -142,9 +159,7 @@ func _ready():
 
 
 func start_connection():
-	force_close_popup()
-	pop_up = pop_up_template.instantiate()
-	add_child(pop_up)
+	force_open_popup()
 	if OS.is_debug_build() and Globals.local_debug_instance_number > 0 and not Globals.is_server:
 		var debug_delay: int = Globals.local_debug_instance_number
 		while debug_delay > 0:
@@ -156,20 +171,21 @@ func start_connection():
 
 
 func connection_reset(delay):
-	if OS.is_debug_build():
+	force_open_popup()
+	pop_up.set_msg(
+		Globals.connection_failed_message,
+		Color(0.79215687513351, 0.26274511218071, 0.56470590829849)
+	)
+	if OS.is_debug_build() and OS.get_name() != "Web":
 		# Exit when the server closes in debug mode
-		get_tree().quit()  # Quits the game
+		# except in web mode, where "exit" has no meaning.
+		Helpers.log_print("Closing due to server disconnecting and this running in Debug mode.")
+		Helpers.quit_gracefully()
 
 	var game_scene_node: Node = get_node_or_null("../Main/game_scene")
 	if game_scene_node and is_instance_valid(game_scene_node):
 		game_scene_node.queue_free()
 
-	force_close_popup()
-	pop_up = pop_up_template.instantiate()
-	pop_up.set_msg(
-		"Connection Interrupted!", Color(0.79215687513351, 0.26274511218071, 0.56470590829849)
-	)
-	add_child(pop_up)
 	await get_tree().create_timer(3).timeout
 	var retry_delay = delay
 	while retry_delay > 0:
@@ -183,13 +199,16 @@ func connection_reset(delay):
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed(&"ui_cancel"):
 		if OS.is_debug_build():
-			get_tree().quit()  # Quits the game in debug mode
+			# ESC key closes game in debug mode
+			Helpers.log_print("Closing due to ESC key.")
+			Helpers.quit_gracefully()
 		else:  # Releases mouse in normal build
 			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 
-	if event.is_action_pressed(&"ui_end") and OS.get_name() != "Web":
-		# "Closing" the game in web has no meaning and just freezes it in your browser window.
-		get_tree().quit()
+	if event.is_action_pressed(&"ui_end"):
+		# END key closes the game
+		Helpers.log_print("Closing due to END key.")
+		Helpers.quit_gracefully()
 
 	# Only in Debug Mode: Use F1 to both Release and Capture the mouse for testing
 	if (
@@ -220,7 +239,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			await get_tree().create_timer(0.5).timeout
 			#print("Mouse Mode: ", Input.get_mouse_mode())
 			var text_to_toast: String = Globals.release_mouse_text
-			if Input.get_mouse_mode() == 0:
+			if Input.get_mouse_mode() == Input.MOUSE_MODE_VISIBLE:
 				# Browsers have a cool down on capturing the mouse.
 				# https://discourse.threejs.org/t/how-to-avoid-pointerlockcontrols-error/33017/4
 				# So users may click, Esc, and then Click again too fast and it does not capture the mouse
@@ -229,6 +248,12 @@ func _unhandled_input(event: InputEvent) -> void:
 			var toast = Toast.new(text_to_toast, 2.0)
 			get_node("/root").add_child(toast)
 			toast.show()
+
+
+func force_open_popup():
+	if not pop_up:
+		pop_up = pop_up_template.instantiate()
+		add_child(pop_up)
 
 
 func force_close_popup():

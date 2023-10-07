@@ -24,13 +24,14 @@ func _ready() -> void:
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed(&"ui_cancel"):
 		if OS.is_debug_build():
-			get_tree().quit()  # Quits the game in debug mode
+			# ESC key closes game in debug mode
+			Helpers.quit_gracefully()
 		else:  # Releases mouse in normal build
 			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 
-	if event.is_action_pressed(&"ui_end") and OS.get_name() != "Web":
-		# "Closing" the game in web has no meaning and just freezes it in your browser window.
-		get_tree().quit()
+	if event.is_action_pressed(&"ui_end"):
+		# END key closes the game
+		Helpers.quit_gracefully()
 
 	# Only in Debug Mode: Use F1 to both Release and Capture the mouse for testing
 	if (
