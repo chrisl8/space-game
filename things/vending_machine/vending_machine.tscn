@@ -1,15 +1,15 @@
 [gd_scene load_steps=3 format=3 uid="uid://pdx1ljphijan"]
 
-[ext_resource type="PackedScene" uid="uid://c71ttlan4c0in" path="res://things/vending_machine/vending_machine.glb" id="1_us2u8"]
+[ext_resource type="PackedScene" uid="uid://clx2pbd1w3f4v" path="res://things/vending_machine/vending_machine_model.tscn" id="1_8122q"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_s0p58"]
 size = Vector3(2, 2.5, 1)
 
-[node name="vending_machine" type="Node3D"]
+[node name="Vending Machine" type="Node3D"]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="."]
 
-[node name="vending_machine" parent="StaticBody3D" instance=ExtResource("1_us2u8")]
+[node name="Vending Machine Model" parent="StaticBody3D" instance=ExtResource("1_8122q")]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
 shape = SubResource("BoxShape3D_s0p58")
