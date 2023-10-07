@@ -40,8 +40,10 @@ func quit_gracefully() -> void:
 	if !Globals.shutdown_in_progress and OS.get_name() != "Web":
 		Globals.shutdown_in_progress = true
 		if Globals.is_server:
-			# TODO: If server disconnect all clients so that their data is saved before shutting down.
 			print("Disconnecting clients and saving data before shutting down server...")
+			var toast = Toast.new("Disconnecting clients and shutting down server...", 2.0)
+			get_node("/root").add_child(toast)
+			toast.show()
 			Network.shutdown_server()
 			while Network.peers.size() > 0:
 				print("...server still clearing clients...")
