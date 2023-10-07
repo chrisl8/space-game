@@ -81,7 +81,7 @@ mesh = SubResource("SphereMesh_673oq")
 skeleton = NodePath("../..")
 
 [node name="OmniLight3D" type="OmniLight3D" parent="RigidBody3D/MeshInstance3D"]
-transform = Transform3D(7.98442, 0, 0, 0, 7.98442, 0, 0, 0, 7.98442, 4.75909e-07, 0.110087, 0.502916)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.75909e-07, 0.110087, 0.502916)
 omni_range = 0.0179239
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="RigidBody3D/MeshInstance3D"]
