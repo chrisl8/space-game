@@ -30,11 +30,11 @@ func ProcessArms(_delta) -> void:
 		#Arm.set_rotation(self.velocity)
 
 
-var CurrentTime: int = 0
+var CurrentTime: float = 0.0
 var ForceApplied: bool = false
 
 
-func _physics_process(_delta):
+func _physics_process(delta):
 	# Delete if it gets out of bounds
 	# Whatever spawned it should track and respawn it if required
 	if abs(position.x) > bounds_distance:
@@ -44,9 +44,9 @@ func _physics_process(_delta):
 	if abs(position.z) > bounds_distance:
 		get_parent().queue_free()
 
-	CurrentTime += _delta
+	CurrentTime += delta
 	var MinSpeed: float = 1.5
-	var MaxSpeed: int = 3
+	var MaxSpeed: float = 3.0
 	var SpeedX: float = RandomNumberGenerator.new().randf_range(MinSpeed, MaxSpeed)
 	var SpeedY: float = RandomNumberGenerator.new().randf_range(MinSpeed, MaxSpeed)
 	var SpeedZ: float = RandomNumberGenerator.new().randf_range(MinSpeed / 2.0, MaxSpeed / 2.0)
@@ -66,4 +66,4 @@ func _physics_process(_delta):
 		CurrentTime = 0
 		ForceApplied = false
 		self.apply_torque(Vector3(0, RandomNumberGenerator.new().randf_range(-3.5, 3.5), 0))
-	ProcessArms(_delta)
+	ProcessArms(delta)
