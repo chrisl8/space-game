@@ -166,6 +166,11 @@ func player_save_data_filename() -> String:
 
 func _connected_to_server():
 	Helpers.log_print("I connected to the server!")
+	if Globals.shutdown_server:
+		print("Sending SHUTDOWN_SERVER message.")
+		send_data_to(1, Message.SHUTDOWN_SERVER, Globals.server_config["server_password"])
+		Helpers.quit_gracefully()
+		return
 
 	#TODO: Testing data read/write
 	#save_player_data("doot!")
@@ -190,7 +195,7 @@ func _server_disconnected():
 func shutdown_server():
 	if Globals.is_server and peers.size() > 0:
 		for key in peers:
-			Helpers.log_print(str(key, " ", peers[key]))
+			print("Telling ", key, " to disconnect")
 			websocket_multiplayer_peer.disconnect_peer(key)
 
 
@@ -236,7 +241,7 @@ func send_data_to(id: int, msg_type: Message, data: String):
 	rpc_id(id, "data_received", send_data)
 
 
-enum Message { PLAYER_JOINED, PLAYER_TOKEN }
+enum Message { PLAYER_JOINED, PLAYER_TOKEN, SHUTDOWN_SERVER }
 
 @rpc("any_peer") func data_received(data) -> void:
 	var sender_id: int = multiplayer.get_remote_sender_id()
@@ -265,6 +270,14 @@ enum Message { PLAYER_JOINED, PLAYER_TOKEN }
 		print("Data error in: ", parsed_message, " from ", sender_id)
 		return
 
+	if parsed_message.type == Message.SHUTDOWN_SERVER:
+		if parsed_message.data == Globals.server_config["server_password"]:
+			print("Server shutdown requested from client ", sender_id)
+			Helpers.quit_gracefully()
+		else:
+			print("Client ", sender_id, " attempted to shut down server with invalid password.")
+		return
+
 	if parsed_message.type == Message.PLAYER_JOINED:
 		player_joined(sender_id, parsed_message.data)
 		return
@@ -274,7 +287,9 @@ enum Message { PLAYER_JOINED, PLAYER_TOKEN }
 		close_popup.emit()
 		return
 
-	print("Unknown Message Type in: ", parsed_message, " from ", sender_id)
+	print(
+		"Unknown Message Type ", parsed_message.type, " in: ", parsed_message, " from ", sender_id
+	)
 
 
 var uuid_util: Resource = preload("res://addons/godot-uuid/uuid.gd")

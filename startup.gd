@@ -20,6 +20,8 @@ var network_type: String = "WebSocket"  # WebSocket or WebRTC
 # 4. Download the WebRTC Native Plugin from https://github.com/godotengine/webrtc-native
 #    and put the webrtc folder it generates in the root of this godot code folder.
 
+var server_config_file_name: String = "user://server_config.dat"
+
 # This has to be here so that it isn't removed after _init() runs,
 # which will cause all instances to look like 0.
 var _instance_socket: TCPServer
@@ -50,6 +52,19 @@ func _init():
 			if arg_array[0] == "server":
 				print("Setting as server based on command line argument.")
 				Globals.is_server = true
+			if arg_array[0] == "client":
+				print("Forcing to be client based on command line argument.")
+				Globals.is_server = false
+				Globals.force_client = true
+			if arg_array[0] == "shutdown_server":
+				print("This client will tell the server to shut down.")
+				Globals.is_server = false
+				Globals.shutdown_server = true
+				# Load server password from local data file
+				var server_config_file_data: String = Helpers.load_data_from_file(
+					server_config_file_name
+				)
+				Globals.server_config = parse_server_config_file_data(server_config_file_data)
 
 
 func _notification(what):
@@ -58,6 +73,41 @@ func _notification(what):
 	# https://docs.godotengine.org/en/stable/tutorials/inputs/handling_quit_requests.html
 	if what == NOTIFICATION_WM_CLOSE_REQUEST:
 		Helpers.quit_gracefully()
+
+
+func generate_server_config_data() -> Dictionary:
+	var server_config: Dictionary = {}
+	Helpers.log_print("Generating new config data for server")
+	var jwt_secret: String = Helpers.generate_random_string(64)
+	server_config["jwt_secret"] = jwt_secret
+	var server_password: String = Helpers.generate_random_string(64)
+	server_config["server_password"] = server_password
+	return server_config
+
+
+func parse_server_config_file_data(server_config_file_data) -> Dictionary:
+	var server_config: Dictionary = {}
+	var json: JSON = JSON.new()
+	var error = json.parse(server_config_file_data)
+	if error != OK:
+		print(
+			"JSON Parse Error: ",
+			json.get_error_message(),
+			" in ",
+			server_config_file_data,
+			" at line ",
+			json.get_error_line()
+		)
+		get_tree().quit()  # Quits the game due to bad server config data
+
+	server_config = json.data
+	if (
+		typeof(server_config) != TYPE_DICTIONARY
+		or not server_config.has("jwt_secret")
+		or not server_config.has("server_password")
+	):
+		server_config = generate_server_config_data()
+	return server_config
 
 
 func _ready():
@@ -80,7 +130,8 @@ func _ready():
 	Network.reset.connect(connection_reset)
 	Network.close_popup.connect(force_close_popup)
 	if (
-		OS.is_debug_build()
+		!Globals.force_client
+		and OS.is_debug_build()
 		and run_server_in_debug
 		and Globals.local_debug_instance_number < 1
 		and OS.get_name() != "Web"
@@ -95,32 +146,12 @@ func _ready():
 
 	if Globals.is_server:
 		# Load or generate server config data
-		var server_config_file_name: String = "user://server_config.dat"
 		var server_config: Dictionary = {}
 		var server_config_file_data: String = Helpers.load_data_from_file(server_config_file_name)
 		if server_config_file_data == "":
-			Helpers.log_print("Generating new config data for server")
-			var jwt_secret: String = Helpers.generate_random_string(64)
-			server_config["jwt_secret"] = jwt_secret
+			server_config = generate_server_config_data()
 		else:
-			var json: JSON = JSON.new()
-			var error = json.parse(server_config_file_data)
-			if error != OK:
-				print(
-					"JSON Parse Error: ",
-					json.get_error_message(),
-					" in ",
-					server_config_file_data,
-					" at line ",
-					json.get_error_line()
-				)
-				get_tree().quit()  # Quits the game due to bad server config data
-
-			server_config = json.data
-			if typeof(server_config) != TYPE_DICTIONARY or not server_config.has("jwt_secret"):
-				print("Data error in: ", server_config)
-				get_tree().quit()  # Quits the game due to bad server config data
-
+			server_config = parse_server_config_file_data(server_config_file_data)
 		Globals.server_config = server_config
 
 		# Save config back out to file, even if we imported it from the file.
