@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://dvyp8uqkqbx3t" path="res://player/body.glb" id="6_40ddh"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_0konm"]
+resource_local_to_scene = true
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_sd7go"]
 radius = 1.0
@@ -36,6 +37,14 @@ properties/5/path = NodePath(".:rotation")
 properties/5/spawn = true
 properties/5/sync = false
 properties/5/watch = true
+properties/6/path = NodePath("Head:position")
+properties/6/spawn = true
+properties/6/sync = false
+properties/6/watch = true
+properties/7/path = NodePath("Character/Foot:position")
+properties/7/spawn = true
+properties/7/sync = false
+properties/7/watch = true
 
 [node name="Player" type="RigidBody3D" groups=["players"]]
 collision_layer = 2
@@ -55,9 +64,8 @@ jump = 10
 air_control = 5
 turning_scale = 45.0
 walkable_normal = 0.35
-speed_to_crouch = 8
+height_adjust_speed = 0.5
 speed_limit = 4.0
-crouching_speed_limit = 2.0
 sprinting_speed_limit = 6.0
 danger_speed_limit = 100.0
 friction_divider = 4
@@ -72,7 +80,7 @@ transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, 0, 0, 0)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7, -0.454299)
 
 [node name="HeadMesh" parent="Head" instance=ExtResource("3_ofsyb")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
 
 [node name="Collision" type="CollisionShape3D" parent="."]
 shape = SubResource("CylinderShape3D_0konm")

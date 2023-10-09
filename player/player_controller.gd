@@ -7,7 +7,7 @@ extends RigidBody3D
 @export var player: int = -1
 
 var is_grounded: bool  # Whether the player is considered to be touching a walkable slope
-@onready var capsule: Shape3D = $Collision.shape  # Capsule collision shape of the player
+@onready var player_collider: Shape3D = $Collision.shape  # Capsule collision shape of the player
 @onready var head: Node3D = $Head  # y-axis rotation node (look left and right)
 @onready var camera: Node = get_node("./Head/Camera3D")  # Camera3D node
 @onready var head_mesh: Node = get_node("./Head/HeadMesh")  # x-axis rotation node (look up and down)
@@ -20,9 +20,8 @@ var is_grounded: bool  # Whether the player is considered to be touching a walka
 @export var turning_scale: float  # How quickly to scale movement towards a turning direction. Lower is more. # (float, 15, 120, 1)
 @export var mouse_sensitivity: float = 0.05  # 0.05
 @export var walkable_normal: float  # 0.35 # Walkable slope. Lower is steeper # (float, 0, 1, 0.01)
-@export var speed_to_crouch: int  # Speed to move in/out of crouching position at. # Too high causes physics glitches currently. # (int, 2, 20)
+@export var height_adjust_speed: float
 @export var speed_limit: float  # 8 # Default speed limit of the player
-@export var crouching_speed_limit: float  # 4 # Speed to move at while crouching
 @export var sprinting_speed_limit: float  # 12 # Speed to move at while sprinting
 @export var danger_speed_limit: float  # Maximum speed limit
 @export var friction_divider: int = 6  # Amount to divide the friction by when not grounded (prevents sticking to walls from air control)
@@ -30,10 +29,10 @@ var upper_slope_normal: Vector3  # Stores the lowest (steepest) slope normal
 var lower_slope_normal: Vector3  # Stores the highest (flattest) slope normal
 var slope_normal: Vector3  # Stores normals of contact points for iteration
 var contacted_body: RigidBody3D  # Rigid body the player is currently contacting, if there is one
-@onready var local_accel: int = accel
 var player_physics_material: Resource = load("res://Physics/player.tres")
-var local_friction = player_physics_material.friction  # Editor friction value
-var local_linear_damp: float = linear_damp
+@onready var original_friction = player_physics_material.friction  # Editor friction value
+@onready var original_linear_damp: float = linear_damp
+@onready var original_accel: int = accel
 var is_landing: bool = true  # Whether the player has jumped and let go of jump
 var is_jumping: bool = false  # Whether the player has jumped
 @export var JUMP_THROTTLE: float  # 0.1 # Stores preference for time before the player can jump again # (float,0.01,1,0.01)
@@ -42,17 +41,21 @@ var jump_throttle: float  # Variable used with jump throttling calculations
 @export var anti_slide_force: float  # 3 # Amount of force to stop sliding with # (float,0.1,100,0.1)
 
 ### Physics process vars
-var original_height: float
-var crouching_height: float
-var current_speed_limit: float  # Current speed limit to use. For standing or crouching.
+var original_player_collider_height: float
+var original_head_position_y: float
+var original_foot_position_y: float
+var minimum_player_collider_height: float = 1.0
+var maximum_player_collider_height: float = 3.0
+var current_speed_limit: float
 var posture  # Current posture state
-enum { TIPTOEING, WALKING, CROUCHING, SPRINTING }  # Possible values for posture
+enum { TIPTOEING, WALKING, SPRINTING }  # Possible values for posture
 
 ## Object Interaction vars
 var is_interacting: bool = false
 
+@export var bounds_distance: int = 100
 
-### Godot notification functions ###
+
 func _ready():
 	# NOTE: At this point this player is still under server authority, because the server cannot give the remote game
 	# authority quite yet. That happens in the function _on_players_spawner_spawned() in startup.gd
@@ -63,8 +66,9 @@ func _ready():
 		camera.make_current()
 
 	# Set capsule variables for use later
-	original_height = capsule.height
-	crouching_height = capsule.height / 2
+	original_player_collider_height = player_collider.height
+	original_head_position_y = head.position.y
+	original_foot_position_y = $Character.get_node("Foot").position.y
 
 
 func _input(event):
@@ -86,8 +90,6 @@ func _input(event):
 		head_mesh.rotate_x(camera_head_x_rotation)
 		head_mesh.rotation.x = clamp(head_mesh.rotation.x, deg_to_rad(-25), deg_to_rad(25))
 
-
-var is_done_shrinking: bool  # temporary # Whether the player is currently shrinking towards being crouched
 
 var character_trimmed: bool = false
 
@@ -117,9 +119,7 @@ func _process(_delta: float) -> void:
 
 func _physics_process(delta):
 	### Player posture FSM
-	if Input.is_action_pressed("crouch"):
-		posture = CROUCHING
-	elif Input.is_action_pressed("sprint"):
+	if Input.is_action_pressed("sprint"):
 		posture = SPRINTING
 	elif Input.is_action_pressed("tiptoe"):
 		posture = TIPTOEING
@@ -130,8 +130,8 @@ func _physics_process(delta):
 	# Define raycast info used with detecting groundedness
 	var raycast_list: Array = Array()  # List of raycasts used with detecting groundedness
 	var bottom: float = 0.1  # Distance down from start to fire the raycast to
-	var start = (capsule.height / 2 + capsule.radius) - 0.05  # Start point down from the center of the player to start the raycast
-	var cv_dist = capsule.radius - 0.1  # Cardinal vector distance.
+	var start = (player_collider.height / 2 + player_collider.radius) - 0.05  # Start point down from the center of the player to start the raycast
+	var cv_dist = player_collider.radius - 0.1  # Cardinal vector distance.
 	var ov_dist = cv_dist / sqrt(2)  # Ordinal vector distance. Added to 2 cardinal vectors to result in a diagonal with the same magnitude of the cardinal vectors
 	# Get world state for collisions
 	var direct_state: PhysicsDirectSpaceState3D = get_world_3d().direct_space_state
@@ -191,43 +191,41 @@ func _physics_process(delta):
 		# WARNING: You MUST comment the DebugDraw3D calls out for web builds to work!
 		#DebugDraw3D.draw_line(params.from, params.to, array[2])  #$"Lines/2".global_transform.origin,  #target.global_transform.origin,
 
-	### Sprinting & Crouching
-	var crouch_scale = delta * speed_to_crouch  # Amount to change capsule height up or down
-	var move_camera = delta / 2 * speed_to_crouch  # Amount to move camera while crouching
+	### Sprinting & Tiptoeing
 	match posture:
 		SPRINTING:
-			accel = local_accel
-			linear_damp = local_linear_damp
+			accel = original_accel
+			linear_damp = original_linear_damp
 			current_speed_limit = sprinting_speed_limit
-			grow_capsule(is_done_shrinking, crouch_scale, move_camera)
-		CROUCHING:  # Shrink
-			accel = local_accel / 2
-			linear_damp = local_linear_damp * 10
-			current_speed_limit = crouching_speed_limit
-			if capsule.height > crouching_height:
-				capsule.height -= crouch_scale
-				camera.position.y -= move_camera
-			## Adding a force to work around some physics glitches for the moment
-			elif is_done_shrinking == false:
-				var look_direction: Vector3 = head.transform.basis.z
-				self.apply_central_force(look_direction * mass * 100)
-				is_done_shrinking = true
-		WALKING:  # Grow
-			accel = local_accel
-			linear_damp = local_linear_damp
-			current_speed_limit = speed_limit
-			grow_capsule(is_done_shrinking, crouch_scale, move_camera)
 		TIPTOEING:
-			accel = local_accel / 2
-			linear_damp = local_linear_damp * 10
+			accel = original_accel / 2
+			linear_damp = original_linear_damp * 10
 			current_speed_limit = speed_limit / 2
-			grow_capsule(is_done_shrinking, crouch_scale, move_camera)
+		WALKING:  # Grow
+			accel = original_accel
+			linear_damp = original_linear_damp
+			current_speed_limit = speed_limit
+
+	adjust_player_height(delta)
 
 	# Setup jump throttle for integrate_forces
 	if is_jumping or is_landing:
 		jump_throttle -= delta
 	else:
 		jump_throttle = JUMP_THROTTLE
+
+
+@export var player_spawn_point: Vector3 = Vector3(4, 1.5, -4)
+
+
+func get_new_spawn_position() -> Vector3:
+	var pos: Vector2 = Vector2.from_angle(randf() * 2 * PI)
+	const SPAWN_RANDOM: float = 2.0
+	return Vector3(
+		player_spawn_point.x + (pos.x * SPAWN_RANDOM * randf()),
+		player_spawn_point.y,
+		player_spawn_point.z + (pos.y * SPAWN_RANDOM * randf())
+	)
 
 
 func _integrate_forces(state):
@@ -432,7 +430,10 @@ func move_player(move, state):
 
 		# Raycast to get slope
 		# Start at the edge of the cylinder of the capsule in the movement direction
-		var start = (self.position - Vector3(0, capsule.height / 2, 0)) + (move * capsule.radius)
+		var start = (
+			(self.position - Vector3(0, player_collider.height / 2, 0))
+			+ (move * player_collider.radius)
+		)
 		var end = start + Vector3.DOWN * 200
 		# Some Godot 3 to 4 conversion information can be found at:
 		# https://www.reddit.com/r/godot/comments/u0fboh/comment/idtoz30/?utm_source=share&utm_medium=web2x&context=3
@@ -462,10 +463,10 @@ func move_player(move, state):
 
 # Set player friction
 func set_friction(_move):
-	player_physics_material.friction = local_friction
+	player_physics_material.friction = original_friction
 	# If moving or not grounded, reduce friction
 	if not is_grounded:
-		player_physics_material.friction = local_friction / friction_divider
+		player_physics_material.friction = original_friction / friction_divider
 
 
 # Get movement vector based on input, relative to the player's head transform
@@ -486,11 +487,40 @@ func relative_input() -> Vector3:
 	return move.normalized()
 
 
-func grow_capsule(_is_done_shrinking, player_scale, move_camera):
-	_is_done_shrinking = false
-	if capsule.height < original_height:
-		capsule.height += player_scale
-		camera.position.y += move_camera
+@rpc() func update_player_collider_height(height):
+	if get_multiplayer_authority() == multiplayer.get_remote_sender_id():
+		$Collision.shape.height = height
+
+
+func adjust_player_height(delta):
+	if get_multiplayer_authority() == multiplayer.get_unique_id():
+		var height_scale = delta * height_adjust_speed  # Amount to change capsule height up or down
+		if Input.is_action_pressed("grow"):
+			#Helpers.log_print("GROW")
+			# TODO: Account for local ceiling height and do not allow growing into it
+			if player_collider.height < maximum_player_collider_height:
+				$Collision.shape.height += height_scale
+				# Head moves half the rate of the total growth,
+				# because growth happens at both ends.
+				head.position.y += height_scale / 2
+				$Character.get_node("Foot").position.y -= height_scale / 2
+				update_player_collider_height.rpc($Collision.shape.height)
+		elif Input.is_action_pressed("shrink"):
+			#Helpers.log_print("SHRINK")
+			if player_collider.height > minimum_player_collider_height:
+				$Collision.shape.height -= height_scale
+				# Head moves half the rate of the total growth,
+				# because growth happens at both ends.
+				head.position.y -= height_scale / 2
+				$Character.get_node("Foot").position.y += height_scale / 2
+				update_player_collider_height.rpc($Collision.shape.height)
+		elif Input.is_action_just_pressed("reset_player_height"):
+			if player_collider.height != original_player_collider_height:
+				#player_collider.height = original_player_collider_height
+				$Collision.shape.height = original_player_collider_height
+				head.position.y = original_head_position_y
+				$Character.get_node("Foot").position.y = original_foot_position_y
+				update_player_collider_height.rpc($Collision.shape.height)
 
 
 var selected_node: Node3D
