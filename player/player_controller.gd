@@ -231,6 +231,22 @@ func _physics_process(delta):
 
 
 func _integrate_forces(state):
+	# If we "fall out of the world" reset to spawn area
+	if (
+		abs(position.x) > bounds_distance
+		or abs(position.y) > bounds_distance
+		or abs(position.z) > bounds_distance
+	):
+		# Just in case player was shrinking or growing
+		$Collision.shape.height = original_player_collider_height
+		head.position.y = original_head_position_y
+		update_player_collider_height.rpc($Collision.shape.height)
+
+		# state.transform.origin appears to be the correct way
+		# to teleport a rigidbody in _integrate_forces()
+		state.transform.origin = get_new_spawn_position()
+		return
+
 	upper_slope_normal = Vector3(0, 1, 0)
 	lower_slope_normal = Vector3(0, -1, 0)
 	contacted_body = null  # Rigidbody
