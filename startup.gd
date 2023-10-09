@@ -223,7 +223,9 @@ func connection_reset(delay):
 		pop_up.set_msg("Retrying in " + str(retry_delay))
 		retry_delay = retry_delay - 1
 		await get_tree().create_timer(1).timeout
-	pop_up.set_msg("Connecting...")
+	if OS.get_name() == "Web":
+		# Force browser refresh in case there are updates to the game code to download
+		JavaScriptBridge.eval("location.reload();")
 	start_connection()
 
 
