@@ -3,7 +3,10 @@ extends Node
 
 func log_print(text: String) -> void:
 	if Globals.is_server or OS.is_debug_build():
-		print(Globals.local_debug_instance_number, " ", multiplayer.get_unique_id(), " ", text)
+		var unique_id: int = -1
+		if multiplayer.has_multiplayer_peer():
+			unique_id = multiplayer.get_unique_id()
+		print(Globals.local_debug_instance_number, " ", unique_id, " ", text)
 
 
 func generate_random_string(length: int) -> String:
