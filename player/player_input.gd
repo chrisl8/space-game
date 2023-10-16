@@ -27,7 +27,7 @@ var normal_speed: int = speed
 var sprint_speed: int = 25
 
 
-func _ready():
+func _ready() -> void:
 	cam = get_parent().get_node("Head").get_node("Camera3D")
 	normal_fov = cam.fov
 

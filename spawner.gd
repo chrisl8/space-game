@@ -8,20 +8,20 @@ var done_once: bool = false
 @rpc("any_peer", "call_remote") func place_chair() -> void:
 	if Globals.is_server:
 		var chair: Resource = preload("res://things/chair/chair.tscn")
-		var new_thing = chair.instantiate()
+		var new_thing: Node = chair.instantiate()
 		# TODO: I wish I could locate items when I create them, but I cannnot. No idea why.
 		# new_thing.position = Vector3(8, 1, -8)
 		# new_thing.rotation.y = -45.0
 		things_spawning_node.add_child(new_thing, true)
 
 
-func things():
+func things() -> void:
 	# Ball
 	var thing_name_to_spawn: String = "Ball01"
 	var beach_ball: Resource = preload("res://things/beach_ball/beach_ball.tscn")
 	var existing_thing: Node = things_spawning_node.get_node_or_null(thing_name_to_spawn)
 	if not existing_thing:
-		var new_thing = beach_ball.instantiate()
+		var new_thing: Node = beach_ball.instantiate()
 		new_thing.name = str(thing_name_to_spawn)
 		Helpers.log_print(str("spawning ", thing_name_to_spawn))
 		things_spawning_node.add_child(new_thing)
@@ -29,7 +29,7 @@ func things():
 	thing_name_to_spawn = "Ball02"
 	existing_thing = things_spawning_node.get_node_or_null(thing_name_to_spawn)
 	if not existing_thing:
-		var new_thing = beach_ball.instantiate()
+		var new_thing: Node = beach_ball.instantiate()
 		new_thing.name = str(thing_name_to_spawn)
 
 		Helpers.log_print(str("spawning ", thing_name_to_spawn))
@@ -43,7 +43,7 @@ func things():
 		existing_thing = things_spawning_node.get_node_or_null(thing_name_to_spawn)
 		var chair: Resource = preload("res://things/chair/chair.tscn")
 		if not existing_thing:
-			var new_thing = chair.instantiate()
+			var new_thing: Node = chair.instantiate()
 			new_thing.name = str(thing_name_to_spawn)
 			# TODO: I wish I could locate items when I create them, but I can't. No idea why.
 			# new_thing.position = Vector3(8, 1, -8)
@@ -59,15 +59,15 @@ func things():
 		thing_name_to_spawn = "Plant_A" + str(PlantsToSpawn)
 		existing_thing = things_spawning_node.get_node_or_null(thing_name_to_spawn)
 		if not existing_thing:
-			var new_thing = plant_a.instantiate()
+			var new_thing: Node = plant_a.instantiate()
 			new_thing.name = str(thing_name_to_spawn)
 			things_spawning_node.add_child(new_thing)
 		PlantsToSpawn -= 1
-		
+
 	thing_name_to_spawn = "Floater"
 	existing_thing = things_spawning_node.get_node_or_null(thing_name_to_spawn)
 	var Floater: Resource = preload("res://things/Floater/Floater.tscn")
 	if not existing_thing:
-		var new_thing = Floater.instantiate()
+		var new_thing: Node = Floater.instantiate()
 		new_thing.name = str(thing_name_to_spawn)
 		things_spawning_node.add_child(new_thing)

@@ -1,12 +1,12 @@
 extends Node
 
 
-func log_print(text) -> void:
+func log_print(text: String) -> void:
 	if Globals.is_server or OS.is_debug_build():
 		print(Globals.local_debug_instance_number, " ", multiplayer.get_unique_id(), " ", text)
 
 
-func generate_random_string(length) -> String:
+func generate_random_string(length: int) -> String:
 	var characters: String = "abcdefghijklmnopqrstuvwxyz0123456789"
 	var word: String = ""
 	var n_char: int = len(characters)
@@ -15,7 +15,7 @@ func generate_random_string(length) -> String:
 	return word
 
 
-func save_data_to_file(file_name: String, content: String):
+func save_data_to_file(file_name: String, content: String) -> void:
 	var file: FileAccess = FileAccess.open(file_name, FileAccess.WRITE)
 	file.store_string(content)
 
@@ -41,7 +41,7 @@ func quit_gracefully() -> void:
 		Globals.shutdown_in_progress = true
 		if Globals.is_server:
 			print("Disconnecting clients and saving data before shutting down server...")
-			var toast = Toast.new("Disconnecting clients and shutting down server...", 2.0)
+			var toast: Toast = Toast.new("Disconnecting clients and shutting down server...", 2.0)
 			get_node("/root").add_child(toast)
 			toast.show()
 			Network.shutdown_server()

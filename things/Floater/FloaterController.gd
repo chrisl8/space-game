@@ -6,7 +6,7 @@ extends RigidBody3D
 @export var Eye: Node3D
 
 
-func _ready():
+func _ready() -> void:
 	set_physics_process(get_multiplayer_authority() == multiplayer.get_unique_id())
 
 	# TODO: Figure out a way to use this without having the location hard coded ahead of time.
@@ -15,7 +15,7 @@ func _ready():
 		rotation.y = -45.0
 
 
-func ProcessArms(_delta) -> void:
+func ProcessArms(_delta: float) -> void:
 	for Arm in Arms:
 		#Why arm no rotate :(
 		Arm.rotation = Vector3(
@@ -34,7 +34,7 @@ var CurrentTime: float = 0.0
 var ForceApplied: bool = false
 
 
-func _physics_process(delta):
+func _physics_process(delta: float) -> void:
 	# Delete if it gets out of bounds
 	# Whatever spawned it should track and respawn it if required
 	if abs(position.x) > bounds_distance:

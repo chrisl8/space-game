@@ -7,7 +7,7 @@ extends RigidBody3D
 var player_focused: String
 
 
-func _ready():
+func _ready() -> void:
 	set_physics_process(get_multiplayer_authority() == multiplayer.get_unique_id())
 
 	# TODO: Figure out a way to use this without having the location hard coded ahead of time.
@@ -16,7 +16,7 @@ func _ready():
 		rotation.y = -45.0
 
 
-func _physics_process(_delta):
+func _physics_process(_delta: float) -> void:
 	# Delete if it gets out of bounds
 	# Whatever spawned it should track and respawn it if required
 	if abs(position.x) > bounds_distance:
@@ -27,14 +27,14 @@ func _physics_process(_delta):
 		get_parent().queue_free()
 
 
-func select(other_name):
+func select(other_name: String) -> void:
 	if player_focused == "":
 		player_focused = other_name
 		print(other_name, " is near ", get_parent().name)
 		$SpotLight3D.visible = true
 
 
-func unselect(other_name):
+func unselect(other_name: String) -> void:
 	player_focused = ""
 	print(other_name, " moved away from ", get_parent().name)
 	$SpotLight3D.visible = false
@@ -50,5 +50,5 @@ func my_name() -> String:
 	return get_parent().name
 
 
-func input_position(new_position):
+func input_position(new_position: Vector3) -> void:
 	self.position = new_position

@@ -7,7 +7,7 @@ extends RigidBody3D
 
 
 # Called when the node enters the scene tree for the first time.
-func _ready():
+func _ready() -> void:
 	set_physics_process(Globals.is_server)
 	if Globals.is_server:
 		position = Vector3(
@@ -24,17 +24,17 @@ func _ready():
 			LeafStates.append(true)
 
 
-func _process(delta):
+func _process(delta: float) -> void:
 	ProcessLeaves(delta)
 
 
 var LeafStates: Array[bool] = []
 
 
-func ProcessLeaves(delta) -> void:
+func ProcessLeaves(delta: float) -> void:
 	var Count: int = 0
 	for Leaf in Leafs:
-		var RotVal = 0.03 * RandomNumberGenerator.new().randf_range(0.5, 1.5)
+		var RotVal: float = 0.03 * RandomNumberGenerator.new().randf_range(0.5, 1.5)
 		if LeafStates[Count]:
 			RotVal *= -1
 
@@ -57,7 +57,7 @@ func ProcessLeaves(delta) -> void:
 	return
 
 
-func _physics_process(_delta):
+func _physics_process(_delta: float) -> void:
 	# Only the server should act on this object, as the server owns it,
 	# especially the delete part.
 	# Delete if it gets out of bounds

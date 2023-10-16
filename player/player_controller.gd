@@ -30,7 +30,7 @@ var lower_slope_normal: Vector3  # Stores the highest (flattest) slope normal
 var slope_normal: Vector3  # Stores normals of contact points for iteration
 var contacted_body: RigidBody3D  # Rigid body the player is currently contacting, if there is one
 var player_physics_material: Resource = load("res://Physics/player.tres")
-@onready var original_friction = player_physics_material.friction  # Editor friction value
+@onready var original_friction: float = player_physics_material.friction  # Editor friction value
 @onready var original_linear_damp: float = linear_damp
 @onready var original_accel: int = accel
 var is_landing: bool = true  # Whether the player has jumped and let go of jump
@@ -47,7 +47,7 @@ var original_foot_position_y: float
 var minimum_player_collider_height: float = 1.0
 var maximum_player_collider_height: float = 3.0
 var current_speed_limit: float
-var posture  # Current posture state
+var posture: int  # Current posture state
 enum { TIPTOEING, WALKING, SPRINTING }  # Possible values for posture
 
 ## Object Interaction vars
@@ -56,7 +56,7 @@ var is_interacting: bool = false
 @export var bounds_distance: int = 100
 
 
-func _ready():
+func _ready() -> void:
 	# NOTE: At this point this player is still under server authority, because the server cannot give the remote game
 	# authority quite yet. That happens in the function _on_players_spawner_spawned() in startup.gd
 	# This means that you cannot rely on get_multiplayer_authority() yet!
@@ -71,7 +71,7 @@ func _ready():
 	original_foot_position_y = $Character.get_node("Foot").position.y
 
 
-func _input(event):
+func _input(event: InputEvent) -> void:
 	# Player look
 	if (
 		Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED
@@ -117,7 +117,7 @@ func _process(_delta: float) -> void:
 	is_interacting = false
 
 
-func _physics_process(delta):
+func _physics_process(delta: float) -> void:
 	### Player posture FSM
 	if Input.is_action_pressed("sprint"):
 		posture = SPRINTING
@@ -130,9 +130,9 @@ func _physics_process(delta):
 	# Define raycast info used with detecting groundedness
 	var raycast_list: Array = Array()  # List of raycasts used with detecting groundedness
 	var bottom: float = 0.1  # Distance down from start to fire the raycast to
-	var start = (player_collider.height / 2 + player_collider.radius) - 0.05  # Start point down from the center of the player to start the raycast
-	var cv_dist = player_collider.radius - 0.1  # Cardinal vector distance.
-	var ov_dist = cv_dist / sqrt(2)  # Ordinal vector distance. Added to 2 cardinal vectors to result in a diagonal with the same magnitude of the cardinal vectors
+	var start: float = (player_collider.height / 2 + player_collider.radius) - 0.05  # Start point down from the center of the player to start the raycast
+	var cv_dist: float = player_collider.radius - 0.1  # Cardinal vector distance.
+	var ov_dist: float = cv_dist / sqrt(2)  # Ordinal vector distance. Added to 2 cardinal vectors to result in a diagonal with the same magnitude of the cardinal vectors
 	# Get world state for collisions
 	var direct_state: PhysicsDirectSpaceState3D = get_world_3d().direct_space_state
 	raycast_list.clear()
@@ -171,7 +171,7 @@ func _physics_process(delta):
 				loc.z += ov_dist  # SW
 				loc.x -= ov_dist
 		# Copy the current location below the capsule and subtract from it
-		var loc2 = loc
+		var loc2: Vector3 = loc
 		loc2.y -= bottom
 		var debug_color: Color = Color.BLUE
 		if i > 3:
@@ -184,7 +184,7 @@ func _physics_process(delta):
 		params.from = array[0]
 		params.to = array[1]
 		params.exclude = [self]
-		var collision = direct_state.intersect_ray(params)
+		var collision: Dictionary = direct_state.intersect_ray(params)
 		# The player is grounded if any of the raycasts hit
 		if collision and is_walkable(collision.normal.y):
 			is_grounded = true
@@ -228,7 +228,7 @@ func get_new_spawn_position() -> Vector3:
 	)
 
 
-func _integrate_forces(state):
+func _integrate_forces(state: PhysicsDirectBodyState3D) -> void:
 	# If we "fall out of the world" reset to spawn area
 	if (
 		abs(position.x) > bounds_distance
@@ -268,7 +268,7 @@ func _integrate_forces(state):
 			is_grounded = true
 			# If the shallowest contact index exists, get the velocity of the body at the contacted point
 			if shallowest_contact_index >= 0:
-				var contact_position = state.get_contact_collider_position(0)  # coords of the contact point from center of contacted body
+				var contact_position: Vector3 = state.get_contact_collider_position(0)  # coords of the contact point from center of contacted body
 				var collisions: Array[Node3D] = get_colliding_bodies()
 				if collisions.size() > 0 and collisions[0].get_class() == "RigidBody3D":
 					contacted_body = collisions[0]
@@ -381,13 +381,13 @@ func _integrate_forces(state):
 # Gets the velocity of a contacted rigidbody at the point of contact with the player capsule
 func get_contacted_body_velocity_at_point(
 	input_contacted_body: RigidBody3D, contact_position: Vector3
-):
+) -> Vector3:
 	# Global coordinates of contacted body
-	var body_position = input_contacted_body.transform.origin
+	var body_position: Vector3 = input_contacted_body.transform.origin
 	# Global coordinates of the point of contact between the player and contacted body
-	var global_contact_position = body_position + contact_position
+	var global_contact_position: Vector3 = body_position + contact_position
 	# Calculate local velocity at point (cross product of angular velocity and contact position vectors)
-	var local_vel_at_point = input_contacted_body.get_angular_velocity().cross(
+	var local_vel_at_point: Vector3 = input_contacted_body.get_angular_velocity().cross(
 		global_contact_position - body_position
 	)
 	# Add the current velocity of the contacted body to the velocity at the contacted point
@@ -395,17 +395,17 @@ func get_contacted_body_velocity_at_point(
 
 
 # Return 4 cross products of b with a
-func cross4(a, b):
+func cross4(a: Vector3, b: Vector3) -> Vector3:
 	return a.cross(b).cross(b).cross(b).cross(b)
 
 
 # Whether a slope is walkable
-func is_walkable(normal):
+func is_walkable(normal: float) -> bool:
 	return normal >= walkable_normal  # Lower normal means steeper slope
 
 
 # Whether the player is below the speed limit in the direction they're traveling
-func is_player_below_speed_limit(nvel, vel) -> bool:
+func is_player_below_speed_limit(nvel: Vector3, vel: Vector3) -> bool:
 	return (
 		(nvel.x >= 0 and vel.x < nvel.x * current_speed_limit)
 		or (nvel.x <= 0 and vel.x > nvel.x * current_speed_limit)
@@ -415,7 +415,7 @@ func is_player_below_speed_limit(nvel, vel) -> bool:
 	)
 
 
-func is_player_below_danger_speed_limit(vel) -> bool:
+func is_player_below_danger_speed_limit(vel: Vector3) -> bool:
 	return (
 		abs(vel.x) < danger_speed_limit
 		and abs(vel.y) < danger_speed_limit
@@ -424,24 +424,24 @@ func is_player_below_danger_speed_limit(vel) -> bool:
 
 
 # Move the player
-func move_player(move, state):
+func move_player(move: Vector3, state: PhysicsDirectBodyState3D) -> void:
 	if is_grounded:
 		var direct_state: PhysicsDirectSpaceState3D = get_world_3d().direct_space_state
 
 		# Raycast to get slope
 		# Start at the edge of the cylinder of the capsule in the movement direction
-		var start = (
+		var start: Vector3 = (
 			(self.position - Vector3(0, player_collider.height / 2, 0))
 			+ (move * player_collider.radius)
 		)
-		var end = start + Vector3.DOWN * 200
+		var end: Vector3 = start + Vector3.DOWN * 200
 		# Some Godot 3 to 4 conversion information can be found at:
 		# https://www.reddit.com/r/godot/comments/u0fboh/comment/idtoz30/?utm_source=share&utm_medium=web2x&context=3
 		var params: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.new()
 		params.from = start
 		params.to = end
 		params.exclude = [self]
-		var hit = direct_state.intersect_ray(params)
+		var hit: Dictionary = direct_state.intersect_ray(params)
 		# WARNING: You MUST comment the DebugDraw3D calls out for web builds to work!
 		#DebugDraw3D.draw_line(params.from, params.to, Color.GREEN)  #$"Lines/2".global_transform.origin,  #target.global_transform.origin,
 		var use_normal: Vector3
@@ -462,7 +462,7 @@ func move_player(move, state):
 
 
 # Set player friction
-func set_friction(_move):
+func set_friction(_move: Vector3) -> void:
 	player_physics_material.friction = original_friction
 	# If moving or not grounded, reduce friction
 	if not is_grounded:
@@ -487,14 +487,14 @@ func relative_input() -> Vector3:
 	return move.normalized()
 
 
-@rpc() func update_player_collider_height(height):
+@rpc() func update_player_collider_height(height: float) -> void:
 	if get_multiplayer_authority() == multiplayer.get_remote_sender_id():
 		$Collision.shape.height = height
 
 
-func adjust_player_height(delta):
+func adjust_player_height(delta: float) -> void:
 	if get_multiplayer_authority() == multiplayer.get_unique_id():
-		var height_scale = delta * height_adjust_speed  # Amount to change capsule height up or down
+		var height_scale: float = delta * height_adjust_speed  # Amount to change capsule height up or down
 		if Input.is_action_pressed("grow"):
 			#Helpers.log_print("GROW")
 			# TODO: Account for local ceiling height and do not allow growing into it
@@ -526,14 +526,14 @@ func adjust_player_height(delta):
 var selected_node: Node3D
 
 
-func _on_personal_space_body_entered(body: Node3D):
+func _on_personal_space_body_entered(body: Node3D) -> void:
 	if body.has_method("select"):
 		selected_node = body
 		if get_multiplayer_authority() == multiplayer.get_unique_id():
 			body.select(name)
 
 
-func _on_personal_space_body_exited(body):
+func _on_personal_space_body_exited(body: Node3D) -> void:
 	if body.has_method("unselect"):
 		selected_node = null
 		if get_multiplayer_authority() == multiplayer.get_unique_id():

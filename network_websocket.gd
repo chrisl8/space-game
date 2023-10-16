@@ -24,7 +24,7 @@ var websocket_multiplayer_peer: WebSocketMultiplayerPeer
 @export var player_spawn_point: Vector3 = Vector3(4, 1, -4)
 
 
-func _process(_delta) -> void:
+func _process(_delta: float) -> void:
 	if not ready_to_connect:
 		return
 
@@ -72,7 +72,7 @@ func _process(_delta) -> void:
 	Spawner.things()
 
 
-func _ready():
+func _ready() -> void:
 	multiplayer.peer_connected.connect(_peer_connected)
 	multiplayer.peer_disconnected.connect(_peer_disconnected)
 	multiplayer.connected_to_server.connect(_connected_to_server)
@@ -80,13 +80,13 @@ func _ready():
 	multiplayer.server_disconnected.connect(_server_disconnected)
 
 
-func load_level(scene: PackedScene):
+func load_level(scene: PackedScene) -> void:
 	# Helpers.log_print("Loading Scene")
 	var level_parent: Node = get_tree().get_root().get_node("Main/Level")
 	for c in level_parent.get_children():
 		level_parent.remove_child(c)
 		c.queue_free()
-	var game_scene = scene.instantiate()
+	var game_scene: Node = scene.instantiate()
 	game_scene.name = "game_scene"
 	level_parent.add_child(game_scene)
 
@@ -118,12 +118,12 @@ func validate_and_decode_jwt(secret: String, jwt: String) -> Dictionary:
 	return content
 
 
-func _peer_connected(id):
+func _peer_connected(id: int) -> void:
 	Helpers.log_print(str("Peer ", id, " connected."))
 	peers[id] = {}
 
 
-func _peer_disconnected(id) -> void:
+func _peer_disconnected(id: int) -> void:
 	Helpers.log_print(str("Peer ", id, " Disconnected."))
 	var player_uuid: String = ""
 	if peers.has(id):
@@ -164,7 +164,7 @@ func player_save_data_filename() -> String:
 	return file_name
 
 
-func _connected_to_server():
+func _connected_to_server() -> void:
 	Helpers.log_print("I connected to the server!")
 	if Globals.shutdown_server:
 		print("Sending SHUTDOWN_SERVER message.")
@@ -180,26 +180,26 @@ func _connected_to_server():
 	send_data_to(1, Message.PLAYER_JOINED, saved_player_data)
 
 
-func _connection_failed():
+func _connection_failed() -> void:
 	Helpers.log_print("My connection failed. =(")
 	Globals.connection_failed_message = "Connection Failed!"
 	reset_connection()
 
 
-func _server_disconnected():
+func _server_disconnected() -> void:
 	Helpers.log_print("Server Disconnected")
 	Globals.connection_failed_message = "Connection Interrupted!"
 	reset_connection()
 
 
-func shutdown_server():
+func shutdown_server() -> void:
 	if Globals.is_server and peers.size() > 0:
 		for key in peers:
 			print("Telling ", key, " to disconnect")
 			websocket_multiplayer_peer.disconnect_peer(key)
 
 
-func reset_connection():
+func reset_connection() -> void:
 	Helpers.log_print("Resetting Connection")
 	ready_to_connect = false
 	network_connection_initiated = false
@@ -214,7 +214,7 @@ func reset_connection():
 	reset.emit(5)
 
 
-func init_network():
+func init_network() -> void:
 	Helpers.log_print("Init Network")
 	websocket_multiplayer_peer = WebSocketMultiplayerPeer.new()
 	# This is a client/server setup, NOT a Mesh.
@@ -223,12 +223,12 @@ func init_network():
 	else:
 		var error: int = websocket_multiplayer_peer.create_client(Globals.url)  # WebSocket
 		if error:
-			Helpers.log_print(error)
+			Helpers.log_print(str("Websocket Error: ", error))
 	get_tree().get_multiplayer().multiplayer_peer = websocket_multiplayer_peer
 	network_initialized = true
 
 
-func send_data_to(id: int, msg_type: Message, data: String):
+func send_data_to(id: int, msg_type: Message, data: String) -> void:
 	var send_data: String = (
 		JSON
 		. stringify(
@@ -243,11 +243,11 @@ func send_data_to(id: int, msg_type: Message, data: String):
 
 enum Message { PLAYER_JOINED, PLAYER_TOKEN, SHUTDOWN_SERVER }
 
-@rpc("any_peer") func data_received(data) -> void:
+@rpc("any_peer") func data_received(data: String) -> void:
 	var sender_id: int = multiplayer.get_remote_sender_id()
 
 	var json: JSON = JSON.new()
-	var error = json.parse(data)
+	var error: int = json.parse(data)
 	if error != OK:
 		print(
 			"JSON Parse Error: ",
@@ -295,7 +295,7 @@ enum Message { PLAYER_JOINED, PLAYER_TOKEN, SHUTDOWN_SERVER }
 var uuid_util: Resource = preload("res://addons/godot-uuid/uuid.gd")
 
 
-func player_joined(id: int, data: String):
+func player_joined(id: int, data: String) -> void:
 	if Globals.is_server and id > 1:  # I'm not sure this check is necessary
 		var player_uuid: String = ""
 		if data != "":
@@ -303,7 +303,7 @@ func player_joined(id: int, data: String):
 			# NOTE: At this point an invalid token is merely wiped and rebuilt, as there is no "login",
 			# We are only preventing people from hacking into another player's data.
 			var json: JSON = JSON.new()
-			var error = json.parse(data)
+			var error: int = json.parse(data)
 			if error != OK:
 				print(
 					"User data JSON Parse Error: ",
@@ -343,7 +343,7 @@ func player_joined(id: int, data: String):
 		# Save player's UUID to peer list so we can find it later
 		peers[id]["uuid"] = player_uuid
 
-		var character = player_character_template.instantiate()
+		var character: Node = player_character_template.instantiate()
 		character.player = id  # Set player id.
 
 		# Use saved player position or randomize it around the spawn area

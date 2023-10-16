@@ -19,17 +19,19 @@ class Connection:
 	var ws: WebSocketPeer = WebSocketPeer.new()
 	var user_name: String = ""
 
-	func _init(connection_id, tcp):
+	func _init(connection_id: int, tcp: StreamPeer) -> void:
 		id = connection_id
 		var error: int = ws.accept_stream(tcp)
 		if error != OK:
-			Helpers.log_print("Signal Server: ERROR! Can not accept stream from a connection request!")
+			Helpers.log_print(
+				"Signal Server: ERROR! Can not accept stream from a connection request!"
+			)
 		else:
 			Helpers.log_print(
 				str("Signal Server: Connection connection successfully accepted for ", id)
 			)
 
-	func send_msg(type: int, msg_id: int, data = "") -> int:
+	func send_msg(type: int, msg_id: int, data: String = "") -> int:
 		return (
 			ws
 			. send_text(
@@ -50,8 +52,8 @@ class Connection:
 		return ws.get_ready_state() == WebSocketPeer.STATE_OPEN
 
 
-func start():
-	var error = server.listen(hard_coded_port)
+func start() -> void:
+	var error: int = server.listen(hard_coded_port)
 	if error != OK:
 		Helpers.log_print(
 			"Signal Server: ERROR! Can not create signalling server! ERROR CODE = %d" % error
@@ -61,15 +63,15 @@ func start():
 		started = true
 
 
-func _process(_delta):
+func _process(_delta: float) -> void:
 	if started:
 		poll()
 		clean_up()
 
 
-func poll():
+func poll() -> void:
 	if server.is_connection_available():
-		var id = randi() % (1 << 31)
+		var id: int = randi() % (1 << 31)
 		connections[id] = Connection.new(id, server.take_connection())
 
 	for p in connections.values():
@@ -97,7 +99,7 @@ func poll():
 func parse_msg(peer: Connection) -> bool:
 	var msg: String = peer.ws.get_packet().get_string_from_utf8()
 
-	var parsed = JSON.parse_string(msg)
+	var parsed: Variant = JSON.parse_string(msg)
 	if (
 		not typeof(parsed) == TYPE_DICTIONARY
 		or not parsed.has("type")
@@ -120,9 +122,9 @@ func parse_msg(peer: Connection) -> bool:
 	var data: String = str(accepted_msg.data)
 
 	if type == Message.OFFER:
-		var str_arr = data.split("***", true, 2)
-		var send_to_id = str_arr[2].to_int()
-		var receiver_peer = find_player_by_id(send_to_id)
+		var str_arr: PackedStringArray = data.split("***", true, 2)
+		var send_to_id: int = str_arr[2].to_int()
+		var receiver_peer: Variant = find_player_by_id(send_to_id)
 		if receiver_peer:
 			receiver_peer.send_msg(type, peer.id, data)
 			Helpers.log_print("Signal Server: Sending received OFFER! to peer %d" % peer.id)
@@ -134,9 +136,9 @@ func parse_msg(peer: Connection) -> bool:
 			return false
 
 	if type == Message.ANSWER:
-		var str_arr = data.split("***", true, 2)
-		var send_to_id = str_arr[2].to_int()
-		var receiver_peer = find_player_by_id(send_to_id)
+		var str_arr: PackedStringArray = data.split("***", true, 2)
+		var send_to_id: int = str_arr[2].to_int()
+		var receiver_peer: Variant = find_player_by_id(send_to_id)
 		if receiver_peer:
 			receiver_peer.send_msg(type, peer.id, data)
 			Helpers.log_print("Signal Server: Sending received ANSWER! to peer %d" % peer.id)
@@ -148,19 +150,21 @@ func parse_msg(peer: Connection) -> bool:
 			return false
 
 	if type == Message.ICE:
-		var str_arr = data.split("***", true, 3)
-		var send_to_id = str_arr[3].to_int()
-		var receiver_peer = find_player_by_id(send_to_id)
+		var str_arr: PackedStringArray = data.split("***", true, 3)
+		var send_to_id: int = str_arr[3].to_int()
+		var receiver_peer: Variant = find_player_by_id(send_to_id)
 		if receiver_peer:
 			receiver_peer.send_msg(type, peer.id, data)
 			Helpers.log_print("Signal Server: Sending received ICE! to peer %d" % peer.id)
 			return true
 		else:
-			Helpers.log_print("Signal Server: ERROR: ICE received but ID do not match with any peer!")
+			Helpers.log_print(
+				"Signal Server: ERROR: ICE received but ID do not match with any peer!"
+			)
 			return false
 
 	if type == Message.USER_INFO:
-		var parsed_user_data = JSON.parse_string(data)
+		var parsed_user_data: Variant = JSON.parse_string(data)
 		if (
 			not typeof(parsed_user_data) == TYPE_DICTIONARY
 			or not parsed_user_data.has("name")
@@ -195,7 +199,7 @@ func parse_msg(peer: Connection) -> bool:
 	return false
 
 
-func clean_up():
+func clean_up() -> void:
 	var temp_arr: Array = []
 	for player in to_remove_connections:
 		if connections.has(player.id):
@@ -219,7 +223,7 @@ func clean_up():
 				)
 
 
-func find_player_by_id(id) -> Variant:
+func find_player_by_id(id: int) -> Variant:
 	# The socket connection ID and the "player ID" are not guaranteed to be the same.
 	# Currently they are the same in every case except for the server.
 	for connection_id in connections.keys():

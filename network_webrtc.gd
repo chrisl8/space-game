@@ -39,12 +39,12 @@ var rtc_peer: WebRTCMultiplayerPeer
 @export var player_spawn_point: Vector3 = Vector3(4, 1, -4)
 
 
-func _init():
+func _init() -> void:
 	if OS.is_debug_build():
 		url = "ws://127.0.0.1:9090"
 
 
-func _process(_delta) -> void:
+func _process(_delta: float) -> void:
 	if not ready_to_connect:
 		return
 
@@ -116,7 +116,7 @@ func _process(_delta) -> void:
 	Spawner.things()
 
 
-func _ready():
+func _ready() -> void:
 	multiplayer.peer_connected.connect(_peer_connected)
 	multiplayer.peer_disconnected.connect(_peer_disconnected)
 	multiplayer.connected_to_server.connect(_connected_to_server)

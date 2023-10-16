@@ -5,7 +5,7 @@ extends RigidBody3D
 @export var push_factor: float = 0.05
 
 
-func _ready():
+func _ready() -> void:
 	set_physics_process(Globals.is_server)
 	if Globals.is_server:
 		position = Vector3(4, 1, -2)
@@ -21,7 +21,7 @@ func _on_Area_body_entered(body: Node) -> void:
 		$AudioStreamPlayer3D.play()
 
 
-func _physics_process(_delta):
+func _physics_process(_delta: float) -> void:
 	# Only the server should act on this object, as the server owns it,
 	# especially the delete part.
 	# Delete if it gets out of bounds

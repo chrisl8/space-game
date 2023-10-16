@@ -27,7 +27,7 @@ var server_config_file_name: String = "user://server_config.dat"
 var _instance_socket: TCPServer
 
 
-func _init():
+func _init() -> void:
 	if OS.is_debug_build() and run_server_in_debug:
 		Globals.url = debug_server_url
 	else:
@@ -48,7 +48,7 @@ func _init():
 
 	if OS.get_cmdline_user_args().size() > 0:
 		for arg in OS.get_cmdline_user_args():
-			var arg_array = arg.split("=")
+			var arg_array: Array = arg.split("=")
 			if arg_array[0] == "server":
 				print("Setting as server based on command line argument.")
 				Globals.is_server = true
@@ -67,7 +67,7 @@ func _init():
 				Globals.server_config = parse_server_config_file_data(server_config_file_data)
 
 
-func _notification(what):
+func _notification(what: int) -> void:
 	# This catches the quit command and acts on it,
 	# since we negated it in the _ready() function.
 	# https://docs.godotengine.org/en/stable/tutorials/inputs/handling_quit_requests.html
@@ -85,10 +85,10 @@ func generate_server_config_data() -> Dictionary:
 	return server_config
 
 
-func parse_server_config_file_data(server_config_file_data) -> Dictionary:
+func parse_server_config_file_data(server_config_file_data: String) -> Dictionary:
 	var server_config: Dictionary = {}
 	var json: JSON = JSON.new()
-	var error = json.parse(server_config_file_data)
+	var error: int = json.parse(server_config_file_data)
 	if error != OK:
 		print(
 			"JSON Parse Error: ",
@@ -110,7 +110,7 @@ func parse_server_config_file_data(server_config_file_data) -> Dictionary:
 	return server_config
 
 
-func _ready():
+func _ready() -> void:
 	force_open_popup()
 	pop_up.set_msg("Booting Universe...")
 
@@ -167,7 +167,7 @@ func _ready():
 			Helpers.log_print("Generating new player save data file for server")
 		else:
 			var json: JSON = JSON.new()
-			var error = json.parse(player_save_data_file_data)
+			var error: int = json.parse(player_save_data_file_data)
 			if error != OK:
 				print(
 					"JSON Parse Error: ",
@@ -189,7 +189,7 @@ func _ready():
 	start_connection()
 
 
-func start_connection():
+func start_connection() -> void:
 	force_open_popup()
 	if OS.is_debug_build() and Globals.local_debug_instance_number > 0 and not Globals.is_server:
 		var debug_delay: int = Globals.local_debug_instance_number
@@ -201,7 +201,7 @@ func start_connection():
 	Network.ready_to_connect = true
 
 
-func connection_reset(delay):
+func connection_reset(delay: int) -> void:
 	force_open_popup()
 	pop_up.set_msg(
 		Globals.connection_failed_message,
@@ -218,7 +218,7 @@ func connection_reset(delay):
 		game_scene_node.queue_free()
 
 	await get_tree().create_timer(3).timeout
-	var retry_delay = delay
+	var retry_delay: int = delay
 	while retry_delay > 0:
 		pop_up.set_msg("Retrying in " + str(retry_delay))
 		retry_delay = retry_delay - 1
@@ -278,18 +278,18 @@ func _unhandled_input(event: InputEvent) -> void:
 				# So users may click, Esc, and then Click again too fast and it does not capture the mouse
 				# This will let the user know that happened
 				text_to_toast = "Oops, too fast, try again"
-			var toast = Toast.new(text_to_toast, 2.0)
+			var toast: Toast = Toast.new(text_to_toast, 2.0)
 			get_node("/root").add_child(toast)
 			toast.show()
 
 
-func force_open_popup():
+func force_open_popup() -> void:
 	if not pop_up:
 		pop_up = pop_up_template.instantiate()
 		add_child(pop_up)
 
 
-func force_close_popup():
+func force_close_popup() -> void:
 	if pop_up and is_instance_valid(pop_up):
 		pop_up.queue_free()
 		pop_up = null
