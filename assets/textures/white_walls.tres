@@ -1,6 +1,0 @@
-[gd_resource type="StandardMaterial3D" format=3 uid="uid://00ovpb55yb80"]
-
-[resource]
-resource_name = "mat_4"
-cull_mode = 2
-vertex_color_use_as_albedo = true
