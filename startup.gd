@@ -120,13 +120,6 @@ func _ready() -> void:
 	# https://docs.godotengine.org/en/stable/tutorials/inputs/handling_quit_requests.html
 	get_tree().set_auto_accept_quit(false)
 
-	if capture_mouse_on_startup and not Globals.is_server:
-		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-
-	if OS.is_debug_build() and OS.get_name() != "Web":
-		Globals.release_mouse_text = "F1 to Release Mouse"
-		Globals.how_to_end_game_text = "ESC to Close Game"
-
 	Network.reset.connect(connection_reset)
 	Network.close_popup.connect(force_close_popup)
 	if (
@@ -185,6 +178,16 @@ func _ready() -> void:
 		Globals.player_save_data = player_save_data
 		# Save config back out to file, even if we imported it from the file.
 		Helpers.save_server_player_save_data_to_file()
+
+	if capture_mouse_on_startup and not Globals.is_server:
+		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+
+	if OS.is_debug_build() and OS.get_name() != "Web":
+		Globals.release_mouse_text = "F1 to Release Mouse"
+		if Globals.is_server:
+			Globals.how_to_end_game_text = "This is the server. You must run at least 2 instances to play. ESC to close Server and all Clients."
+		else:
+			Globals.how_to_end_game_text = "ESC to Close this Client"
 
 	start_connection()
 
