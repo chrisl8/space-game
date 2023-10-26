@@ -16,7 +16,7 @@ func display_how_to_quit_toast() -> void:
 		await get_tree().create_timer(5).timeout
 		var toast: Toast = Toast.new(Globals.how_to_end_game_text, 2.0)
 		get_node("/root").add_child(toast)
-		toast.show()
+		toast.display()
 
 
 func set_room_01_screen_text(text: String) -> void:

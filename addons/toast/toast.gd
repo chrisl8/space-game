@@ -93,7 +93,7 @@ func _ready():
 	add_child(animation)
 
 
-func show():
+func display():
 	animation.play("toast_animations/start")
 	animation.animation_finished.connect(_animationEnded)
 	visible = true

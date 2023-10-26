@@ -46,7 +46,7 @@ func quit_gracefully() -> void:
 			print("Disconnecting clients and saving data before shutting down server...")
 			var toast: Toast = Toast.new("Disconnecting clients and shutting down server...", 2.0)
 			get_node("/root").add_child(toast)
-			toast.show()
+			toast.display()
 			Network.shutdown_server()
 			while Network.peers.size() > 0:
 				print("...server still clearing clients...")

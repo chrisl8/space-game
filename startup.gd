@@ -280,7 +280,7 @@ func _unhandled_input(event: InputEvent) -> void:
 				text_to_toast = "Oops, too fast, try again"
 			var toast: Toast = Toast.new(text_to_toast, 2.0)
 			get_node("/root").add_child(toast)
-			toast.show()
+			toast.display()
 
 
 func force_open_popup() -> void:
