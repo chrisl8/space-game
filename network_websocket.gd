@@ -194,7 +194,7 @@ func _server_disconnected() -> void:
 
 func shutdown_server() -> void:
 	if Globals.is_server and peers.size() > 0:
-		for key in peers:
+		for key: int in peers:
 			print("Telling ", key, " to disconnect")
 			websocket_multiplayer_peer.disconnect_peer(key)
 

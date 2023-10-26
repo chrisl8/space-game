@@ -74,7 +74,7 @@ func poll() -> void:
 		var id: int = randi() % (1 << 31)
 		connections[id] = Connection.new(id, server.take_connection())
 
-	for p in connections.values():
+	for p: Connection in connections.values():
 		p.ws.poll()
 
 		while p.is_ws_open() and p.ws.get_available_packet_count():
@@ -189,7 +189,7 @@ func parse_msg(peer: Connection) -> bool:
 
 		peer.send_msg(Message.USER_INFO, peer.id, JSON.stringify(parsed_user_data))
 
-		for p in connections.values():
+		for p: Connection in connections.values():
 			p.send_msg(Message.PLAYER_JOINED, peer.id, peer.user_name)
 			peer.send_msg(Message.PLAYER_JOINED, p.id, p.user_name)
 
@@ -201,7 +201,7 @@ func parse_msg(peer: Connection) -> bool:
 
 func clean_up() -> void:
 	var temp_arr: Array = []
-	for player in to_remove_connections:
+	for player: Connection in to_remove_connections:
 		if connections.has(player.id):
 			connections.erase(player.id)
 			temp_arr.push_back(player)
@@ -216,8 +216,8 @@ func clean_up() -> void:
 			)
 
 	if temp_arr.size() > 0:
-		for p in connections.values():
-			for disconnected_player in temp_arr:
+		for p: Connection in connections.values():
+			for disconnected_player: Connection in temp_arr:
 				p.send_msg(
 					Message.PLAYER_LEFT, disconnected_player.id, disconnected_player.user_name
 				)
@@ -226,7 +226,7 @@ func clean_up() -> void:
 func find_player_by_id(id: int) -> Variant:
 	# The socket connection ID and the "player ID" are not guaranteed to be the same.
 	# Currently they are the same in every case except for the server.
-	for connection_id in connections.keys():
+	for connection_id: int in connections.keys():
 		if id == connections[connection_id].id:
 			return connections[connection_id]
 	return false

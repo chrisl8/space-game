@@ -179,7 +179,7 @@ func _physics_process(delta: float) -> void:
 		# Add the two points for this iteration to the list for the raycast
 		raycast_list.append([loc, loc2, debug_color])
 	# Check each raycast for collision, ignoring the capsule itself
-	for array in raycast_list:
+	for array: Array in raycast_list:
 		var params: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.new()
 		params.from = array[0]
 		params.to = array[1]
