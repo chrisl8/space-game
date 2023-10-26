@@ -23,6 +23,11 @@ Network="*res://network_websocket.gd"
 SignalingServer="*res://signaling_server.gd"
 Spawner="*res://spawner.gd"
 
+[debug]
+
+gdscript/warnings/untyped_declaration=1
+gdscript/warnings/integer_division=0
+
 [display]
 
 window/size/always_on_top=true
