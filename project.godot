@@ -23,6 +23,10 @@ Network="*res://network_websocket.gd"
 SignalingServer="*res://signaling_server.gd"
 Spawner="*res://spawner.gd"
 
+[display]
+
+window/size/always_on_top=true
+
 [filesystem]
 
 import/blender/enabled=false
