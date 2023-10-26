@@ -263,11 +263,14 @@ func _input(event: InputEvent) -> void:
 		get_tree().root.print_tree_pretty()
 	if event.is_action_pressed(&"click_mode"):
 		Globals.click_mode = !Globals.click_mode
+		# Release mouse immediately if we are going into click mode
+		if Globals.click_mode:
+			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 		Helpers.log_print(str("click_mode = ", Globals.click_mode))
 
 
 # Capture mouse if clicked on the game
-# Called when an InputEvent hasn't been consumed by _input() or any GUI item
+# Called when an InputEvent has not been consumed by _input() or any GUI item
 func _unhandled_input(event: InputEvent) -> void:
 	if not Globals.is_server and event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed and not Globals.click_mode:
