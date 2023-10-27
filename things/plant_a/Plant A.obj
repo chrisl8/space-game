@@ -1,6 +1,5 @@
 # Blender 3.6.2
 # www.blender.org
-mtllib Plant A.mtl
 o Plant_A
 v -1.449330 9.918738 1.048992
 v 0.000000 0.000000 1.000000
