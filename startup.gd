@@ -185,7 +185,7 @@ func _ready() -> void:
 	if OS.is_debug_build() and OS.get_name() != "Web":
 		Globals.release_mouse_text = "F1 to Release Mouse"
 		if Globals.is_server:
-			Globals.how_to_end_game_text = "This is the server. You must run at least 2 instances to play. ESC to close Server and all Clients."
+			Globals.how_to_end_game_text = "This is the server window. You cannot interact with it.\nYou must run at least 2 game instances to play.\nPress ESC to close Server and all Clients."
 		else:
 			Globals.how_to_end_game_text = "ESC to Close this Client"
 
@@ -261,32 +261,38 @@ func _input(event: InputEvent) -> void:
 	if event.is_action_pressed(&"dump_tree"):
 		print(multiplayer.get_unique_id())
 		get_tree().root.print_tree_pretty()
+
 	if event.is_action_pressed(&"click_mode"):
 		Globals.click_mode = !Globals.click_mode
 		# Release mouse immediately if we are going into click mode
 		if Globals.click_mode:
 			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-		Helpers.log_print(str("click_mode = ", Globals.click_mode))
+		else:
+			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 
 # Capture mouse if clicked on the game
 # Called when an InputEvent has not been consumed by _input() or any GUI item
 func _unhandled_input(event: InputEvent) -> void:
-	if not Globals.is_server and event is InputEventMouseButton:
-		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed and not Globals.click_mode:
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+		var text_to_toast: String = Globals.release_mouse_text
+		if Globals.is_server:
+			text_to_toast = Globals.how_to_end_game_text
+		elif Globals.click_mode:
+			text_to_toast = "Pres q to exit 'Click Mode' and control camera again."
+		else:
 			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 			await get_tree().create_timer(0.5).timeout
 			#print("Mouse Mode: ", Input.get_mouse_mode())
-			var text_to_toast: String = Globals.release_mouse_text
 			if Input.get_mouse_mode() == Input.MOUSE_MODE_VISIBLE:
 				# Browsers have a cool down on capturing the mouse.
 				# https://discourse.threejs.org/t/how-to-avoid-pointerlockcontrols-error/33017/4
 				# So users may click, Esc, and then Click again too fast and it does not capture the mouse
 				# This will let the user know that happened
 				text_to_toast = "Oops, too fast, try again"
-			var toast: Toast = Toast.new(text_to_toast, 2.0)
-			get_node("/root").add_child(toast)
-			toast.display()
+		var toast: Toast = Toast.new(text_to_toast, 2.0)
+		get_node("/root").add_child(toast)
+		toast.display()
 
 
 func force_open_popup() -> void:
