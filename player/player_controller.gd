@@ -201,7 +201,7 @@ func _physics_process(delta: float) -> void:
 			accel = original_accel / 2
 			linear_damp = original_linear_damp * 10
 			current_speed_limit = speed_limit / 2
-		WALKING:  # Grow
+		WALKING:
 			accel = original_accel
 			linear_damp = original_linear_damp
 			current_speed_limit = speed_limit
