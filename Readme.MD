@@ -1,4 +1,4 @@
-You can play the game right now at https://voidshipephemeral.space
+You can play the game right now at [https://voidshipephemeral.space](https://voidshipephemeral.space)
 
 # Space Game - A 3D Online Space
 
@@ -8,7 +8,7 @@ All the source is MIT licensed, so you can use this to help make your own game a
 
 # Play the Game Now!
 
-Go to https://voidshipephemeral.space where the game is up and running live now.  
+Go to [https://voidshipephemeral.space](https://voidshipephemeral.space) where the game is up and running live now!  
 This is the preferred method.
 
 ## Binary Releases
