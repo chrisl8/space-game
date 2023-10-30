@@ -76,15 +76,15 @@ func _physics_process(delta: float) -> void:
 		cam.set_fov(lerp(cam.fov, normal_fov, delta * 8))
 
 
-func jump():
+func jump() -> void:
 	jumping = true
 
 
-@rpc() func interact():
+@rpc() func interact() -> void:
 	interacting = true
 
 
-func _process(_delta):
+func _process(_delta: float) -> void:
 	input_axis = Input.get_vector(&"move_back", &"move_forward", &"move_left", &"move_right")
 
 	if Input.is_action_just_pressed(&"jump"):
