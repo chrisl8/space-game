@@ -96,9 +96,8 @@ func generate_jwt(secret: String, player_uuid: String) -> String:
 	var jwt_builder: JWTBuilder = (
 		JWT
 		. create()
-		. with_expires_at(
-			Time.get_unix_time_from_datetime_dict(Time.get_date_dict_from_system()) + 60 * 24 * 365
-		)
+		. with_issued_at(int(Time.get_unix_time_from_system()))
+		. with_expires_at(int(Time.get_unix_time_from_system()) + 60 * 60 * 24 * 365)
 		. with_issuer("Space Game")
 		. with_payload({"uuid": player_uuid})
 	)
