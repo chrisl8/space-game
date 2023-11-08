@@ -188,7 +188,7 @@ func _physics_process(delta: float) -> void:
 		# The player is grounded if any of the raycasts hit
 		if collision and is_walkable(collision.normal.y):
 			is_grounded = true
-		# WARNING: You MUST comment the DebugDraw3D calls out for web builds to work!
+		# NOTICE: See Readme.MD about obtaining DebugDraw if you want to use it.
 		#DebugDraw3D.draw_line(params.from, params.to, array[2])  #$"Lines/2".global_transform.origin,  #target.global_transform.origin,
 
 	### Sprinting & Tiptoeing
@@ -442,7 +442,7 @@ func move_player(move: Vector3, state: PhysicsDirectBodyState3D) -> void:
 		params.to = end
 		params.exclude = [self]
 		var hit: Dictionary = direct_state.intersect_ray(params)
-		# WARNING: You MUST comment the DebugDraw3D calls out for web builds to work!
+		# NOTICE: See Readme.MD about obtaining DebugDraw if you want to use it.
 		#DebugDraw3D.draw_line(params.from, params.to, Color.GREEN)  #$"Lines/2".global_transform.origin,  #target.global_transform.origin,
 		var use_normal: Vector3
 		# If the slope in front of the player movement direction is steeper than the

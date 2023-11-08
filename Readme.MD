@@ -72,6 +72,17 @@ The primary scene has a camera in it that is never seen by players. It is there 
 
 When a Debug build (in the Editor) is run, the code also defaults to using your local host as the Server, which is how the 2nd, 3rd, etc. instances of the game find the first instance and know it is the Server.
 
+## DebugDraw
+
+You may see some commented out calls to `DebugDraw3D` in my code.  
+[DebugDraw](https://github.com/DmitriySalnikov/godot_debug_draw_3d) is an amazing tool for debugging, but I didn't want it cluttering up my repo or releases.  
+If you want to use `DebugDraw3D` yourself during debugging you will have to download it yourself.
+
+ - Go to https://github.com/DmitriySalnikov/godot_debug_draw_3d/releases and download the latest release
+ - Unzip it somewhere
+ - Place the **contents** if the `addons` folder (named `debug_draw_3d`) into the `addons` folder of this game
+
+ Now you will be able to use the `DebugDraw3D` commands during development and debugging.
 
 
 # Production
