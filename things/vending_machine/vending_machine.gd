@@ -77,7 +77,11 @@ func _on_static_body_3d_input_event(
 	button_node_path: NodePath,
 ) -> void:
 	if event is InputEventMouseButton:
-		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed == true:
+		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+			# Prevent startup.gd _unhandled_input from responding to this click.
+			# _unhandled_input fires BEFORE Collider inputs
+			# https://docs.godotengine.org/en/stable/tutorials/inputs/inputevent.html#how-does-it-work
+			Globals.last_click_handled_time = int(Time.get_unix_time_from_system())
 			server_button_clicked.rpc(button_node_name, button_index, button_node_path)
 
 

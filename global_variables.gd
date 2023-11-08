@@ -11,6 +11,7 @@ var local_debug_instance_number: int = -1
 var intro_music_has_played: bool = false
 var url: String
 var click_mode: bool = false
+var last_click_handled_time: int = 0
 var shutdown_in_progress: bool = false
 
 var connection_failed_message: String = "Connection Failed!"

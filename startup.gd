@@ -269,6 +269,10 @@ func _input(event: InputEvent) -> void:
 			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 		else:
 			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+			# Remind user how to release mouse since we captured it without a mouse click
+			var toast: Toast = Toast.new(Globals.release_mouse_text, 2.0)
+			get_node("/root").add_child(toast)
+			toast.display()
 
 
 # Capture mouse if clicked on the game
@@ -279,7 +283,18 @@ func _unhandled_input(event: InputEvent) -> void:
 		if Globals.is_server:
 			text_to_toast = Globals.how_to_end_game_text
 		elif Globals.click_mode:
-			text_to_toast = "Pres q to exit 'Click Mode' and control camera again."
+			# Prevent startup.gd _unhandled_input from responding to this click.
+			# _unhandled_input fires BEFORE Collider inputs
+			# https://docs.godotengine.org/en/stable/tutorials/inputs/inputevent.html#how-does-it-work
+			await get_tree().create_timer(1).timeout
+			var current_unix_time: int = int(Time.get_unix_time_from_system())
+			# Adjust new_click_timeout if you want more or less time after a "valid" collider click (button)
+			# before an errant click pops up the "how to get out of here" message
+			var new_click_timeout: int = 3
+			if current_unix_time - Globals.last_click_handled_time > new_click_timeout:
+				text_to_toast = "Pres q to exit 'Click Mode' and control camera again."
+			else:
+				text_to_toast = ""
 		else:
 			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 			await get_tree().create_timer(0.5).timeout
@@ -290,9 +305,11 @@ func _unhandled_input(event: InputEvent) -> void:
 				# So users may click, Esc, and then Click again too fast and it does not capture the mouse
 				# This will let the user know that happened
 				text_to_toast = "Oops, too fast, try again"
-		var toast: Toast = Toast.new(text_to_toast, 2.0)
-		get_node("/root").add_child(toast)
-		toast.display()
+		if text_to_toast != "":
+			# Set it to an empty string to signal that we don't want to display anything this time.
+			var toast: Toast = Toast.new(text_to_toast, 2.0)
+			get_node("/root").add_child(toast)
+			toast.display()
 
 
 func force_open_popup() -> void:
