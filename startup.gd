@@ -264,15 +264,16 @@ func _input(event: InputEvent) -> void:
 
 	if event.is_action_pressed(&"click_mode"):
 		Globals.click_mode = !Globals.click_mode
+		var text_to_toast: String = Globals.release_mouse_text
 		# Release mouse immediately if we are going into click mode
 		if Globals.click_mode:
 			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+			text_to_toast = Globals.exit_click_mode_text
 		else:
 			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-			# Remind user how to release mouse since we captured it without a mouse click
-			var toast: Toast = Toast.new(Globals.release_mouse_text, 2.0)
-			get_node("/root").add_child(toast)
-			toast.display()
+		var toast: Toast = Toast.new(text_to_toast, 2.0)
+		get_node("/root").add_child(toast)
+		toast.display()
 
 
 # Capture mouse if clicked on the game
@@ -292,7 +293,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			# before an errant click pops up the "how to get out of here" message
 			var new_click_timeout: int = 3
 			if current_unix_time - Globals.last_click_handled_time > new_click_timeout:
-				text_to_toast = "Pres q to exit 'Click Mode' and control camera again."
+				text_to_toast = Globals.exit_click_mode_text
 			else:
 				text_to_toast = ""
 		else:
