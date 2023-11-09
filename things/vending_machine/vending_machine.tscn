@@ -1,15 +1,21 @@
 [gd_scene load_steps=3 format=3 uid="uid://pdx1ljphijan"]
 
-[ext_resource type="PackedScene" uid="uid://clx2pbd1w3f4v" path="res://things/vending_machine/vending_machine_model.tscn" id="1_8122q"]
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_s0p58"]
-size = Vector3(2, 2.5, 1)
+[ext_resource type="Script" path="res://things/vending_machine/vending_machine.gd" id="1_vexae"]
+[ext_resource type="PackedScene" uid="uid://b8nv04m4fcfnt" path="res://things/vending_machine/vending_machine.glb" id="2_wqfw2"]
 
 [node name="Vending Machine" type="Node3D"]
+script = ExtResource("1_vexae")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="."]
+[node name="Screen Text" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.664979, 0.632199, 0.520367)
+pixel_size = 0.001
+text = "OUT
+OF
+ORDER"
+font_size = 37
+outline_size = 0
+horizontal_alignment = 0
+vertical_alignment = 0
+line_spacing = -6.0
 
-[node name="Vending Machine Model" parent="StaticBody3D" instance=ExtResource("1_8122q")]
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
-shape = SubResource("BoxShape3D_s0p58")
+[node name="Model" parent="." instance=ExtResource("2_wqfw2")]
