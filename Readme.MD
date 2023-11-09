@@ -82,7 +82,10 @@ If you want to use `DebugDraw3D` yourself during debugging you will have to down
  - Unzip it somewhere
  - Place the **contents** if the `addons` folder (named `debug_draw_3d`) into the `addons` folder of this game
 
- Now you will be able to use the `DebugDraw3D` commands during development and debugging.
+ Now you will be able to use the `DebugDraw3D` commands during development and debugging.  
+
+ Be aware that if you attempt to build a Web release with any `DebugDraw3D` calls still in the code it will probably fail. This shouldn't affect debugging or platform native builds though.  
+ Comment out any `DebugDraw3D` calls before committing code and before making production builds.
 
 
 # Production
