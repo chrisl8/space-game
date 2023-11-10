@@ -1,0 +1,19 @@
+name: Static checks
+# See https://github.com/lampe-games/godot-open-rts/blob/main/.github/workflows/main.yml
+# for source and example
+
+on:
+  push:
+    branches: [ "main", "using_godot_4.2" ]
+  pull_request:
+    branches: [ "main", "using_godot_4.2" ]
+
+jobs:
+  static-checks:
+    name: 'Static checks'
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: Scony/godot-gdscript-toolkit@master
+    - run: gdformat --check source/
+    - run: gdlint source/
