@@ -15,6 +15,13 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    - id: create-requirements-if-not-exists
+      run: |
+        if [ ! -f requirements.txt ]; then
+          echo "gdtoolkit==4.*" > requirements.txt
+        fi
+      shell: bash
+
     - id: install-python
       uses: actions/setup-python@v4
       with:
