@@ -1,3 +1,5 @@
+[![Static Code Checks](https://github.com/chrisl8/space-game/actions/workflows/static.yml/badge.svg)](https://github.com/chrisl8/space-game/actions/workflows/static.yml)
+
 You can play the game right now at [https://voidshipephemeral.space](https://voidshipephemeral.space)
 
 # Space Game - A 3D Online Space

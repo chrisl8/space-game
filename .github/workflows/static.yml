@@ -14,6 +14,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    - uses: Scony/godot-gdscript-toolkit@master
-    - run: gdformat --check .
-    - run: gdlint .
+
+    - id: install-python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.x"
+        cache: "pip"
+
+    - id: upgrade-setuptools
+      run: pip install --upgrade setuptools
+      shell: bash
+
+    - id: install-gdtoolkit
+      run: pip install git+https://github.com/Scony/godot-gdscript-toolkit.git
+      shell: bash
+    
+    - id: run-gdformat
+      run: gdformat --check .
+    
+    - id: run-gdlint
+      run: gdlint .
