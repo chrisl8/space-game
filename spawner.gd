@@ -1,22 +1,21 @@
 extends Node
 
-var done_once: bool = false
 var Chair: Resource = preload("res://things/chair/chair.tscn")
 var BeachBall: Resource = preload("res://things/beach_ball/beach_ball.tscn")
 var Fish: Resource = preload("res://things/fish/fish.tscn")
 var Floater: Resource = preload("res://things/Floater/Floater.tscn")
 var PlantA: Resource = preload("res://things/plant_a/plant_a.tscn")
+var done_once: bool = false
 
 @onready var things_spawning_node: Node = get_node("../Main/Things")
 
 # Called by players to ask Server to place a new chair.
 @rpc("any_peer", "call_remote") func place_chair() -> void:
 	if Globals.is_server:
-		var new_thing: Node = Chair.instantiate()
+		thing("Chair", 1)
 		# TODO: I wish I could locate items when I create them, but I cannot. No idea why.
 		# new_thing.position = Vector3(8, 1, -8)
 		# new_thing.rotation.y = -45.0
-		things_spawning_node.add_child(new_thing, true)
 
 
 func thing(thing_name: String, id: int) -> void:
@@ -43,6 +42,7 @@ func thing(thing_name: String, id: int) -> void:
 		things_spawning_node.add_child(new_thing)
 
 
+# This is ONLY called on the server, by the _process() function in network_websocket.gd
 func things() -> void:
 	# Balls
 	thing("Ball", 1)
