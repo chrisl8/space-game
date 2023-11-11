@@ -18,12 +18,8 @@ func _ready() -> void:
 
 
 func ProcessArms(_delta: float) -> void:
-	var TargetRotation = Vector3(
-			0,
-			45,
-			0
-		)
-	if(position.distance_to(LastPosition) > 0.1*_delta):
+	var TargetRotation = Vector3(0, 45, 0)
+	if position.distance_to(LastPosition) > 0.1 * _delta:
 		TargetRotation = position - LastPosition
 	for Arm in Arms:
 		#Arms still only run on server
@@ -33,11 +29,11 @@ func ProcessArms(_delta: float) -> void:
 		#	45,
 		#	RandomNumberGenerator.new().randf_range(-20, 20)
 		#)
-		
+
 		#Arm.set_rotation(self.linear_velocity)
 		#print(self.velocity)
 		#Arm.set_rotation(self.velocity)
-		
+
 	#Because I don't know how to read node atributes
 	LastPosition = position
 
@@ -58,7 +54,6 @@ func _physics_process(delta: float) -> void:
 		get_parent().queue_free()
 
 	CurrentTime += delta
-	
 
 	if CurrentTime > 1 and !ForceApplied:
 		var MinSpeed: float = 0.5
@@ -73,7 +68,7 @@ func _physics_process(delta: float) -> void:
 			SpeedY *= -1
 		if RandomNumberGenerator.new().randf_range(0, 1) > 0.5:
 			SpeedZ *= -1
-		
+
 		ForceApplied = true
 		self.apply_impulse(Vector3(SpeedX, SpeedY, SpeedZ))
 	if CurrentTime > 3.5:
@@ -82,21 +77,30 @@ func _physics_process(delta: float) -> void:
 		self.apply_torque(Vector3(0, RandomNumberGenerator.new().randf_range(-3.5, 3.5), 0))
 	ProcessArms(delta)
 
+
 var CurrentEyeRotTime = 0
+
+
 func _process(delta: float) -> void:
 	for Arm in Arms:
 		#Arm rotation is applied internally, but does not affect rendered arm rotation
-		Arm.set_rotation_degrees(Vector3(
-			RandomNumberGenerator.new().randf_range(-90, 90),
-			RandomNumberGenerator.new().randf_range(-90, 90),
-			RandomNumberGenerator.new().randf_range(-90, 90)
-		))
+		Arm.set_rotation_degrees(
+			Vector3(
+				RandomNumberGenerator.new().randf_range(-90, 90),
+				RandomNumberGenerator.new().randf_range(-90, 90),
+				RandomNumberGenerator.new().randf_range(-90, 90)
+			)
+		)
 		#When logged will display set rotation, but rotation is not applied to game arm
 		#Is it rotating some other arm? The prephab arm? Do rigibodies support sub objects being rotated?
 		#print(Arm.rotation)
-	
-	CurrentEyeRotTime+=delta
-	if(CurrentEyeRotTime > 3):
+
+	CurrentEyeRotTime += delta
+	if CurrentEyeRotTime > 3:
 		CurrentEyeRotTime = 0
-		Eye.rotation = Vector3(RandomNumberGenerator.new().randf_range(-10, 10),RandomNumberGenerator.new().randf_range(-10, 10),0)
+		Eye.rotation = Vector3(
+			RandomNumberGenerator.new().randf_range(-10, 10),
+			RandomNumberGenerator.new().randf_range(-10, 10),
+			0
+		)
 	ProcessArms(delta)
