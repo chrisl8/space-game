@@ -1,6 +1,9 @@
 name: Static checks
+# Based on https://github.com/Scony/godot-gdscript-toolkit/blob/master/action.yml
+# In theory I could just copy this one:
 # See https://github.com/lampe-games/godot-open-rts/blob/main/.github/workflows/main.yml
-# for source and example
+# But that pulls from the "released" version, not direct from git master,
+# and currently I want the lateast as only it supports all Godot 4.2 GDscript features
 
 on:
   push:
@@ -37,7 +40,7 @@ jobs:
       shell: bash
     
     - id: run-gdformat
-      run: gdformat --check .
+      run: gdformat --check $(find . -name '*.gd' -not -path "./addons/*")
     
     - id: run-gdlint
       run: gdlint .
