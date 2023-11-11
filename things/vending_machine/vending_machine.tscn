@@ -18,4 +18,4 @@ horizontal_alignment = 0
 vertical_alignment = 0
 line_spacing = -6.0
 
-[node name="Model" parent="." instance=ExtResource("2_wqfw2")]
+[node name="Mesh" parent="." instance=ExtResource("2_wqfw2")]

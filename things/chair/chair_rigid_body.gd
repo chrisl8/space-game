@@ -43,7 +43,7 @@ func unselect(other_name: String) -> void:
 @rpc("any_peer", "call_remote") func grab() -> void:
 	Helpers.log_print("Deleting myself now")
 	# Just delete myself if someone grabbed me
-	get_node("..").queue_free()
+	get_node(".").queue_free()
 
 
 func my_name() -> String:
