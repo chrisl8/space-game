@@ -129,11 +129,8 @@ func parse_msg(peer: Connection) -> bool:
 			receiver_peer.send_msg(type, peer.id, data)
 			Helpers.log_print("Signal Server: Sending received OFFER! to peer %d" % peer.id)
 			return true
-		else:
-			Helpers.log_print(
-				"Signal Server: ERROR: OFFER received but ID do not match with any peer!"
-			)
-			return false
+		Helpers.log_print("Signal Server: ERROR: OFFER received but ID do not match with any peer!")
+		return false
 
 	if type == Message.ANSWER:
 		var str_arr: PackedStringArray = data.split("***", true, 2)
@@ -143,11 +140,10 @@ func parse_msg(peer: Connection) -> bool:
 			receiver_peer.send_msg(type, peer.id, data)
 			Helpers.log_print("Signal Server: Sending received ANSWER! to peer %d" % peer.id)
 			return true
-		else:
-			Helpers.log_print(
-				"Signal Server: ERROR: ANSWER received but ID do not match with any peer!"
-			)
-			return false
+		Helpers.log_print(
+			"Signal Server: ERROR: ANSWER received but ID do not match with any peer!"
+		)
+		return false
 
 	if type == Message.ICE:
 		var str_arr: PackedStringArray = data.split("***", true, 3)
@@ -157,11 +153,8 @@ func parse_msg(peer: Connection) -> bool:
 			receiver_peer.send_msg(type, peer.id, data)
 			Helpers.log_print("Signal Server: Sending received ICE! to peer %d" % peer.id)
 			return true
-		else:
-			Helpers.log_print(
-				"Signal Server: ERROR: ICE received but ID do not match with any peer!"
-			)
-			return false
+		Helpers.log_print("Signal Server: ERROR: ICE received but ID do not match with any peer!")
+		return false
 
 	if type == Message.USER_INFO:
 		var parsed_user_data: Variant = JSON.parse_string(data)

@@ -61,7 +61,6 @@ speed_limit = 4.0
 sprinting_speed_limit = 6.0
 danger_speed_limit = 100.0
 friction_divider = 4
-JUMP_THROTTLE = 0.1
 landing_assist = 1.5
 anti_slide_force = 4.0
 

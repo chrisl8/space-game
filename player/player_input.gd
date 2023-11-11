@@ -8,20 +8,19 @@ extends MultiplayerSynchronizer
 @export var interacting: bool = false
 
 @export var camera_rotation_y: float = 0.0
+@export var mouse_sensitivity: float = 2.0
+@export var y_limit: float = 80.0
+@export var speed: int = 10
+@export var fov_multiplier: float = 1.05
 
 # Source: https://github.com/Whimfoome/godot-FirstPersonStarter
 
 var cam: Camera3D
 
-@export var mouse_sensitivity: float = 2.0
-@export var y_limit: float = 80.0
-
 var mouse_axis: Vector2 = Vector2()
 var rot: Vector3 = Vector3()
 
-@export var speed: int = 10
 var normal_fov: float
-@export var fov_multiplier: float = 1.05
 var is_sprinting: bool = false
 var normal_speed: int = speed
 var sprint_speed: int = 25

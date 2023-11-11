@@ -2,18 +2,11 @@ extends RigidBody3D
 
 # The entire Rigidbody based Character Controller here is based on code found at https://github.com/FreeFlyFall/RigidBodyController
 
+enum { TIPTOEING, WALKING, SPRINTING }  # Possible values for posture
+
 # Set the player ID, which is only used in _ready(),
 # and perhaps by others via the MultiplayerSynchronizer, but I'm not sure on that.
 @export var player: int = -1
-
-var is_grounded: bool  # Whether the player is considered to be touching a walkable slope
-@onready var player_collider: Shape3D = $Collision.shape  # Capsule collision shape of the player
-@onready var head: Node3D = $Head  # y-axis rotation node (look left and right)
-@onready var camera: Node = get_node("./Head/Camera3D")  # Camera3D node
-@onready var head_mesh: Node = get_node("./Head/HeadMesh")  # x-axis rotation node (look up and down)
-@onready var character_meshes: Node3D = $Character
-
-### Integrate forces vars
 @export var accel: int  # Player acceleration force
 @export var jump: int  # Jump force multiplier
 @export var air_control: int  # Air control multiplier
@@ -25,20 +18,22 @@ var is_grounded: bool  # Whether the player is considered to be touching a walka
 @export var sprinting_speed_limit: float  # 12 # Speed to move at while sprinting
 @export var danger_speed_limit: float  # Maximum speed limit
 @export var friction_divider: int = 6  # Amount to divide the friction by when not grounded (prevents sticking to walls from air control)
+@export var jump_throttle: float = 0.1  # 0.1 # Stores preference for time before the player can jump again # (float,0.01,1,0.01)
+@export var landing_assist: float  # 1.5 # Downward force to apply when letting go of space while jumping
+@export var anti_slide_force: float  # 3 # Amount of force to stop sliding with # (float,0.1,100,0.1)
+@export var player_spawn_point: Vector3 = Vector3(4, 1.5, -4)
+@export var bounds_distance: int = 100
+
+var is_grounded: bool  # Whether the player is considered to be touching a walkable slope
+
 var upper_slope_normal: Vector3  # Stores the lowest (steepest) slope normal
 var lower_slope_normal: Vector3  # Stores the highest (flattest) slope normal
 var slope_normal: Vector3  # Stores normals of contact points for iteration
 var contacted_body: RigidBody3D  # Rigid body the player is currently contacting, if there is one
 var player_physics_material: Resource = load("res://Physics/player.tres")
-@onready var original_friction: float = player_physics_material.friction  # Editor friction value
-@onready var original_linear_damp: float = linear_damp
-@onready var original_accel: int = accel
 var is_landing: bool = true  # Whether the player has jumped and let go of jump
 var is_jumping: bool = false  # Whether the player has jumped
-@export var JUMP_THROTTLE: float  # 0.1 # Stores preference for time before the player can jump again # (float,0.01,1,0.01)
-var jump_throttle: float  # Variable used with jump throttling calculations
-@export var landing_assist: float  # 1.5 # Downward force to apply when letting go of space while jumping
-@export var anti_slide_force: float  # 3 # Amount of force to stop sliding with # (float,0.1,100,0.1)
+var current_jump_throttle: float  # Variable used with jump throttling calculations
 
 ### Physics process vars
 var original_player_collider_height: float
@@ -48,12 +43,23 @@ var minimum_player_collider_height: float = 1.0
 var maximum_player_collider_height: float = 3.0
 var current_speed_limit: float
 var posture: int  # Current posture state
-enum { TIPTOEING, WALKING, SPRINTING }  # Possible values for posture
 
 ## Object Interaction vars
 var is_interacting: bool = false
 
-@export var bounds_distance: int = 100
+var character_trimmed: bool = false
+var selected_node: Node3D
+var held_item: Node
+
+@onready var player_collider: Shape3D = $Collision.shape  # Capsule collision shape of the player
+@onready var head: Node3D = $Head  # y-axis rotation node (look left and right)
+@onready var camera: Node = get_node("./Head/Camera3D")  # Camera3D node
+@onready var head_mesh: Node = get_node("./Head/HeadMesh")  # x-axis rotation node (look up and down)
+@onready var character_meshes: Node3D = $Character
+@onready var original_friction: float = player_physics_material.friction  # Editor friction value
+@onready var original_linear_damp: float = linear_damp
+@onready var original_accel: int = accel
+@onready var holding_things_joint: Node = get_node("./Joint")
 
 
 func _ready() -> void:
@@ -89,9 +95,6 @@ func _input(event: InputEvent) -> void:
 		# Limit more strictly so head doesn't clip into body
 		head_mesh.rotate_x(camera_head_x_rotation)
 		head_mesh.rotation.x = clamp(head_mesh.rotation.x, deg_to_rad(-25), deg_to_rad(25))
-
-
-var character_trimmed: bool = false
 
 
 func _process(_delta: float) -> void:
@@ -210,12 +213,9 @@ func _physics_process(delta: float) -> void:
 
 	# Setup jump throttle for integrate_forces
 	if is_jumping or is_landing:
-		jump_throttle -= delta
+		current_jump_throttle -= delta
 	else:
-		jump_throttle = JUMP_THROTTLE
-
-
-@export var player_spawn_point: Vector3 = Vector3(4, 1.5, -4)
+		current_jump_throttle = jump_throttle
 
 
 func get_new_spawn_position() -> Vector3:
@@ -288,7 +288,7 @@ func _integrate_forces(state: PhysicsDirectBodyState3D) -> void:
 	# Check for is_jumping is because contact still exists at the beginning of a jump for more than one physics frame
 	if (
 		Input.is_action_pressed("jump")
-		and jump_throttle < 0
+		and current_jump_throttle < 0
 		and has_walkable_contact
 		and not is_jumping
 	):
@@ -523,9 +523,6 @@ func adjust_player_height(delta: float) -> void:
 				update_player_collider_height.rpc($Collision.shape.height)
 
 
-var selected_node: Node3D
-
-
 func _on_personal_space_body_entered(body: Node3D) -> void:
 	if body.has_method("select"):
 		selected_node = body
@@ -540,14 +537,10 @@ func _on_personal_space_body_exited(body: Node3D) -> void:
 			body.unselect(name)
 
 
-@onready var holding_things_joint: Node = get_node("./Joint")
-
-var held_item: Node
-
 @rpc("call_local") func _spawn_me_a_chair() -> void:
 	# Spawn a local version for myself
-	var chair: Resource = preload("res://things/held/chair/chair.tscn")
-	held_item = chair.instantiate()
+	var Chair: Resource = preload("res://things/held/chair/chair.tscn")
+	held_item = Chair.instantiate()
 	holding_things_joint.add_child(held_item)
 	holding_things_joint.node_a = NodePath("..")
 	holding_things_joint.node_b = held_item.get_path()

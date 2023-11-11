@@ -1,10 +1,13 @@
 extends Node
 
-var ws: WebSocketPeer = WebSocketPeer.new()
-
 signal reset
 signal close_popup
 
+enum Message { PLAYER_JOINED, PLAYER_TOKEN, SHUTDOWN_SERVER }
+
+@export var player_spawn_point: Vector3 = Vector3(4, 1, -4)
+
+var ws: WebSocketPeer = WebSocketPeer.new()
 var ready_to_connect: bool = false
 var peers: Dictionary
 var peer_count: int = -1
@@ -20,8 +23,7 @@ var level_scene: PackedScene = preload("res://spaceship/spaceship.tscn")
 #var level_scene: PackedScene = preload("res://character_test_level/character_test.tscn")
 
 var websocket_multiplayer_peer: WebSocketMultiplayerPeer
-
-@export var player_spawn_point: Vector3 = Vector3(4, 1, -4)
+var uuid_util: Resource = preload("res://addons/godot-uuid/uuid.gd")
 
 
 func _process(_delta: float) -> void:
@@ -240,8 +242,6 @@ func send_data_to(id: int, msg_type: Message, data: String) -> void:
 	rpc_id(id, "data_received", send_data)
 
 
-enum Message { PLAYER_JOINED, PLAYER_TOKEN, SHUTDOWN_SERVER }
-
 @rpc("any_peer") func data_received(data: String) -> void:
 	var sender_id: int = multiplayer.get_remote_sender_id()
 
@@ -289,9 +289,6 @@ enum Message { PLAYER_JOINED, PLAYER_TOKEN, SHUTDOWN_SERVER }
 	print(
 		"Unknown Message Type ", parsed_message.type, " in: ", parsed_message, " from ", sender_id
 	)
-
-
-var uuid_util: Resource = preload("res://addons/godot-uuid/uuid.gd")
 
 
 func player_joined(id: int, data: String) -> void:

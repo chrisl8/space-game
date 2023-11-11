@@ -43,4 +43,4 @@ jobs:
       run: gdformat --check $(find . -name '*.gd' -not -path "./addons/*")
     
     - id: run-gdlint
-      run: gdlint .
+      run: gdlint $(find . -name '*.gd' -not -path "./addons/*")
