@@ -53,7 +53,7 @@ func quit_gracefully() -> void:
 	if !Globals.shutdown_in_progress and OS.get_name() != "Web":
 		Globals.shutdown_in_progress = true
 		if Globals.is_server:
-			print(
+			print_rich(
 				"[color=orange]Disconnecting clients and saving data before shutting down server...[/color]"
 			)
 			var toast: Toast = Toast.new("Disconnecting clients and shutting down server...", 2.0)
@@ -61,6 +61,6 @@ func quit_gracefully() -> void:
 			toast.display()
 			Network.shutdown_server()
 			while Network.peers.size() > 0:
-				print("[color=orange]...server still clearing clients...[/color]")
+				print_rich("[color=orange]...server still clearing clients...[/color]")
 				await get_tree().create_timer(1).timeout
 		get_tree().quit()

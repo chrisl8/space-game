@@ -547,7 +547,7 @@ func _on_personal_space_body_exited(body: Node3D) -> void:
 
 
 @rpc("call_local") func _drop_chair() -> void:
-	Helpers.log_print("Let go")
+	Helpers.log_print("Let go", "tomato")
 	holding_things_joint.node_a = NodePath("")
 	holding_things_joint.node_b = NodePath("")
 	held_item.queue_free()
