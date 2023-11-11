@@ -1,12 +1,22 @@
 extends Node
 
 
-func log_print(text: String) -> void:
+func log_print(text: String, color: String = "white") -> void:
 	if Globals.is_server or OS.is_debug_build():
 		var unique_id: int = -1
 		if multiplayer.has_multiplayer_peer():
 			unique_id = multiplayer.get_unique_id()
-		print(Globals.local_debug_instance_number, " ", unique_id, " ", text)
+		print_rich(
+			"[color=",
+			color,
+			"]",
+			Globals.local_debug_instance_number,
+			" ",
+			unique_id,
+			" ",
+			text,
+			"[/color]"
+		)
 
 
 func generate_random_string(length: int) -> String:
@@ -43,12 +53,14 @@ func quit_gracefully() -> void:
 	if !Globals.shutdown_in_progress and OS.get_name() != "Web":
 		Globals.shutdown_in_progress = true
 		if Globals.is_server:
-			print("Disconnecting clients and saving data before shutting down server...")
+			print(
+				"[color=orange]Disconnecting clients and saving data before shutting down server...[/color]"
+			)
 			var toast: Toast = Toast.new("Disconnecting clients and shutting down server...", 2.0)
 			get_node("/root").add_child(toast)
 			toast.display()
 			Network.shutdown_server()
 			while Network.peers.size() > 0:
-				print("...server still clearing clients...")
+				print("[color=orange]...server still clearing clients...[/color]")
 				await get_tree().create_timer(1).timeout
 		get_tree().quit()

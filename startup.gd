@@ -50,14 +50,16 @@ func _init() -> void:
 		for arg in OS.get_cmdline_user_args():
 			var arg_array: Array = arg.split("=")
 			if arg_array[0] == "server":
-				print("Setting as server based on command line argument.")
+				print_rich("[color=green]Setting as server based on command line argument.[/color]")
 				Globals.is_server = true
 			if arg_array[0] == "client":
-				print("Forcing to be client based on command line argument.")
+				print_rich(
+					"[color=green]Forcing to be client based on command line argument.[/color]"
+				)
 				Globals.is_server = false
 				Globals.force_client = true
 			if arg_array[0] == "shutdown_server":
-				print("This client will tell the server to shut down.")
+				print_rich("[color=green]This client will tell the server to shut down.[/color]")
 				Globals.is_server = false
 				Globals.shutdown_server = true
 				# Load server password from local data file
@@ -77,7 +79,7 @@ func _notification(what: int) -> void:
 
 func generate_server_config_data() -> Dictionary:
 	var server_config: Dictionary = {}
-	Helpers.log_print("Generating new config data for server")
+	Helpers.log_print("Generating new config data for server", "green")
 	var jwt_secret: String = Helpers.generate_random_string(64)
 	server_config["jwt_secret"] = jwt_secret
 	var server_password: String = Helpers.generate_random_string(64)
@@ -90,7 +92,7 @@ func parse_server_config_file_data(server_config_file_data: String) -> Dictionar
 	var json: JSON = JSON.new()
 	var error: int = json.parse(server_config_file_data)
 	if error != OK:
-		print(
+		printerr(
 			"JSON Parse Error: ",
 			json.get_error_message(),
 			" in ",
@@ -129,8 +131,8 @@ func _ready() -> void:
 		and Globals.local_debug_instance_number < 1
 		and OS.get_name() != "Web"
 	):
-		print(
-			"Setting as server based being a debug build and run_server_in_debug and being first instance to run."
+		print_rich(
+			"[color=green]Setting as server based being a debug build and run_server_in_debug and being first instance to run.[/color]"
 		)
 		Globals.is_server = true
 
@@ -151,13 +153,12 @@ func _ready() -> void:
 		Helpers.save_data_to_file(server_config_file_name, JSON.stringify(Globals.server_config))
 
 		# Load or generate player data
-		print("----------------------")
 		var player_save_data: Dictionary = {}
 		var player_save_data_file_data: String = Helpers.load_data_from_file(
 			Globals.server_player_save_data_file_name
 		)
 		if player_save_data_file_data == "":
-			Helpers.log_print("Generating new player save data file for server")
+			Helpers.log_print("Generating new player save data file for server", "green")
 		else:
 			var json: JSON = JSON.new()
 			var error: int = json.parse(player_save_data_file_data)
@@ -173,7 +174,7 @@ func _ready() -> void:
 				get_tree().quit()  # Quits the game due to bad server config data
 			player_save_data = json.data
 			if typeof(player_save_data) != TYPE_DICTIONARY:
-				print("Data error in: ", server_config)
+				printerr("Data error in: ", server_config)
 				get_tree().quit()  # Quits the game due to bad server config data
 		Globals.player_save_data = player_save_data
 		# Save config back out to file, even if we imported it from the file.
@@ -213,7 +214,9 @@ func connection_reset(delay: int) -> void:
 	if OS.is_debug_build() and OS.get_name() != "Web":
 		# Exit when the server closes in debug mode
 		# except in web mode, where "exit" has no meaning.
-		Helpers.log_print("Closing due to server disconnecting and this running in Debug mode.")
+		Helpers.log_print(
+			"Closing due to server disconnecting and this running in Debug mode.", "green"
+		)
 		Helpers.quit_gracefully()
 
 	var game_scene_node: Node = get_node_or_null("../Main/game_scene")
@@ -236,14 +239,14 @@ func _input(event: InputEvent) -> void:
 	if event.is_action_pressed(&"ui_cancel"):
 		if OS.is_debug_build():
 			# ESC key closes game in debug mode
-			Helpers.log_print("Closing due to ESC key.")
+			Helpers.log_print("Closing due to ESC key.", "green")
 			Helpers.quit_gracefully()
 		else:  # Releases mouse in normal build
 			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 
 	if event.is_action_pressed(&"ui_end"):
 		# END key closes the game
-		Helpers.log_print("Closing due to END key.")
+		Helpers.log_print("Closing due to END key.", "green")
 		Helpers.quit_gracefully()
 
 	# Only in Debug Mode: Use F1 to both Release and Capture the mouse for testing
@@ -326,5 +329,5 @@ func force_close_popup() -> void:
 
 
 func _on_players_spawner_spawned(node: Node) -> void:
-	Helpers.log_print(str("_on_players_spawner_spawned ", node.name))
+	Helpers.log_print(str("_on_players_spawner_spawned ", node.name), "green")
 	node.set_multiplayer_authority(str(node.name).to_int())

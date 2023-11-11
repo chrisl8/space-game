@@ -7,7 +7,6 @@ func _ready() -> void:
 		Globals.intro_music_has_played = true
 		$AudioStreamPlayer.play()
 	display_how_to_quit_toast()
-	print(Globals.player_save_data.size())
 
 
 func display_how_to_quit_toast() -> void:

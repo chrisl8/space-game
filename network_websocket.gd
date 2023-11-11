@@ -41,7 +41,7 @@ func _process(_delta: float) -> void:
 		peer_count = peers.size()
 		if peer_count > 0:
 			peers_have_connected = true
-		Helpers.log_print(str("New peer count is: ", peer_count))
+		Helpers.log_print(str("New peer count is: ", peer_count), "cyan")
 
 	if not Globals.is_server:
 		# Only server proceeds past this point,
@@ -56,14 +56,15 @@ func _process(_delta: float) -> void:
 		and !Globals.shutdown_in_progress
 	):
 		Helpers.log_print(
-			"Closing server due to all clients disconnecting and this running in Debug mode."
+			"Closing server due to all clients disconnecting and this running in Debug mode.",
+			"cyan"
 		)
 		Helpers.quit_gracefully()
 
 	# Initialize the Level if it isn't yet
 	if not game_scene_initialized:
 		if not game_scene_initialize_in_progress:
-			# Helpers.log_print("Load level")
+			# Helpers.log_print("Load level", "cyan")
 			game_scene_initialize_in_progress = true
 			load_level.call_deferred(level_scene)
 		elif get_node_or_null("../Main/Level/game_scene"):
@@ -83,7 +84,7 @@ func _ready() -> void:
 
 
 func load_level(scene: PackedScene) -> void:
-	# Helpers.log_print("Loading Scene")
+	# Helpers.log_print("Loading Scene", "cyan")
 	var level_parent: Node = get_tree().get_root().get_node("Main/Level")
 	for c in level_parent.get_children():
 		level_parent.remove_child(c)
@@ -115,17 +116,17 @@ func validate_and_decode_jwt(secret: String, jwt: String) -> Dictionary:
 		var jwt_decoder: JWTDecoder = JWT.decode(jwt)
 		content = jwt_decoder.get_claims()
 	else:
-		print(jwt_verifier.exception)
+		printerr(jwt_verifier.exception)
 	return content
 
 
 func _peer_connected(id: int) -> void:
-	Helpers.log_print(str("Peer ", id, " connected."))
+	Helpers.log_print(str("Peer ", id, " connected."), "cyan")
 	peers[id] = {}
 
 
 func _peer_disconnected(id: int) -> void:
-	Helpers.log_print(str("Peer ", id, " Disconnected."))
+	Helpers.log_print(str("Peer ", id, " Disconnected."), "cyan")
 	var player_uuid: String = ""
 	if peers.has(id):
 		if peers[id].has("uuid"):
@@ -137,7 +138,8 @@ func _peer_disconnected(id: int) -> void:
 	var player_spawner_node: Node = get_node_or_null("../Main/Players")
 	if player_spawner_node and player_spawner_node.has_node(str(id)):
 		var player: Node = player_spawner_node.get_node(str(id))
-		print(
+		print_rich(
+			"[color=blue]",
 			"Server: Player ",
 			id,
 			" ",
@@ -145,7 +147,8 @@ func _peer_disconnected(id: int) -> void:
 			" disconnected while at position ",
 			player.position,
 			" rotation ",
-			player.rotation
+			player.rotation,
+			"[/color]"
 		)
 		if player_uuid != "":
 			Globals.player_save_data[player_uuid]["position"] = {
@@ -166,9 +169,9 @@ func player_save_data_filename() -> String:
 
 
 func _connected_to_server() -> void:
-	Helpers.log_print("I connected to the server!")
+	Helpers.log_print("I connected to the server!", "cyan")
 	if Globals.shutdown_server:
-		print("Sending SHUTDOWN_SERVER message.")
+		print("[color=blue]Sending SHUTDOWN_SERVER message.[/color]")
 		send_data_to(1, Message.SHUTDOWN_SERVER, Globals.server_config["server_password"])
 		Helpers.quit_gracefully()
 		return
@@ -182,13 +185,13 @@ func _connected_to_server() -> void:
 
 
 func _connection_failed() -> void:
-	Helpers.log_print("My connection failed. =(")
+	Helpers.log_print("My connection failed. =(", "cyan")
 	Globals.connection_failed_message = "Connection Failed!"
 	reset_connection()
 
 
 func _server_disconnected() -> void:
-	Helpers.log_print("Server Disconnected")
+	Helpers.log_print("Server Disconnected", "cyan")
 	Globals.connection_failed_message = "Connection Interrupted!"
 	reset_connection()
 
@@ -196,12 +199,12 @@ func _server_disconnected() -> void:
 func shutdown_server() -> void:
 	if Globals.is_server and peers.size() > 0:
 		for key: int in peers:
-			print("Telling ", key, " to disconnect")
+			print_rich("[color=blue]Telling ", key, " to disconnect[/color]")
 			websocket_multiplayer_peer.disconnect_peer(key)
 
 
 func reset_connection() -> void:
-	Helpers.log_print("Resetting Connection")
+	Helpers.log_print("Resetting Connection", "cyan")
 	ready_to_connect = false
 	network_connection_initiated = false
 	network_initialized = false
@@ -216,7 +219,7 @@ func reset_connection() -> void:
 
 
 func init_network() -> void:
-	Helpers.log_print("Init Network")
+	Helpers.log_print("Init Network", "cyan")
 	websocket_multiplayer_peer = WebSocketMultiplayerPeer.new()
 	# This is a client/server setup, NOT a Mesh.
 	if Globals.is_server:
@@ -224,7 +227,7 @@ func init_network() -> void:
 	else:
 		var error: int = websocket_multiplayer_peer.create_client(Globals.url)  # WebSocket
 		if error:
-			Helpers.log_print(str("Websocket Error: ", error))
+			Helpers.log_print(str("Websocket Error: ", error), "cyan")
 	get_tree().get_multiplayer().multiplayer_peer = websocket_multiplayer_peer
 	network_initialized = true
 
@@ -248,7 +251,7 @@ func send_data_to(id: int, msg_type: Message, data: String) -> void:
 	var json: JSON = JSON.new()
 	var error: int = json.parse(data)
 	if error != OK:
-		print(
+		printerr(
 			"JSON Parse Error: ",
 			json.get_error_message(),
 			" in ",
@@ -266,15 +269,15 @@ func send_data_to(id: int, msg_type: Message, data: String) -> void:
 		or not parsed_message.has("type")
 		or not parsed_message.has("data")
 	):
-		print("Data error in: ", parsed_message, " from ", sender_id)
+		printerr("Data error in: ", parsed_message, " from ", sender_id)
 		return
 
 	if parsed_message.type == Message.SHUTDOWN_SERVER:
 		if parsed_message.data == Globals.server_config["server_password"]:
-			print("Server shutdown requested from client ", sender_id)
+			print("[color=blue]Server shutdown requested from client ", sender_id, "[/color]")
 			Helpers.quit_gracefully()
 		else:
-			print("Client ", sender_id, " attempted to shut down server with invalid password.")
+			printerr("Client ", sender_id, " attempted to shut down server with invalid password.")
 		return
 
 	if parsed_message.type == Message.PLAYER_JOINED:
@@ -286,7 +289,7 @@ func send_data_to(id: int, msg_type: Message, data: String) -> void:
 		close_popup.emit()
 		return
 
-	print(
+	printerr(
 		"Unknown Message Type ", parsed_message.type, " in: ", parsed_message, " from ", sender_id
 	)
 
@@ -301,7 +304,7 @@ func player_joined(id: int, data: String) -> void:
 			var json: JSON = JSON.new()
 			var error: int = json.parse(data)
 			if error != OK:
-				print(
+				printerr(
 					"User data JSON Parse Error: ",
 					json.get_error_message(),
 					" in ",
@@ -312,21 +315,21 @@ func player_joined(id: int, data: String) -> void:
 			else:
 				var player_data: Variant = json.data
 				if typeof(player_data) != TYPE_DICTIONARY or not player_data.has("jwt"):
-					print("Data error player data from ", id, ": ", player_data)
+					printerr("Data error player data from ", id, ": ", player_data)
 				else:
 					var content: Dictionary = validate_and_decode_jwt(
 						Globals.server_config["jwt_secret"], player_data["jwt"]
 					)
 					if content.has("uuid") and Globals.player_save_data.has(content["uuid"]):
 						player_uuid = content["uuid"]
-						Helpers.log_print(str("Player ", id, " uuid is ", player_uuid))
+						Helpers.log_print(str("Player ", id, " uuid is ", player_uuid), "cyan")
 					else:
-						print("----------------------------------------------------")
-						print("Player ", id, " joined with bad token content:")
-						print(content)
-						print("-----")
-						print(Globals.player_save_data)
-						print("----------------------------------------------------")
+						printerr("----------------------------------------------------")
+						printerr("Player ", id, " joined with bad token content:")
+						printerr(content)
+						printerr("-----")
+						printerr(Globals.player_save_data)
+						printerr("----------------------------------------------------")
 		if player_uuid == "":
 			# If player has no valid UUID, they are new, so set them up with a unique UUID
 			# that we can use to store data against.

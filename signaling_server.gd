@@ -106,7 +106,7 @@ func parse_msg(peer: Connection) -> bool:
 		or not parsed.has("id")
 		or not parsed.has("data")
 	):
-		print(parsed)
+		printerr("Bad message: ", parsed)
 		return false
 
 	var accepted_msg: Dictionary = {
