@@ -1,8 +1,8 @@
 extends RigidBody3D
 
 @export var bounds_distance: int = 100
-
 @export var push_factor: float = 0.9
+@export var spawn_position: Vector3
 
 var player_focused: String
 
@@ -11,8 +11,8 @@ func _ready() -> void:
 	set_physics_process(get_multiplayer_authority() == multiplayer.get_unique_id())
 
 	# TODO: Figure out a way to use this without having the location hard coded ahead of time.
-	if Globals.is_server:
-		position = Vector3(8, 1, -8)
+	if Globals.is_server and spawn_position:
+		position = spawn_position
 		rotation.y = -45.0
 
 

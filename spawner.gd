@@ -9,16 +9,15 @@ var done_once: bool = false
 
 @onready var things_spawning_node: Node = get_node("../Main/Things")
 
-# Called by players to ask Server to place a new chair.
-@rpc("any_peer", "call_remote") func place_chair() -> void:
+# Called by players to ask Server to place a held item.
+@rpc("any_peer", "call_remote")
+func place_thing(node_name: String, placement_position: Vector3 = Vector3.ZERO) -> void:
 	if Globals.is_server:
-		thing("Chair", 1)
-		# TODO: I wish I could locate items when I create them, but I cannot. No idea why.
-		# new_thing.position = Vector3(8, 1, -8)
-		# new_thing.rotation.y = -45.0
+		var parsed_node_name: Dictionary = Helpers.parse_thing_name(node_name)
+		thing(parsed_node_name.name, parsed_node_name.id, placement_position)
 
 
-func thing(thing_name: String, id: int) -> void:
+func thing(thing_name: String, id: int, spawn_position: Vector3 = Vector3.ZERO) -> void:
 	var thing_name_to_spawn: String = str(thing_name, "-", id)
 	var existing_thing: Node = things_spawning_node.get_node_or_null(thing_name_to_spawn)
 	if not existing_thing:
@@ -35,30 +34,38 @@ func thing(thing_name: String, id: int) -> void:
 			"Chair":
 				new_thing = Chair.instantiate()
 			_:
-				Helpers.log_print(str("Invalid thing to spawn name: ", thing_name), "red")
+				printerr("Invalid thing to spawn name: ", thing_name)
 				return
 		new_thing.name = str(thing_name_to_spawn)
+		if spawn_position:
+			new_thing.spawn_position = spawn_position
 		Helpers.log_print(str("spawning ", thing_name_to_spawn), "yellow")
 		things_spawning_node.add_child(new_thing)
 
 
-# This is ONLY called on the server, by the _process() function in network_websocket.gd
+# This is ONLY called on the server instance
+# This is called on EVERY update in the _process() function in network_websocket.gd
 func things() -> void:
-	# Balls
+	# Various Things that respawn if lost
+	# The way things get lost is physics yeets them out of the rooms
+	# and then they fall past the boundary where they are deleted
+	# by their own code
 	thing("Ball", 1)
 	thing("Ball", 2)
 	thing("Fish", 1)
 	thing("Floater", 1)
 
-	# Only spawn the chair once, even if it goes away
-	# so that it is not re-spawned when picked up
-	if not done_once:
-		done_once = true
-		thing("Chair", 1)
-
+	# Plants
 	#Spawn randomization bounds configured for 3
 	#Will generate somewhat reasonably up to 20
 	var plants_to_spawn: int = 3
 	while plants_to_spawn > 0:
 		thing("PlantA", plants_to_spawn)
 		plants_to_spawn -= 1
+
+	# Things to only spawn once, even if they go away
+	# Things that can be picked up will disappear when picked up,
+	# so they must not respawn then.
+	if not done_once:
+		done_once = true
+		thing("Chair", 1, Vector3(8, 1, -8))

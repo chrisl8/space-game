@@ -24,6 +24,8 @@ enum { TIPTOEING, WALKING, SPRINTING }  # Possible values for posture
 @export var player_spawn_point: Vector3 = Vector3(4, 1.5, -4)
 @export var bounds_distance: int = 100
 
+var Chair: Resource = preload("res://things/held/chair/chair.tscn")
+
 var is_grounded: bool  # Whether the player is considered to be touching a walkable slope
 
 var upper_slope_normal: Vector3  # Stores the lowest (steepest) slope normal
@@ -537,16 +539,26 @@ func _on_personal_space_body_exited(body: Node3D) -> void:
 			body.unselect(name)
 
 
-@rpc("call_local") func _spawn_me_a_chair() -> void:
+@rpc("call_local") func _spawn_me_a_thing(grabbed_item_name: String) -> void:
+	var parsed_thing_name: Dictionary = Helpers.parse_thing_name(grabbed_item_name)
+	Helpers.log_print(str("Grabbed ", parsed_thing_name.name, " ", parsed_thing_name.id), "tomato")
 	# Spawn a local version for myself
-	var Chair: Resource = preload("res://things/held/chair/chair.tscn")
-	held_item = Chair.instantiate()
+	# This is similar to the thing spawning code in spawner()
+	match parsed_thing_name.name:
+		"Chair":
+			held_item = Chair.instantiate()
+		_:
+			printerr(
+				"Invalid thing to spawn name into player held position: ", parsed_thing_name.name
+			)
+			return
+	held_item.name = grabbed_item_name
 	holding_things_joint.add_child(held_item)
 	holding_things_joint.node_a = NodePath("..")
 	holding_things_joint.node_b = held_item.get_path()
 
 
-@rpc("call_local") func _drop_chair() -> void:
+@rpc("call_local") func _drop_held_thing() -> void:
 	Helpers.log_print("Let go", "tomato")
 	holding_things_joint.node_a = NodePath("")
 	holding_things_joint.node_b = NodePath("")
@@ -555,14 +567,15 @@ func _on_personal_space_body_exited(body: Node3D) -> void:
 
 
 func _grab_or_drop() -> void:
-	# TODO: The server should TELL the player to do this after it got the signal and despawned the server side thing.
-
-	if selected_node and not held_item:
+	if selected_node and not held_item and selected_node.has_method("grab"):
 		# Tell the server version to delete itself
-		if selected_node.has_method("grab"):
-			selected_node.grab.rpc()
-		_spawn_me_a_chair.rpc()
+		var grabbed_item_name: String = selected_node.name
+		selected_node.grab.rpc()
+		# Spawn a held version in my hands
+		_spawn_me_a_thing.rpc(grabbed_item_name)
 	elif held_item:
 		# Let Go
-		_drop_chair.rpc()
-		Spawner.place_chair.rpc()
+		var held_item_name: String = held_item.name
+		var held_item_global_position: Vector3 = held_item.global_position
+		_drop_held_thing.rpc()
+		Spawner.place_thing.rpc(held_item_name, held_item_global_position)
