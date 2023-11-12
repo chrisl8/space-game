@@ -48,6 +48,18 @@ func save_server_player_save_data_to_file() -> void:
 	)
 
 
+func parse_thing_name(node_name: String) -> Dictionary:
+	var parsed_thing_name: Dictionary = {}
+	# Use the given Node name to determine the thing name and ID
+	var split_node_name: PackedStringArray = node_name.split("-")
+	if not split_node_name or split_node_name.size() != 2:
+		printerr("Invalid thing grabbed: ", node_name)
+		return parsed_thing_name
+	parsed_thing_name.name = split_node_name[0]
+	parsed_thing_name.id = int(split_node_name[1])
+	return parsed_thing_name
+
+
 func quit_gracefully() -> void:
 	# Quitting in Web just stops the game but leaves it stalled in the browser window, so it really should never happen.
 	if !Globals.shutdown_in_progress and OS.get_name() != "Web":
