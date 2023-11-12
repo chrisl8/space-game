@@ -51,18 +51,23 @@ contact_monitor = true
 linear_damp = 1.0
 angular_damp = 10.0
 script = ExtResource("1_5i51a")
+player = null
 accel = 60
 jump = 10
 air_control = 5
 turning_scale = 45.0
+mouse_sensitivity = null
 walkable_normal = 0.35
 height_adjust_speed = 0.5
 speed_limit = 4.0
 sprinting_speed_limit = 6.0
 danger_speed_limit = 100.0
 friction_divider = 4
+jump_throttle = null
 landing_assist = 1.5
 anti_slide_force = 4.0
+player_spawn_point = null
+bounds_distance = null
 
 [node name="Head" type="Node3D" parent="."]
 transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, 0, 0, 0)
