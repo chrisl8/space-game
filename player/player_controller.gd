@@ -539,9 +539,22 @@ func _on_personal_space_body_exited(body: Node3D) -> void:
 			body.unselect(name)
 
 
+# Spawning and dropping the "thing" must be an RPC because all "copies" of the player
+# must do this to sync the view of them holding/not holding the thing across players views
+# of this player.
+
 @rpc("call_local") func _spawn_me_a_thing(grabbed_item_name: String) -> void:
 	var parsed_thing_name: Dictionary = Helpers.parse_thing_name(grabbed_item_name)
-	Helpers.log_print(str("Grabbed ", parsed_thing_name.name, " ", parsed_thing_name.id), "tomato")
+	Helpers.log_print(
+		str(
+			parsed_thing_name.name,
+			" ",
+			parsed_thing_name.id,
+			" picked up by ",
+			multiplayer.get_remote_sender_id()
+		),
+		"Cornflowerblue"
+	)
 	# Spawn a local version for myself
 	# This is similar to the thing spawning code in spawner()
 	match parsed_thing_name.name:
@@ -559,7 +572,9 @@ func _on_personal_space_body_exited(body: Node3D) -> void:
 
 
 @rpc("call_local") func _drop_held_thing() -> void:
-	Helpers.log_print("Let go", "tomato")
+	Helpers.log_print(
+		str(held_item.name, " dropped by ", multiplayer.get_remote_sender_id()), "Cornflowerblue"
+	)
 	holding_things_joint.node_a = NodePath("")
 	holding_things_joint.node_b = NodePath("")
 	held_item.queue_free()
@@ -568,14 +583,17 @@ func _on_personal_space_body_exited(body: Node3D) -> void:
 
 func _grab_or_drop() -> void:
 	if selected_node and not held_item and selected_node.has_method("grab"):
+		Helpers.log_print(str("I picked up ", selected_node.name), "Cornflowerblue")
 		# Tell the server version to delete itself
 		var grabbed_item_name: String = selected_node.name
-		selected_node.grab.rpc()
+
+		selected_node.grab.rpc_id(1)
 		# Spawn a held version in my hands
 		_spawn_me_a_thing.rpc(grabbed_item_name)
 	elif held_item:
+		Helpers.log_print(str("I dropped ", held_item.name), "Cornflowerblue")
 		# Let Go
 		var held_item_name: String = held_item.name
 		var held_item_global_position: Vector3 = held_item.global_position
 		_drop_held_thing.rpc()
-		Spawner.place_thing.rpc(held_item_name, held_item_global_position)
+		Spawner.place_thing.rpc_id(1, held_item_name, held_item_global_position)

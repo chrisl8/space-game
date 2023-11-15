@@ -30,20 +30,29 @@ func _physics_process(_delta: float) -> void:
 func select(other_name: String) -> void:
 	if player_focused == "":
 		player_focused = other_name
-		Helpers.log_print(str(other_name, " is near ", get_parent().name), "saddlebrown")
+		Helpers.log_print(str(other_name, " is near me (", name, ")"), "saddlebrown")
 		$SpotLight3D.visible = true
 
 
 func unselect(other_name: String) -> void:
 	player_focused = ""
-	Helpers.log_print(str(other_name, " moved away from ", get_parent().name), "saddlebrown")
+	Helpers.log_print(str(other_name, " moved away from me (", name, ")"), "saddlebrown")
 	$SpotLight3D.visible = false
 
 
 @rpc("any_peer", "call_remote") func grab() -> void:
-	Helpers.log_print("Deleting myself now", "saddlebrown")
+	Helpers.log_print(
+		str(
+			"I (",
+			name,
+			") was grabbed by ",
+			multiplayer.get_remote_sender_id(),
+			" Deleting myself now"
+		),
+		"saddlebrown"
+	)
 	# Just delete myself if someone grabbed me
-	get_node(".").queue_free()
+	queue_free()
 
 
 func my_name() -> String:
