@@ -12,7 +12,7 @@ var done_once: bool = false
 # Called by players to ask Server to place a held item.
 @rpc("any_peer", "call_remote")
 func place_thing(node_name: String, placement_position: Vector3 = Vector3.ZERO) -> void:
-	if Globals.is_server:
+	if Globals.is_server:  # this should only be called TO the server, but just in case someone calls it incorrectly
 		var parsed_node_name: Dictionary = Helpers.parse_thing_name(node_name)
 		thing(parsed_node_name.name, parsed_node_name.id, placement_position)
 
