@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://cbs4s4ea2n473"]
+[gd_scene load_steps=11 format=3 uid="uid://cbs4s4ea2n473"]
 
 [ext_resource type="Script" path="res://spaceship/spaceship.gd" id="1_e1est"]
 [ext_resource type="PackedScene" uid="uid://bywfoekpnmak5" path="res://spaceship/room_02/room_02.tscn" id="2_xjddl"]
@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://viddguc81rrv" path="res://spaceship/room_03/room_03.tscn" id="6_u88hu"]
 [ext_resource type="PackedScene" uid="uid://1ct1i8smg5ki" path="res://spaceship/hallway_-1/Hallway_-1.tscn" id="7_4y50c"]
 [ext_resource type="PackedScene" uid="uid://cm2b8wui16i" path="res://posters/purple_running_runes/purple_running_runes_poster.tscn" id="8_qy7mq"]
+[ext_resource type="Script" path="res://addons/Mirror/Mirror/Mirror.gd" id="9_ruxjs"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_neoav"]
 size = Vector3(1, 1.01678, 1)
@@ -60,3 +61,57 @@ shape = SubResource("BoxShape3D_neoav")
 
 [node name="Window Poster 2" parent="." instance=ExtResource("8_qy7mq")]
 transform = Transform3D(-2, 0, -1.74846e-07, 0, 2, 0, 1.74846e-07, 0, -2, 25, 1, 9.691)
+
+[node name="Writing On The Wall" type="Label3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0.558425, 2.25442, -3.07948)
+pixel_size = 0.001
+text = "(The Doctor speaks to a man approaching them.)
+DOCTOR: Excuse me, have you seen Calufrax?
+(The man turns and runs.)
+DOCTOR: It's sort of planet, about fourteen thousand kilometres across, oblate spheroid.
+(He tries again with another couple who enter the plaza.)
+DOCTOR: Excuse me, I'm looking for a planet called Calufrax.
+(They run, too.)
+DOCTOR: It's about fourteen thousand kilometres across, it's an oblate spheroid and it's covered in ice. Excuse me, excuse me. Has anybody seen a planet called Calufrax? Funny, nobody's seen it.
+PRALIX [OC]: The life force is dead! The life force is dead!
+DOCTOR: Well, someone's around, anyway.
+PRALIX [OC]: We're all murderers! Murderers!
+ROMANA: It came from over there.
+DOCTOR: Over there? You stay here. I'll go and see.
+(Meanwhile, the Mentiads walk over the grassy hills towards the city.)
+
+[Pralix's bedroom]
+
+(Kimus and Mula are trying to hold Pralix down as he thrashes about on his bed.)
+BALATON: We're done for! They must be nearly here! They'll take him as they tried to take your father!
+MULA: We must hide him.
+KIMUS: We can't hide him forever.
+
+[Balaton's home]
+
+(The doorbell rings. It's the Doctor shaking a small brass bell.)
+DOCTOR: Excuse me, are you sure this planet's meant to be here?
+
+[Zanak city]
+
+(Out in the plaza, Romana is using the telescope to get a better look at the metal building up above them. A guard walks up to her and takes it away.)
+GUARD: This is a forbidden object.
+ROMANA: Why?
+GUARD: That is a forbidden question. You are a stranger?
+ROMANA: Well, yes.
+GUARD: Strangers are forbidden.
+ROMANA: I did come with the Doctor.
+GUARD: Who is
+ROMANA: Ah, now, don't tell me. Doctors are forbidden as well.
+GUARD: You are under arrest. Come.
+ROMANA: No, K9, you mustn't.
+GUARD: What did you say?
+ROMANA: What I said was, no K9, you mustn't (pause) fetch the Doctor.
+GUARD: You're mad. Move.
+(The guard takes Romana away. K9 trundles off.)"
+font_size = 25
+outline_size = 0
+
+[node name="Mirror" type="Node3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 9.49, 2.334, -2.28)
+script = ExtResource("9_ruxjs")

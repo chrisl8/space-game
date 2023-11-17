@@ -32,6 +32,10 @@ gdscript/warnings/integer_division=0
 
 window/size/always_on_top=true
 
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/Mirror/plugin.cfg")
+
 [filesystem]
 
 import/blender/enabled=false

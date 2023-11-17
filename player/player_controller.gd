@@ -72,6 +72,9 @@ func _ready() -> void:
 	# us to pass it to other players via MultiplayerSynchronizer although I also don't know if that is required?
 	if player == multiplayer.get_unique_id():
 		camera.make_current()
+		var spaceship_node: Node3D = get_node_or_null("/root/Main/Level/game_scene/Mirror")
+		if spaceship_node:
+			spaceship_node.MainCamPath = camera.get_path()
 
 	# Set capsule variables for use later
 	original_player_collider_height = player_collider.height
@@ -107,8 +110,13 @@ func _process(_delta: float) -> void:
 		and get_multiplayer_authority() == multiplayer.get_unique_id()
 	):
 		character_trimmed = true
-		get_node("./Head/HeadMesh").visible = false  # Only make invisible so that we can rotate it and sync to other players
-		get_node("./Character/Body").queue_free()
+		# Hide player head and body from player's own camera by setting their layer mask locally
+		var head_mesh_root: Node3D = head_mesh.get_node("root")
+		head_mesh_root.set_layer_mask_value(1, false)
+		head_mesh_root.set_layer_mask_value(2, true)  # Player camera is set to not display layer 2
+		var character_body_mesh_root: Node3D = character_meshes.get_node("Body/root")
+		character_body_mesh_root.set_layer_mask_value(1, false)
+		character_body_mesh_root.set_layer_mask_value(2, true)  # Player camera is set to not display layer 2
 
 	if (
 		get_multiplayer_authority() == multiplayer.get_unique_id()
