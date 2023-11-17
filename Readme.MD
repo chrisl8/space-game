@@ -59,6 +59,10 @@ My experience is that WebRTC connections silently stop sending data after 5 or 1
 
 # Development
 
+## Godot Version
+
+I am using Godot 4.2 at the moment, but whatever is listed in `projects.godot` is clearly the correct one.
+
 ## There Must Always be Two
 In the Godot Editor, you must set Debug-> Run Multiple Instances to at least two (2) or more.
 
