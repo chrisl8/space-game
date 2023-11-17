@@ -171,7 +171,7 @@ func player_save_data_filename() -> String:
 func _connected_to_server() -> void:
 	Helpers.log_print("I connected to the server!", "cyan")
 	if Globals.shutdown_server:
-		print("[color=blue]Sending SHUTDOWN_SERVER message.[/color]")
+		print_rich("[color=blue]Sending SHUTDOWN_SERVER message.[/color]")
 		send_data_to(1, Message.SHUTDOWN_SERVER, Globals.server_config["server_password"])
 		Helpers.quit_gracefully()
 		return
@@ -274,7 +274,7 @@ func send_data_to(id: int, msg_type: Message, data: String) -> void:
 
 	if parsed_message.type == Message.SHUTDOWN_SERVER:
 		if parsed_message.data == Globals.server_config["server_password"]:
-			print("[color=blue]Server shutdown requested from client ", sender_id, "[/color]")
+			print_rich("[color=blue]Server shutdown requested from client ", sender_id, "[/color]")
 			Helpers.quit_gracefully()
 		else:
 			printerr("Client ", sender_id, " attempted to shut down server with invalid password.")
