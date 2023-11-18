@@ -41,13 +41,13 @@ properties/3/replication_mode = 2
 
 [node name="plant_a" type="Node3D"]
 
-[node name="RigidBody3D" type="RigidBody3D" parent="." node_paths=PackedStringArray("Leafs")]
+[node name="RigidBody3D" type="RigidBody3D" parent="." node_paths=PackedStringArray("leafs")]
 collision_layer = 8
 collision_mask = 11
 linear_damp = 1.0
 angular_damp = 1.0
 script = ExtResource("1_1mur0")
-Leafs = [NodePath("Leaf4"), NodePath("Leaf9"), NodePath("Leaf10"), NodePath("Leaf11"), NodePath("Leaf5"), NodePath("Leaf6"), NodePath("Leaf7"), NodePath("Leaf8")]
+leafs = [NodePath("Leaf4"), NodePath("Leaf9"), NodePath("Leaf10"), NodePath("Leaf11"), NodePath("Leaf5"), NodePath("Leaf6"), NodePath("Leaf7"), NodePath("Leaf8")]
 
 [node name="PlantPot" type="MeshInstance3D" parent="RigidBody3D"]
 transform = Transform3D(3, 0, 0, 0, -1.31134e-07, 3, 0, -3, -1.31134e-07, 0, 0, 0)

@@ -27,7 +27,7 @@ properties/3/replication_mode = 2
 
 [node name="Floater" type="Node3D"]
 
-[node name="RigidBody3D" type="RigidBody3D" parent="." node_paths=PackedStringArray("Arms", "Eye")]
+[node name="RigidBody3D" type="RigidBody3D" parent="." node_paths=PackedStringArray("arms", "eye")]
 collision_layer = 8
 collision_mask = 11
 axis_lock_angular_x = true
@@ -37,8 +37,8 @@ gravity_scale = 0.0
 linear_damp = 1.0
 angular_damp = 1.0
 script = ExtResource("1_f5aan")
-Arms = [NodePath("Arm"), NodePath("Arm2"), NodePath("Arm3"), NodePath("Arm4")]
-Eye = NodePath("MeshInstance3D/OmniLight3D")
+arms = [NodePath("Arm"), NodePath("Arm2"), NodePath("Arm3"), NodePath("Arm4")]
+eye = NodePath("MeshInstance3D/OmniLight3D")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBody3D"]
 transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0.0498042, 0)

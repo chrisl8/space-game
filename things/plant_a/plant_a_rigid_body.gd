@@ -1,9 +1,10 @@
 extends RigidBody3D
 
 @export var bounds_distance: int = 100
-@export var Leafs: Array[Node3D] = []
-
+@export var leafs: Array[Node3D] = []
 @export var push_factor: float = 0.8
+
+var leaf_states: Array[bool] = []
 
 
 # Called when the node enters the scene tree for the first time.
@@ -17,44 +18,40 @@ func _ready() -> void:
 		)
 		rotation.y = RandomNumberGenerator.new().randf_range(-180.0, 180.0)
 
-	for Leaf in Leafs:
+	for leaf: Node3D in leafs:
 		if RandomNumberGenerator.new().randi_range(0, 1) == 1:
-			LeafStates.append(false)
+			leaf_states.append(false)
 		else:
-			LeafStates.append(true)
+			leaf_states.append(true)
 
 
 func _process(delta: float) -> void:
-	ProcessLeaves(delta)
+	process_leaves(delta)
 
 
-var LeafStates: Array[bool] = []
+func process_leaves(delta: float) -> void:
+	var count: int = 0
+	for leaf: Node3D in leafs:
+		var rot_val: float = 0.03 * RandomNumberGenerator.new().randf_range(0.5, 1.5)
+		if leaf_states[count]:
+			rot_val *= -1
 
-
-func ProcessLeaves(delta: float) -> void:
-	var Count: int = 0
-	for Leaf in Leafs:
-		var RotVal: float = 0.03 * RandomNumberGenerator.new().randf_range(0.5, 1.5)
-		if LeafStates[Count]:
-			RotVal *= -1
-
-		var Variance: float = 0.99
+		var variance: float = 0.99
 
 		if (
-			Leaf.get_rotation().z * 180 / 3.14 > 75
-			|| RandomNumberGenerator.new().randf_range(0, 1) > Variance
+			leaf.get_rotation().z * 180 / 3.14 > 75
+			|| RandomNumberGenerator.new().randf_range(0, 1) > variance
 		):
-			LeafStates[Count] = false
+			leaf_states[count] = false
 		if (
-			Leaf.get_rotation().z * 180 / 3.14 < 55
-			|| RandomNumberGenerator.new().randf_range(0, 1) > Variance
+			leaf.get_rotation().z * 180 / 3.14 < 55
+			|| RandomNumberGenerator.new().randf_range(0, 1) > variance
 		):
-			LeafStates[Count] = true
+			leaf_states[count] = true
 
-		Leaf.rotate_object_local(Vector3.FORWARD, delta * RotVal)
+		leaf.rotate_object_local(Vector3.FORWARD, delta * rot_val)
 
-		Count += 1
-	return
+		count += 1
 
 
 func _physics_process(_delta: float) -> void:
