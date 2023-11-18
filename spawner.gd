@@ -50,17 +50,22 @@ func things() -> void:
 	# The way things get lost is physics yeets them out of the rooms
 	# and then they fall past the boundary where they are deleted
 	# by their own code
-	thing("Ball", 1)
-	thing("Ball", 2)
-	thing("Fish", 1)
-	thing("Floater", 1)
+	thing("Ball", 1, Vector3(4, 1, -2))
+	thing("Ball", 2, Vector3(4, 1, -2))
+	thing("Fish", 1, Vector3(4, 1, -2))
+	thing("Floater", 1, Vector3(20.3, 2.4, -3.1))
 
 	# Plants
 	#Spawn randomization bounds configured for 3
 	#Will generate somewhat reasonably up to 20
 	var plants_to_spawn: int = 3
 	while plants_to_spawn > 0:
-		thing("PlantA", plants_to_spawn)
+		var plant_position: Vector3 = Vector3(
+			2.274 + RandomNumberGenerator.new().randf_range(-1.0, 1.0),
+			0.5,
+			-17.702 + RandomNumberGenerator.new().randf_range(-1.0, 1.0)
+		)
+		thing("PlantA", plants_to_spawn, plant_position)
 		plants_to_spawn -= 1
 
 	# Things to only spawn once, even if they go away

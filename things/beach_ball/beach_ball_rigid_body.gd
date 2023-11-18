@@ -1,14 +1,14 @@
 extends RigidBody3D
 
 @export var bounds_distance: int = 100
-
 @export var push_factor: float = 0.05
+@export var spawn_position: Vector3
 
 
 func _ready() -> void:
 	set_physics_process(Globals.is_server)
-	if Globals.is_server:
-		position = Vector3(4, 1, -2)
+	if Globals.is_server and spawn_position:
+		position = spawn_position
 
 	# Remember to turn on "Contact Monitor"
 	# and set the "Max Contacts Reported" to be more than 0

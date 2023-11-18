@@ -9,10 +9,9 @@ var player_focused: String
 
 func _ready() -> void:
 	set_physics_process(get_multiplayer_authority() == multiplayer.get_unique_id())
-
-	# TODO: Figure out a way to use this without having the location hard coded ahead of time.
 	if Globals.is_server and spawn_position:
 		position = spawn_position
+		# Only position, not rotation is currently passed in by the spawner
 		rotation.y = -45.0
 
 

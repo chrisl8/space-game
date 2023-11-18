@@ -3,6 +3,7 @@ extends RigidBody3D
 @export var bounds_distance: int = 100
 @export var leafs: Array[Node3D] = []
 @export var push_factor: float = 0.8
+@export var spawn_position: Vector3
 
 var leaf_states: Array[bool] = []
 
@@ -10,12 +11,9 @@ var leaf_states: Array[bool] = []
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	set_physics_process(Globals.is_server)
-	if Globals.is_server:
-		position = Vector3(
-			2.274 + RandomNumberGenerator.new().randf_range(-1.0, 1.0),
-			0.5,
-			-17.702 + RandomNumberGenerator.new().randf_range(-1.0, 1.0)
-		)
+	if Globals.is_server and spawn_position:
+		position = spawn_position
+		# Only position, not rotation is currently passed in by the spawner
 		rotation.y = RandomNumberGenerator.new().randf_range(-180.0, 180.0)
 
 	for leaf: Node3D in leafs:

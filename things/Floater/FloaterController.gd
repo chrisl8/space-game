@@ -3,6 +3,7 @@ extends RigidBody3D
 @export var bounds_distance: int = 100
 @export var arms: Array[Node3D] = []
 @export var eye: Node3D
+@export var spawn_position: Vector3
 
 var current_time: float = 0.0
 var force_applied: bool = false
@@ -12,12 +13,10 @@ var current_eye_rot_time: float = 0
 
 func _ready() -> void:
 	set_physics_process(get_multiplayer_authority() == multiplayer.get_unique_id())
-	set_process(true)
 
-	# TODO: Figure out a way to use this without having the location hard coded ahead of time.
-	if Globals.is_server:
-		position = Vector3(20.3, 2.4, -3.1)
-		rotation.y = -45.0
+	if Globals.is_server and spawn_position:
+		position = spawn_position
+
 	last_position = position
 
 

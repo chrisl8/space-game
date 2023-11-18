@@ -39,9 +39,7 @@ properties/3/path = NodePath(".:rotation")
 properties/3/spawn = false
 properties/3/replication_mode = 2
 
-[node name="plant_a" type="Node3D"]
-
-[node name="RigidBody3D" type="RigidBody3D" parent="." node_paths=PackedStringArray("leafs")]
+[node name="RigidBody3D" type="RigidBody3D" node_paths=PackedStringArray("leafs")]
 collision_layer = 8
 collision_mask = 11
 linear_damp = 1.0
@@ -49,49 +47,49 @@ angular_damp = 1.0
 script = ExtResource("1_1mur0")
 leafs = [NodePath("Leaf4"), NodePath("Leaf9"), NodePath("Leaf10"), NodePath("Leaf11"), NodePath("Leaf5"), NodePath("Leaf6"), NodePath("Leaf7"), NodePath("Leaf8")]
 
-[node name="PlantPot" type="MeshInstance3D" parent="RigidBody3D"]
+[node name="PlantPot" type="MeshInstance3D" parent="."]
 transform = Transform3D(3, 0, 0, 0, -1.31134e-07, 3, 0, -3, -1.31134e-07, 0, 0, 0)
 material_override = ExtResource("2_11jeu")
 mesh = SubResource("ArrayMesh_ar8pr")
 skeleton = NodePath("../..")
 
-[node name="PlantPotDirt" type="MeshInstance3D" parent="RigidBody3D/PlantPot"]
+[node name="PlantPotDirt" type="MeshInstance3D" parent="PlantPot"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.94419e-11, 0.000673552)
 material_override = ExtResource("4_mussq")
 mesh = ExtResource("4_hj7av")
 skeleton = NodePath("../../..")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(0.999998, 0, 0.00197222, 0, 1, 0, -0.00197222, 0, 0.999998, -0.0239495, 0.925291, -0.0141093)
 shape = SubResource("BoxShape3D_j5wk6")
 
-[node name="CollisionShape3D2" type="CollisionShape3D" parent="RigidBody3D"]
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.298094, 0)
 shape = SubResource("BoxShape3D_xjm5c")
 
-[node name="Leaf4" parent="RigidBody3D" instance=ExtResource("7_arjwr")]
+[node name="Leaf4" parent="." instance=ExtResource("7_arjwr")]
 transform = Transform3D(-0.0483805, 0.151224, 0.987315, 0.977037, 0.212516, 0.0153266, -0.207502, 0.965385, -0.158033, 0, 0.540578, 0)
 
-[node name="Leaf9" parent="RigidBody3D" instance=ExtResource("7_arjwr")]
+[node name="Leaf9" parent="." instance=ExtResource("7_arjwr")]
 transform = Transform3D(0.0857623, -0.190424, 0.977949, 0.942079, 0.33494, -0.0173976, -0.324242, 0.922796, 0.20812, 0, 0.540578, 0)
 
-[node name="Leaf10" parent="RigidBody3D" instance=ExtResource("7_arjwr")]
+[node name="Leaf10" parent="." instance=ExtResource("7_arjwr")]
 transform = Transform3D(0.325646, -0.925885, -0.191552, 0.942079, 0.334941, -0.0173976, 0.0802666, -0.174791, 0.981328, 0, 0.540578, 0)
 
-[node name="Leaf11" parent="RigidBody3D" instance=ExtResource("7_arjwr")]
+[node name="Leaf11" parent="." instance=ExtResource("7_arjwr")]
 transform = Transform3D(0.0219093, -0.11322, -0.993329, 0.942079, 0.334941, -0.0173976, 0.334676, -0.935412, 0.114, 0, 0.540578, 0)
 
-[node name="Leaf5" parent="RigidBody3D" instance=ExtResource("7_arjwr")]
+[node name="Leaf5" parent="." instance=ExtResource("7_arjwr")]
 transform = Transform3D(-0.210916, 0.954464, 0.210979, 0.977037, 0.212516, 0.0153266, -0.0302077, 0.209367, -0.97737, 0, 0.540578, 0)
 
-[node name="Leaf6" parent="RigidBody3D" instance=ExtResource("7_arjwr")]
+[node name="Leaf6" parent="." instance=ExtResource("7_arjwr")]
 transform = Transform3D(-0.0946694, 0.497431, -0.862322, 0.977037, 0.212516, 0.0153266, 0.190881, -0.84107, -0.506128, 0, 0.540578, 0)
 
-[node name="Leaf7" parent="RigidBody3D" instance=ExtResource("7_arjwr")]
+[node name="Leaf7" parent="." instance=ExtResource("7_arjwr")]
 transform = Transform3D(0.141487, -0.593337, -0.792422, 0.977038, 0.212516, 0.0153266, 0.159308, -0.776395, 0.60978, 0, 0.540578, 0)
 
-[node name="Leaf8" parent="RigidBody3D" instance=ExtResource("7_arjwr")]
+[node name="Leaf8" parent="." instance=ExtResource("7_arjwr")]
 transform = Transform3D(0.179535, -0.859873, 0.477897, 0.977037, 0.212516, 0.0153266, -0.11474, 0.464172, 0.878282, 0, 0.540578, 0)
 
-[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="RigidBody3D"]
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_14qyn")
