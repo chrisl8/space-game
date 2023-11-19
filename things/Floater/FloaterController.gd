@@ -8,6 +8,8 @@ var current_time: float = 0.0
 var force_applied: bool = false
 var last_position: Vector3
 var current_eye_rot_time: float = 0
+var current_arm_rot_time: float = 0
+var arm_movement_last_rotation: Vector3 = Vector3.ZERO
 
 @onready var eye: Node3D = $Eye
 
@@ -24,26 +26,19 @@ func _ready() -> void:
 	last_position = position
 
 
-func process_arms(_delta: float) -> void:
-	# This code works, but it results in insanely rapid movement of the arms,
-	# so I disabled it by not calling it in _process
-	var target_rotation: Vector3 = Vector3(0, 45, 0)
-	if position.distance_to(last_position) > 0.1 * _delta:
-		target_rotation = position - last_position
+func process_arms(delta: float) -> void:
+	current_arm_rot_time += delta
+	var target_rotation: Vector3 = arm_movement_last_rotation
+	if position.distance_to(last_position) > 0.1 * delta:
+		current_arm_rot_time = 0
+		target_rotation = position - last_position * 2
+	elif current_arm_rot_time > 1:
+		# Otherwise it moves back so rapidly we never see the changes
+		current_arm_rot_time = 0
+		target_rotation = Vector3.ZERO
 	for arm: Node3D in arms:
-		#arms still only run on server
-		arm.rotation = target_rotation
-		#Arm.rotation = Vector3(
-		#	RandomNumberGenerator.new().randf_range(-20, 20),
-		#	45,
-		#	RandomNumberGenerator.new().randf_range(-20, 20)
-		#)
-
-		#Arm.set_rotation(self.linear_velocity)
-		#print(self.velocity)
-		#Arm.set_rotation(self.velocity)
-
-	#Because I don't know how to read node attributes
+		arm.set_rotation_degrees(target_rotation)
+	arm_movement_last_rotation = target_rotation
 	last_position = position
 
 
@@ -84,20 +79,6 @@ func _physics_process(delta: float) -> void:
 
 
 func _process(delta: float) -> void:
-	# This code fights with the code in process_arms, need to use one or the other.
-	# for arm: Node3D in arms:
-	# 	#Arm rotation is applied internally, but does not affect rendered arm rotation
-	# 	arm.set_rotation_degrees(
-	# 		Vector3(
-	# 			RandomNumberGenerator.new().randf_range(-90, 90),
-	# 			RandomNumberGenerator.new().randf_range(-90, 90),
-	# 			RandomNumberGenerator.new().randf_range(-90, 90)
-	# 		)
-	# 	)
-	# 	#When logged will display set rotation, but rotation is not applied to game arm
-	# 	#Is it rotating some other arm? The prephab arm? Do rigibodies support sub objects being rotated?
-	# 	#print(Arm.rotation)
-
 	# Eye Movement
 	current_eye_rot_time += delta
 	if current_eye_rot_time > 3:
@@ -105,4 +86,5 @@ func _process(delta: float) -> void:
 		var eye_x: float = RandomNumberGenerator.new().randf_range(-30, 10)
 		var eye_y: float = RandomNumberGenerator.new().randf_range(-37, 37)
 		eye.rotation_degrees = Vector3(eye_x, eye_y, 0)
-	#process_arms(delta)
+
+	process_arms(delta)

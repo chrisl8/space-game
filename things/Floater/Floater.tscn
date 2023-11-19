@@ -42,16 +42,16 @@ transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0.0498042, 0)
 shape = SubResource("BoxShape3D_j5wk6")
 
 [node name="Arm" parent="." instance=ExtResource("3_4ij4q")]
-transform = Transform3D(1.06066, 0, 1.06066, 0, 1.5, 0, -1.06066, 0, 1.06066, 0.233, 0, 0.233)
+transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0.233, 0, 0.233)
 
 [node name="Arm2" parent="." instance=ExtResource("3_4ij4q")]
-transform = Transform3D(-1.06066, 0, 1.06066, 0, 1.5, 0, -1.06066, 0, -1.06066, 0.233, 0, -0.233)
+transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0.233, 0, -0.233)
 
 [node name="Arm3" parent="." instance=ExtResource("3_4ij4q")]
-transform = Transform3D(-1.06066, 0, -1.06066, 0, 1.5, 0, 1.06066, 0, -1.06066, -0.233, 0, -0.233)
+transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, -0.233, 0, -0.233)
 
 [node name="Arm4" parent="." instance=ExtResource("3_4ij4q")]
-transform = Transform3D(1.06066, 0, -1.06066, 0, 1.5, 0, 1.06066, 0, 1.06066, -0.233, 0, 0.233)
+transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, -0.233, 0, 0.233)
 
 [node name="SgFloater" type="MeshInstance3D" parent="."]
 transform = Transform3D(1.5, 0, 0, 0, -6.55671e-08, 1.5, 0, -1.5, -6.55671e-08, 0, 0, 0)
