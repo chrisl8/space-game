@@ -72,11 +72,11 @@ func _physics_process(delta: float) -> void:
 			speed_z *= -1
 
 		force_applied = true
-		#self.apply_impulse(Vector3(speed_x, speed_y, speed_z))
+		self.apply_impulse(Vector3(speed_x, speed_y, speed_z))
 	if current_time > 3.5:
 		current_time = 0
 		force_applied = false
-		#self.apply_torque(Vector3(0, RandomNumberGenerator.new().randf_range(-3.5, 3.5), 0))
+		self.apply_torque(Vector3(0, RandomNumberGenerator.new().randf_range(-3.5, 3.5), 0))
 
 
 func _process(delta: float) -> void:
