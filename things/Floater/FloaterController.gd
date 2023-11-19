@@ -21,6 +21,8 @@ func _ready() -> void:
 
 
 func process_arms(_delta: float) -> void:
+	# This code works, but it results in insanely rapid movement of the arms,
+	# so I disabled it by not calling it in _process
 	var target_rotation: Vector3 = Vector3(0, 45, 0)
 	if position.distance_to(last_position) > 0.1 * _delta:
 		target_rotation = position - last_position
@@ -70,28 +72,31 @@ func _physics_process(delta: float) -> void:
 			speed_z *= -1
 
 		force_applied = true
-		self.apply_impulse(Vector3(speed_x, speed_y, speed_z))
+		#self.apply_impulse(Vector3(speed_x, speed_y, speed_z))
 	if current_time > 3.5:
 		current_time = 0
 		force_applied = false
-		self.apply_torque(Vector3(0, RandomNumberGenerator.new().randf_range(-3.5, 3.5), 0))
-	# process_arms(delta)
+		#self.apply_torque(Vector3(0, RandomNumberGenerator.new().randf_range(-3.5, 3.5), 0))
 
 
 func _process(delta: float) -> void:
-	for arm: Node3D in arms:
-		#Arm rotation is applied internally, but does not affect rendered arm rotation
-		arm.set_rotation_degrees(
-			Vector3(
-				RandomNumberGenerator.new().randf_range(-90, 90),
-				RandomNumberGenerator.new().randf_range(-90, 90),
-				RandomNumberGenerator.new().randf_range(-90, 90)
-			)
-		)
-		#When logged will display set rotation, but rotation is not applied to game arm
-		#Is it rotating some other arm? The prephab arm? Do rigibodies support sub objects being rotated?
-		#print(Arm.rotation)
+	# This code fights with the code in process_arms, need to use one or the other.
+	# for arm: Node3D in arms:
+	# 	#Arm rotation is applied internally, but does not affect rendered arm rotation
+	# 	arm.set_rotation_degrees(
+	# 		Vector3(
+	# 			RandomNumberGenerator.new().randf_range(-90, 90),
+	# 			RandomNumberGenerator.new().randf_range(-90, 90),
+	# 			RandomNumberGenerator.new().randf_range(-90, 90)
+	# 		)
+	# 	)
+	# 	#When logged will display set rotation, but rotation is not applied to game arm
+	# 	#Is it rotating some other arm? The prephab arm? Do rigibodies support sub objects being rotated?
+	# 	#print(Arm.rotation)
 
+	# This works, but it looks weird. Needs tweaking/fixing
+	# I'm not sure if the issue is that it is rotating on the global instead of local
+	# or something else silly.
 	current_eye_rot_time += delta
 	if current_eye_rot_time > 3:
 		current_eye_rot_time = 0
@@ -100,4 +105,6 @@ func _process(delta: float) -> void:
 			RandomNumberGenerator.new().randf_range(-10, 10),
 			0
 		)
-	process_arms(delta)
+	# This code works, but it results in insanely rapid movement of the arms,
+	# so I disabled it.
+	#process_arms(delta)
