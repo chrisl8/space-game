@@ -25,7 +25,7 @@ properties/3/path = NodePath(".:rotation")
 properties/3/spawn = false
 properties/3/replication_mode = 2
 
-[node name="RigidBody3D" type="RigidBody3D" node_paths=PackedStringArray("arms", "eye")]
+[node name="RigidBody3D" type="RigidBody3D" node_paths=PackedStringArray("arms")]
 collision_layer = 8
 collision_mask = 11
 axis_lock_angular_x = true
@@ -36,7 +36,6 @@ linear_damp = 1.0
 angular_damp = 1.0
 script = ExtResource("1_f5aan")
 arms = [NodePath("Arm"), NodePath("Arm2"), NodePath("Arm3"), NodePath("Arm4")]
-eye = NodePath("MeshInstance3D")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0.0498042, 0)
@@ -60,13 +59,13 @@ material_override = ExtResource("3_pg8al")
 mesh = ExtResource("2_c7hbd")
 skeleton = NodePath("../..")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.120431, 0.0032927, 0.0342273, 0, 0.124668, -0.0119932, -0.0343853, 0.0115324, 0.119878, -5.96046e-08, 0.147224, 0.029952)
+[node name="Eye" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.125244, 0, 0, 0, 0.125244, 0, 0, 0, 0.125244, -5.96046e-08, 0.147224, 0.029952)
 material_override = ExtResource("5_o4qac")
 mesh = SubResource("SphereMesh_673oq")
 skeleton = NodePath("../..")
 
-[node name="OmniLight3D" type="OmniLight3D" parent="MeshInstance3D"]
+[node name="OmniLight3D" type="OmniLight3D" parent="Eye"]
 transform = Transform3D(7.98441, 0, 0, 0, 7.98441, 0, 0, 0, 7.98441, 4.75909e-07, 0.110087, 0.502916)
 omni_range = 0.0179239
 

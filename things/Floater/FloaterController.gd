@@ -2,7 +2,6 @@ extends RigidBody3D
 
 @export var bounds_distance: int = 100
 @export var arms: Array[Node3D] = []
-@export var eye: Node3D
 @export var spawn_position: Vector3
 
 var current_time: float = 0.0
@@ -10,9 +9,14 @@ var force_applied: bool = false
 var last_position: Vector3
 var current_eye_rot_time: float = 0
 
+@onready var eye: Node3D = $Eye
+
 
 func _ready() -> void:
 	set_physics_process(get_multiplayer_authority() == multiplayer.get_unique_id())
+
+	# No need to run these cosmetic movements on the server
+	set_process(!Globals.is_server)
 
 	if Globals.is_server and spawn_position:
 		position = spawn_position
@@ -94,17 +98,11 @@ func _process(delta: float) -> void:
 	# 	#Is it rotating some other arm? The prephab arm? Do rigibodies support sub objects being rotated?
 	# 	#print(Arm.rotation)
 
-	# This works, but it looks weird. Needs tweaking/fixing
-	# I'm not sure if the issue is that it is rotating on the global instead of local
-	# or something else silly.
+	# Eye Movement
 	current_eye_rot_time += delta
 	if current_eye_rot_time > 3:
 		current_eye_rot_time = 0
-		eye.rotation = Vector3(
-			RandomNumberGenerator.new().randf_range(-10, 10),
-			RandomNumberGenerator.new().randf_range(-10, 10),
-			0
-		)
-	# This code works, but it results in insanely rapid movement of the arms,
-	# so I disabled it.
+		var eye_x: float = RandomNumberGenerator.new().randf_range(-30, 10)
+		var eye_y: float = RandomNumberGenerator.new().randf_range(-37, 37)
+		eye.rotation_degrees = Vector3(eye_x, eye_y, 0)
 	#process_arms(delta)
