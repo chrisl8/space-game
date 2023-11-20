@@ -1,11 +1,13 @@
 [gd_scene load_steps=8 format=3 uid="uid://ceod3svxuy34r"]
 
-[ext_resource type="Material" uid="uid://dhg3oi0ha82e6" path="res://things/beach_ball/beach_ball_material.tres" id="1_7jvyi"]
-[ext_resource type="Script" path="res://things/beach_ball/beach_ball_rigid_body.gd" id="1_nuosv"]
-[ext_resource type="AudioStream" uid="uid://cj3o8fhjd1mb6" path="res://things/beach_ball/ball_bounce.ogg" id="3_84ceu"]
+[ext_resource type="Script" path="res://things/ball/ball.gd" id="1_gl64x"]
+[ext_resource type="AudioStream" uid="uid://cj3o8fhjd1mb6" path="res://things/ball/ball_bounce.ogg" id="2_876ia"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_ehc2e"]
 bounce = 0.1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_me68t"]
+albedo_color = Color(0.537255, 0.839216, 0.568627, 1)
 
 [sub_resource type="SphereMesh" id="SphereMesh_te1ch"]
 
@@ -35,17 +37,17 @@ max_contacts_reported = 1
 contact_monitor = true
 linear_damp = 1.0
 angular_damp = 1.0
-script = ExtResource("1_nuosv")
+script = ExtResource("1_gl64x")
 
 [node name="Mesh" type="MeshInstance3D" parent="."]
-material_override = ExtResource("1_7jvyi")
+material_override = SubResource("StandardMaterial3D_me68t")
 mesh = SubResource("SphereMesh_te1ch")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("SphereShape3D_1db3a")
 
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
-stream = ExtResource("3_84ceu")
+stream = ExtResource("2_876ia")
 volume_db = -18.581
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]

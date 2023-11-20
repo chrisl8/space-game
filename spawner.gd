@@ -1,7 +1,7 @@
 extends Node
 
 var Chair: Resource = preload("res://things/chair/chair.tscn")
-var BeachBall: Resource = preload("res://things/beach_ball/beach_ball.tscn")
+var Ball: Resource = preload("res://things/ball/ball.tscn")
 var Fish: Resource = preload("res://things/fish/fish.tscn")
 var Floater: Resource = preload("res://things/Floater/Floater.tscn")
 var PlantA: Resource = preload("res://things/plant_a/plant_a.tscn")
@@ -24,7 +24,7 @@ func thing(thing_name: String, id: int, spawn_position: Vector3 = Vector3.ZERO) 
 		var new_thing: Node
 		match thing_name:
 			"Ball":
-				new_thing = BeachBall.instantiate()
+				new_thing = Ball.instantiate()
 			"Fish":
 				new_thing = Fish.instantiate()
 			"Floater":

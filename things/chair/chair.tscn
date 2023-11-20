@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://dgumnayv4d40c"]
 
 [ext_resource type="PackedScene" uid="uid://xjt6gb3h6u7t" path="res://things/chair/chair.glb" id="1_awrcu"]
-[ext_resource type="Script" path="res://things/chair/chair_rigid_body.gd" id="1_xr6d1"]
+[ext_resource type="Script" path="res://things/chair/chair.gd" id="1_pp34w"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_j5wk6"]
 size = Vector3(0.39615, 0.938752, 0.389975)
@@ -26,7 +26,7 @@ collision_mask = 11
 mass = 10.0
 linear_damp = 1.0
 angular_damp = 1.0
-script = ExtResource("1_xr6d1")
+script = ExtResource("1_pp34w")
 
 [node name="Mesh" parent="." instance=ExtResource("1_awrcu")]
 transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -0.2, 0, 0.2)
