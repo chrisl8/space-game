@@ -550,17 +550,10 @@ func _on_personal_space_body_exited(body: Node3D) -> void:
 # Spawning and dropping the "thing" must be an RPC because all "copies" of the player
 # must do this to sync the view of them holding/not holding the thing across players views
 # of this player.
-
-@rpc("call_local") func _spawn_me_a_thing(grabbed_item_name: String) -> void:
+@rpc("any_peer", "call_local") func spawn_player_held_thing(grabbed_item_name: String) -> void:
 	var parsed_thing_name: Dictionary = Helpers.parse_thing_name(grabbed_item_name)
 	Helpers.log_print(
-		str(
-			parsed_thing_name.name,
-			" ",
-			parsed_thing_name.id,
-			" picked up by ",
-			multiplayer.get_remote_sender_id()
-		),
+		str(parsed_thing_name.name, " ", parsed_thing_name.id, " picked up by ", name),
 		"Cornflowerblue"
 	)
 	# Spawn a local version for myself
@@ -593,11 +586,7 @@ func _grab_or_drop() -> void:
 	if selected_node and not held_item and selected_node.has_method("grab"):
 		Helpers.log_print(str("I picked up ", selected_node.name), "Cornflowerblue")
 		# Tell the server version to delete itself
-		var grabbed_item_name: String = selected_node.name
-
 		selected_node.grab.rpc_id(1)
-		# Spawn a held version in my hands
-		_spawn_me_a_thing.rpc(grabbed_item_name)
 	elif held_item:
 		Helpers.log_print(str("I dropped ", held_item.name), "Cornflowerblue")
 		# Let Go
