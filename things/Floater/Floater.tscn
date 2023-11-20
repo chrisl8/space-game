@@ -25,7 +25,7 @@ properties/3/path = NodePath(".:rotation")
 properties/3/spawn = false
 properties/3/replication_mode = 2
 
-[node name="RigidBody3D" type="RigidBody3D" node_paths=PackedStringArray("arms")]
+[node name="RigidBody3D" type="RigidBody3D" node_paths=PackedStringArray("arms", "arm_particles")]
 collision_layer = 8
 collision_mask = 11
 axis_lock_angular_x = true
@@ -36,6 +36,7 @@ linear_damp = 1.0
 angular_damp = 1.0
 script = ExtResource("1_f5aan")
 arms = [NodePath("Arm"), NodePath("Arm2"), NodePath("Arm3"), NodePath("Arm4")]
+arm_particles = [NodePath("Arm/Rot Point/GPUParticles3D"), NodePath("Arm2/Rot Point/GPUParticles3D"), NodePath("Arm3/Rot Point/GPUParticles3D"), NodePath("Arm4/Rot Point/GPUParticles3D")]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0.0498042, 0)
@@ -71,3 +72,8 @@ omni_range = 0.0179239
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_14qyn")
+
+[editable path="Arm"]
+[editable path="Arm2"]
+[editable path="Arm3"]
+[editable path="Arm4"]

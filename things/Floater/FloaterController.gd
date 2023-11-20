@@ -2,6 +2,7 @@ extends RigidBody3D
 
 @export var bounds_distance: int = 100
 @export var arms: Array[Node3D] = []
+@export var arm_particles: Array[GPUParticles3D] = []
 @export var spawn_position: Vector3
 
 var current_time: float = 0.0
@@ -28,18 +29,27 @@ func _ready() -> void:
 
 func process_arms(delta: float) -> void:
 	current_arm_rot_time += delta
-	var target_rotation: Vector3 = arm_movement_last_rotation
-	if position.distance_to(last_position) > 0.1 * delta:
-		current_arm_rot_time = 0
-		target_rotation = position - last_position * 2
-	elif current_arm_rot_time > 1:
-		# Otherwise it moves back so rapidly we never see the changes
-		current_arm_rot_time = 0
-		target_rotation = Vector3.ZERO
-	for arm: Node3D in arms:
-		arm.set_rotation_degrees(target_rotation)
-	arm_movement_last_rotation = target_rotation
-	last_position = position
+	#var target_rotation: Vector3 = arm_movement_last_rotation
+	#if position.distance_to(last_position) > 0.01 * delta or true:
+	#	#current_arm_rot_time = 0
+	#	target_rotation = position - last_position
+	#elif current_arm_rot_time > 1:
+	#	# Otherwise it moves back so rapidly we never see the changes
+	#	#current_arm_rot_time = 0
+	#	target_rotation = Vector3.ZERO
+	#var LerpTarget = arm_movement_last_rotation.lerp(target_rotation,delta*99)
+	
+	#Rotation isn't applied if updated 'too frequently'. Every 0.2 seconds seems to be the most Godot can handle
+	#Maybe the _process function isn't meant for transform changes?
+	if current_arm_rot_time > 0.2:
+		current_arm_rot_time = 0.
+		for arm: Node3D in arms:
+			arm.look_at(last_position)
+		for particlesystem : GPUParticles3D in arm_particles:
+			particlesystem.amount_ratio = clamp(abs((last_position - position).length()*2),0.1,3)
+			particlesystem.speed_scale = clamp(abs((last_position - position).length()*2),1,3)
+		last_position = position
+	#arm_movement_last_rotation = LerpTarget
 
 
 func _physics_process(delta: float) -> void:
