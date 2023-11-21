@@ -18,6 +18,8 @@ var button_panel_labels: Dictionary = {
 	"Button15": {"id": 15},
 }
 
+@onready var things_spawning_node: Node = get_node("/root/Main/Things")
+
 
 func _ready() -> void:
 	set_screen_text("Enter Code\nto\nVEND\nstuff")
@@ -63,7 +65,35 @@ func _ready() -> void:
 ) -> void:
 	if Globals.is_server:
 		depress_button.rpc(button_node_name, button_node_path)
-		set_screen_text.rpc(str(button_index))
+		var thing_name_to_vend: String = ""
+		match button_index:
+			1:
+				thing_name_to_vend = "Fish"
+			2:
+				thing_name_to_vend = "Ball"
+			3:
+				thing_name_to_vend = "Chair"
+		if thing_name_to_vend != "":
+			# Item vending test
+			var thing_id_to_vend: int = 0
+			for thing: int in range(1, 10):
+				var existing_thing: Node = things_spawning_node.get_node_or_null(
+					str(thing_name_to_vend, "-", thing)
+				)
+				if !existing_thing:
+					thing_id_to_vend = thing
+					continue
+			if thing_id_to_vend > 0:
+				set_screen_text.rpc(str(thing_name_to_vend, "!"))
+				Helpers.log_print(str(thing_name_to_vend, "!"))
+				Spawner.place_thing(
+					str(thing_name_to_vend, "-", thing_id_to_vend), Vector3(18.0, 3.0, -13.7)
+				)
+			else:
+				set_screen_text.rpc(str("No ", thing_name_to_vend, "! =("))
+			# TODO: Clear screen after a delay.
+		else:
+			set_screen_text.rpc(str(button_index))
 
 
 func _on_static_body_3d_input_event(
