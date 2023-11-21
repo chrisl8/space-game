@@ -5,11 +5,13 @@ name: Static checks
 # But that pulls from the "released" version, not direct from git master,
 # and currently I want the lateast as only it supports all Godot 4.2 GDscript features
 
+# Also my command lines skips the addons folder which I don't want to format.
+
 on:
   push:
-    branches: [ "main", "using_godot_4.2" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "main", "using_godot_4.2" ]
+    branches: [ "main" ]
 
 jobs:
   static-checks:
