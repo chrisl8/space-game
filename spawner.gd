@@ -52,7 +52,6 @@ func things() -> void:
 	# by their own code
 	thing("Ball", 1, Vector3(4, 1, -2))
 	thing("Ball", 2, Vector3(4, 1, -2))
-	thing("Fish", 1, Vector3(4, 1, -2))
 	thing("Floater", 1, Vector3(20.3, 2.4, -3.1))
 
 	# Plants
