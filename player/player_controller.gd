@@ -70,8 +70,15 @@ func _ready() -> void:
 	# This means that you cannot rely on get_multiplayer_authority() yet!
 	# Otherwise, this might be the ONLY place that we need to use the player variable, although this also allows
 	# us to pass it to other players via MultiplayerSynchronizer although I also don't know if that is required?
+
+	set_process(player == multiplayer.get_unique_id())
+	set_physics_process(player == multiplayer.get_unique_id())
+	set_process_input(player == multiplayer.get_unique_id())
+
 	if player == multiplayer.get_unique_id():
+		# Set my own player camera to be current camera
 		camera.make_current()
+		# Set up the mirror camera for this player
 		var spaceship_node: Node3D = get_node_or_null("/root/Main/Level/game_scene/Mirror")
 		if spaceship_node:
 			spaceship_node.MainCamPath = camera.get_path()
