@@ -246,152 +246,154 @@ func get_new_spawn_position() -> Vector3:
 
 
 func _integrate_forces(state: PhysicsDirectBodyState3D) -> void:
-	# If we "fall out of the world" reset to spawn area
-	if (
-		abs(position.x) > bounds_distance
-		or abs(position.y) > bounds_distance
-		or abs(position.z) > bounds_distance
-	):
-		# Just in case player was shrinking or growing
-		$Collision.shape.height = original_player_collider_height
-		head.position.y = original_head_position_y
-		update_player_collider_height.rpc($Collision.shape.height)
+	# Apparently this isn't run "by" the physics process, so we have to exclude it from being run by everybody else
+	if player == multiplayer.get_unique_id():
+		# If we "fall out of the world" reset to spawn area
+		if (
+			abs(position.x) > bounds_distance
+			or abs(position.y) > bounds_distance
+			or abs(position.z) > bounds_distance
+		):
+			# Just in case player was shrinking or growing
+			$Collision.shape.height = original_player_collider_height
+			head.position.y = original_head_position_y
+			update_player_collider_height.rpc($Collision.shape.height)
 
-		# state.transform.origin appears to be the correct way
-		# to teleport a rigidbody in _integrate_forces()
-		state.transform.origin = get_new_spawn_position()
-		return
+			# state.transform.origin appears to be the correct way
+			# to teleport a rigidbody in _integrate_forces()
+			state.transform.origin = get_new_spawn_position()
+			return
 
-	upper_slope_normal = Vector3(0, 1, 0)
-	lower_slope_normal = Vector3(0, -1, 0)
-	contacted_body = null  # Rigidbody
-	# Velocity of the Rigidbody the player is contacting
-	var contacted_body_vel_at_point: Vector3 = Vector3()
+		upper_slope_normal = Vector3(0, 1, 0)
+		lower_slope_normal = Vector3(0, -1, 0)
+		contacted_body = null  # Rigidbody
+		# Velocity of the Rigidbody the player is contacting
+		var contacted_body_vel_at_point: Vector3 = Vector3()
 
-	### Grounding, slopes, & rigidbody contact point
-	# If the player body is contacting something
-	var shallowest_contact_index: int = -1
-	if state.get_contact_count() > 0:
-		# Iterate over the capsule contact points and get the steepest/shallowest slopes
-		for i in state.get_contact_count():
-			slope_normal = state.get_contact_local_normal(i)
-			if slope_normal.y < upper_slope_normal.y:  # Lower normal means steeper slope
-				upper_slope_normal = slope_normal
-			if slope_normal.y > lower_slope_normal.y:
-				lower_slope_normal = slope_normal
-				shallowest_contact_index = i
-		# If the steepest slope contacted is more shallow than the walkable_normal, the player is grounded
-		if is_walkable(upper_slope_normal.y):
-			is_grounded = true
-			# If the shallowest contact index exists, get the velocity of the body at the contacted point
-			if shallowest_contact_index >= 0:
-				var contact_position: Vector3 = state.get_contact_collider_position(0)  # coords of the contact point from center of contacted body
-				var collisions: Array[Node3D] = get_colliding_bodies()
-				if collisions.size() > 0 and collisions[0].get_class() == "RigidBody3D":
-					contacted_body = collisions[0]
-					contacted_body_vel_at_point = get_contacted_body_velocity_at_point(
-						contacted_body, contact_position
-					)
-					#print(contacted_body_vel_at_point)
-		# Else if the shallowest slope normal is not walkable, the player is not grounded
-		elif !is_walkable(lower_slope_normal.y):
-			is_grounded = false
+		### Grounding, slopes, & rigidbody contact point
+		# If the player body is contacting something
+		var shallowest_contact_index: int = -1
+		if state.get_contact_count() > 0:
+			# Iterate over the capsule contact points and get the steepest/shallowest slopes
+			for i in state.get_contact_count():
+				slope_normal = state.get_contact_local_normal(i)
+				if slope_normal.y < upper_slope_normal.y:  # Lower normal means steeper slope
+					upper_slope_normal = slope_normal
+				if slope_normal.y > lower_slope_normal.y:
+					lower_slope_normal = slope_normal
+					shallowest_contact_index = i
+			# If the steepest slope contacted is more shallow than the walkable_normal, the player is grounded
+			if is_walkable(upper_slope_normal.y):
+				is_grounded = true
+				# If the shallowest contact index exists, get the velocity of the body at the contacted point
+				if shallowest_contact_index >= 0:
+					var contact_position: Vector3 = state.get_contact_collider_position(0)  # coords of the contact point from center of contacted body
+					var collisions: Array[Node3D] = get_colliding_bodies()
+					if collisions.size() > 0 and collisions[0].get_class() == "RigidBody3D":
+						contacted_body = collisions[0]
+						contacted_body_vel_at_point = get_contacted_body_velocity_at_point(
+							contacted_body, contact_position
+						)
+						#print(contacted_body_vel_at_point)
+			# Else if the shallowest slope normal is not walkable, the player is not grounded
+			elif !is_walkable(lower_slope_normal.y):
+				is_grounded = false
 
-	### Jumping: Should allow the player to jump, and hold jump to jump again if they become grounded after a throttling period
-	var has_walkable_contact: bool = (
-		state.get_contact_count() > 0 and is_walkable(lower_slope_normal.y)
-	)  # Different from is_grounded
-	# If the player is trying to jump, the throttle expired, the player is grounded, and they're not already jumping, jump
-	# Check for is_jumping is because contact still exists at the beginning of a jump for more than one physics frame
-	if (
-		Input.is_action_pressed("jump")
-		and current_jump_throttle < 0
-		and has_walkable_contact
-		and not is_jumping
-	):
-		state.apply_central_impulse(Vector3(0, 1, 0) * jump)
-		is_jumping = true
-		is_landing = false
-	# Apply a downward force once if the player lets go of jump to assist with landing
-	if Input.is_action_just_released("jump"):
-		if is_landing == false:  # Only apply the landing assist force once
-			is_landing = true
-			if not has_walkable_contact:
-				state.apply_central_impulse(Vector3(0, -1, 0) * landing_assist)
-	# If the player becomes grounded, they're no longer considered to be jumping
-	if has_walkable_contact:
-		is_jumping = false
+		### Jumping: Should allow the player to jump, and hold jump to jump again if they become grounded after a throttling period
+		var has_walkable_contact: bool = (
+			state.get_contact_count() > 0 and is_walkable(lower_slope_normal.y)
+		)  # Different from is_grounded
+		# If the player is trying to jump, the throttle expired, the player is grounded, and they're not already jumping, jump
+		# Check for is_jumping is because contact still exists at the beginning of a jump for more than one physics frame
+		if (
+			Input.is_action_pressed("jump")
+			and current_jump_throttle < 0
+			and has_walkable_contact
+			and not is_jumping
+		):
+			state.apply_central_impulse(Vector3(0, 1, 0) * jump)
+			is_jumping = true
+			is_landing = false
+		# Apply a downward force once if the player lets go of jump to assist with landing
+		if Input.is_action_just_released("jump"):
+			if is_landing == false:  # Only apply the landing assist force once
+				is_landing = true
+				if not has_walkable_contact:
+					state.apply_central_impulse(Vector3(0, -1, 0) * landing_assist)
+		# If the player becomes grounded, they're no longer considered to be jumping
+		if has_walkable_contact:
+			is_jumping = false
 
-	### Movement
-	var move: Vector3 = relative_input()  # Get movement vector relative to player orientation
-	var move2: Vector2 = Vector2(move.x, move.z)  # Convert movement for Vector2 methods
+		### Movement
+		var move: Vector3 = relative_input()  # Get movement vector relative to player orientation
+		var move2: Vector2 = Vector2(move.x, move.z)  # Convert movement for Vector2 methods
 
-	# set_friction(move)
+		# set_friction(move)
 
-	# Get the player velocity, relative to the contacting body if there is one
-	var vel: Vector3 = Vector3()
-	if is_grounded:
-		## Keep vertical velocity if grounded. vel will be normalized below
-		## accounting for the y value, preventing faster movement on slopes.
-		vel = state.get_linear_velocity()
-		vel -= contacted_body_vel_at_point
-	else:
-		## Remove y value of velocity so only horizontal speed is checked in the air.
-		## Without this, the normalized vel causes the speed limit check to
-		## progressively limit the player from moving horizontally in relation to vertical speed.
-		vel = Vector3(state.get_linear_velocity().x, 0, state.get_linear_velocity().z)
-		vel -= Vector3(contacted_body_vel_at_point.x, 0, contacted_body_vel_at_point.z)
-	# Get a normalized player velocity
-	var nvel: Vector3 = vel.normalized()
-	var nvel2: Vector2 = Vector2(nvel.x, nvel.z)  # 2D velocity vector to use with angle_to and dot methods
+		# Get the player velocity, relative to the contacting body if there is one
+		var vel: Vector3 = Vector3()
+		if is_grounded:
+			## Keep vertical velocity if grounded. vel will be normalized below
+			## accounting for the y value, preventing faster movement on slopes.
+			vel = state.get_linear_velocity()
+			vel -= contacted_body_vel_at_point
+		else:
+			## Remove y value of velocity so only horizontal speed is checked in the air.
+			## Without this, the normalized vel causes the speed limit check to
+			## progressively limit the player from moving horizontally in relation to vertical speed.
+			vel = Vector3(state.get_linear_velocity().x, 0, state.get_linear_velocity().z)
+			vel -= Vector3(contacted_body_vel_at_point.x, 0, contacted_body_vel_at_point.z)
+		# Get a normalized player velocity
+		var nvel: Vector3 = vel.normalized()
+		var nvel2: Vector2 = Vector2(nvel.x, nvel.z)  # 2D velocity vector to use with angle_to and dot methods
 
-	## If below the speed limit, or above the limit but facing away from the velocity,
-	## move the player, adding an assisting force if turning. If above the speed limit,
-	## and facing the velocity, add a force perpendicular to the velocity and scale
-	## it based on where the player is moving in relation to the velocity.
-	##
-	# Get the angle between the velocity and current movement vector and convert it to degrees
-	var angle: float = nvel2.angle_to(move2)
-	var theta: float = rad_to_deg(angle)  # Angle between 2D look and velocity vectors
-	var is_below_speed_limit: bool = is_player_below_speed_limit(nvel, vel)
-	var is_below_danger_speed_limit: bool = is_player_below_danger_speed_limit(vel)
-	if is_below_danger_speed_limit:
-		var is_facing_velocity: bool = nvel2.dot(move2) >= 0
-		var direction: Vector3  # vector to be set 90 degrees either to the left or right of the velocity
-		var move_scale: float  # Scaled from 0 to 1. Used for both turn assist interpolation and vector scaling
-		# If the angle is to the right of the velocity
-		if theta > 0 and theta < 90:
-			direction = nvel.cross(transform.basis.y)  # Vecor 90 degrees to the right of velocity
-			move_scale = clamp(theta / turning_scale, 0, 1)  # Turn assist scale
-		# If the angle is to the left of the velocity
-		elif theta < 0 and theta > -90:
-			direction = transform.basis.y.cross(nvel)  # Vecor 90 degrees to the left of velocity
-			move_scale = clamp(-theta / turning_scale, 0, 1)
-		# Prevent continuous sliding down steep walkable slopes when the player isn't moving. Could be made better with
-		# debouncing because too high of a force also affects stopping distance noticeably when not on a slope.
-		if move == Vector3(0, 0, 0) and is_grounded:
-			move = -vel / (mass * 100 / anti_slide_force)
-			move_player(move, state)
-		# If not pushing into an unwalkable slope
-		elif upper_slope_normal.y > walkable_normal:
-			# If the player is below the speed limit, or is above it, but facing away from the velocity
-			if is_below_speed_limit or not is_facing_velocity:
-				# Interpolate between the movement and velocity vectors, scaling with turn assist sensitivity
-				move = move.lerp(direction, move_scale)
-			# If the player is above the speed limit, and looking within 90 degrees of the velocity
-			else:
-				move = direction  # Set the move vector 90 to the right or left of the velocity vector
-				move *= move_scale  # Scale the vector. 0 if looking at velocity, up to full magnitude if looking 90 degrees to the side.
-			move_player(move, state)
-		# If pushing into an unwalkable slope, move with unscaled movement vector. Prevents turn assist from pushing the player into the wall.
-		elif is_below_speed_limit:
-			move_player(move, state)
-		### End movement
+		## If below the speed limit, or above the limit but facing away from the velocity,
+		## move the player, adding an assisting force if turning. If above the speed limit,
+		## and facing the velocity, add a force perpendicular to the velocity and scale
+		## it based on where the player is moving in relation to the velocity.
+		##
+		# Get the angle between the velocity and current movement vector and convert it to degrees
+		var angle: float = nvel2.angle_to(move2)
+		var theta: float = rad_to_deg(angle)  # Angle between 2D look and velocity vectors
+		var is_below_speed_limit: bool = is_player_below_speed_limit(nvel, vel)
+		var is_below_danger_speed_limit: bool = is_player_below_danger_speed_limit(vel)
+		if is_below_danger_speed_limit:
+			var is_facing_velocity: bool = nvel2.dot(move2) >= 0
+			var direction: Vector3  # vector to be set 90 degrees either to the left or right of the velocity
+			var move_scale: float  # Scaled from 0 to 1. Used for both turn assist interpolation and vector scaling
+			# If the angle is to the right of the velocity
+			if theta > 0 and theta < 90:
+				direction = nvel.cross(transform.basis.y)  # Vecor 90 degrees to the right of velocity
+				move_scale = clamp(theta / turning_scale, 0, 1)  # Turn assist scale
+			# If the angle is to the left of the velocity
+			elif theta < 0 and theta > -90:
+				direction = transform.basis.y.cross(nvel)  # Vecor 90 degrees to the left of velocity
+				move_scale = clamp(-theta / turning_scale, 0, 1)
+			# Prevent continuous sliding down steep walkable slopes when the player isn't moving. Could be made better with
+			# debouncing because too high of a force also affects stopping distance noticeably when not on a slope.
+			if move == Vector3(0, 0, 0) and is_grounded:
+				move = -vel / (mass * 100 / anti_slide_force)
+				move_player(move, state)
+			# If not pushing into an unwalkable slope
+			elif upper_slope_normal.y > walkable_normal:
+				# If the player is below the speed limit, or is above it, but facing away from the velocity
+				if is_below_speed_limit or not is_facing_velocity:
+					# Interpolate between the movement and velocity vectors, scaling with turn assist sensitivity
+					move = move.lerp(direction, move_scale)
+				# If the player is above the speed limit, and looking within 90 degrees of the velocity
+				else:
+					move = direction  # Set the move vector 90 to the right or left of the velocity vector
+					move *= move_scale  # Scale the vector. 0 if looking at velocity, up to full magnitude if looking 90 degrees to the side.
+				move_player(move, state)
+			# If pushing into an unwalkable slope, move with unscaled movement vector. Prevents turn assist from pushing the player into the wall.
+			elif is_below_speed_limit:
+				move_player(move, state)
+			### End movement
 
-		# Shotgun jump test
-		if Input.is_action_just_pressed("fire"):
-			var dir: Vector3 = camera.global_transform.basis.z  # Opposite of look direction
-			state.apply_central_force(dir * 2700)
+			# Shotgun jump test
+			if Input.is_action_just_pressed("fire"):
+				var dir: Vector3 = camera.global_transform.basis.z  # Opposite of look direction
+				state.apply_central_force(dir * 2700)
 
 
 ### Functions ###
