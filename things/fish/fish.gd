@@ -15,8 +15,8 @@ func _physics_process(_delta: float) -> void:
 	# especially the delete part.
 	# Delete if it gets out of bounds
 	if abs(position.x) > bounds_distance:
-		get_parent().queue_free()
+		queue_free()
 	if abs(position.y) > bounds_distance:
-		get_parent().queue_free()
+		queue_free()
 	if abs(position.z) > bounds_distance:
-		get_parent().queue_free()
+		queue_free()

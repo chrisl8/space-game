@@ -19,11 +19,11 @@ func _physics_process(_delta: float) -> void:
 	# Delete if it gets out of bounds
 	# Whatever spawned it should track and respawn it if required
 	if abs(position.x) > bounds_distance:
-		get_parent().queue_free()
+		queue_free()
 	if abs(position.y) > bounds_distance:
-		get_parent().queue_free()
+		queue_free()
 	if abs(position.z) > bounds_distance:
-		get_parent().queue_free()
+		queue_free()
 
 
 func select(other_name: String) -> void:
