@@ -271,8 +271,10 @@ func _input(event: InputEvent) -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		var text_to_toast: String = Globals.release_mouse_text
+		var text_duration: float = 2.0
 		if Globals.is_server:
 			text_to_toast = Globals.how_to_end_game_text
+			text_duration = 10.0
 		elif Globals.click_mode:
 			# Prevent startup.gd _unhandled_input from responding to this click.
 			# _unhandled_input fires BEFORE Collider inputs
@@ -298,7 +300,7 @@ func _unhandled_input(event: InputEvent) -> void:
 				text_to_toast = "Oops, too fast, try again"
 		if text_to_toast != "":
 			# Set it to an empty string to signal that we don't want to display anything this time.
-			var toast: Toast = Toast.new(text_to_toast, 2.0)
+			var toast: Toast = Toast.new(text_to_toast, text_duration)
 			get_node("/root").add_child(toast)
 			toast.display()
 
