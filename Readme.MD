@@ -51,12 +51,6 @@ Native Windows and Linux clients can also connect to the web-based server and in
 
 There is currently no concept of "lobbies" or "shards." Everyone just joins the same server.
 
-#### WebRTC Experiments
-**You do not need to do this!**  
-At one time I tried WebRTC, and the WebRTC code still exists, but it is not currently functioning.  
-If someone wanted to try using WebRTC, you must make some code changes which are documented at the top of `startup.gd`.  
-My experience is that WebRTC connections silently stop sending data after 5 or 10 minutes, rendering players in a "read only" mode with no way to detect or fix it.
-
 # Development
 
 ## Godot Version

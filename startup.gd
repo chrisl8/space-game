@@ -10,16 +10,6 @@ var pop_up_template: Resource = preload("res://menus/pop_up/pop_up.tscn")
 
 var pop_up: Node
 
-# If you want to try running with WebRTC instead of WebSocket:
-# 1. Change this variable:
-var network_type: String = "WebSocket"  # WebSocket or WebRTC
-# 2. Change this line in project.godot:
-#Network="*res://network_websocket.gd"
-# to
-#Network="*res://network_webrtc.gd"
-# 4. Download the WebRTC Native Plugin from https://github.com/godotengine/webrtc-native
-#    and put the webrtc folder it generates in the root of this godot code folder.
-
 var server_config_file_name: String = "user://server_config.dat"
 
 # This has to be here so that it isn't removed after _init() runs,
@@ -135,9 +125,6 @@ func _ready() -> void:
 			"[color=green]Setting as server based being a debug build and run_server_in_debug and being first instance to run.[/color]"
 		)
 		Globals.is_server = true
-
-	if network_type == "WebRTC" and Globals.is_server:
-		SignalingServer.start()
 
 	if Globals.is_server:
 		# Load or generate server config data
