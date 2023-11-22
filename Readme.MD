@@ -11,7 +11,7 @@ All the source is MIT licensed, so you can use this to help make your own game a
 # Play the Game Now!
 
 Go to [https://voidshipephemeral.space](https://voidshipephemeral.space) where the game is up and running live now!  
-This is the preferred method.
+This is the preferred method to play the game.
 
 ## Binary Releases
 There is no reason to use these, as the website above is the primary target release and should always work, but if you want to download the game and run it locally, you can:
@@ -23,7 +23,7 @@ or
 You will probably have to tell Windows to allow the binary to run as it is unsigned.  
 Use Alt+F4 to close the game if it seems like it won't let you out.  
 
-These releases still connect to and depend on the server.
+These releases still connect to and depend on the server. You will be part of the same multiplayer game as web connected clients, but with the "benefit" of running a native client on your computer instead of running it inside of a browser.
 
 # About the Code
 
@@ -37,7 +37,7 @@ My primary target is HTML export, because I find that the best way to get new pe
 
 ## Character Controller
 The Character Controller is a Rigid Body controller where the user's input all causes physics inputs to the body. This is not the typical way that a character controller works in a 3D game, and has many draw-backs, however it works perfectly for my goals here.  
-All of the code for the Character Controller is based on the [FreeFlyFall's RigidBodyController](https://github.com/FreeFlyFall/RigidBodyController) although I have modified it a lot to fit my goals.
+The code for the Character Controller is based on the [FreeFlyFall's RigidBodyController](https://github.com/FreeFlyFall/RigidBodyController) although I have modified it a lot to fit my goals.
 
 ## Networking
 This code currently uses WebSocket communication to communicate between the clients and the server. I find this to be the most reliable form of networking for HTML clients at the moment.  
@@ -108,7 +108,7 @@ If you want to use `DebugDraw3D` yourself during debugging you will have to down
 ### OS Native and Web
 To deploy, you **must** build at least one OS Native build as the browser-based Web version cannot host the Server.
 
-So the Server will always be an OS Native build, either Windows or Linux should work.
+So the Server will always be an OS Native build, either Windows or Linux works fine.
 
 ### Server Location in Production
 The client has the server URL hard coded.
@@ -124,9 +124,11 @@ You must pass command line arguments to an instance when running it to force it 
 
 Use the arguments `--headless -- server` just like that. Be careful with the spacing, as there is a space between `--` and `server` to signify that `server` is being passed into the Godot code, not used by the Godot engine.
 
-The script I use is at `export-helpers\server\run-space-game-server.sh` which is always up-to-date, so use that as an example for running the server. Note that this one us used on Linux, so it has the `.x86_64` extension on the built file, but you can edit the name. The important part is the arguments after the binary name.
+The script I use is at `export-helpers\server\run-server.sh` which is always up-to-date, so use that as an example for running the server. Note that this one us used on Linux, so it has the `.x86_64` extension on the built file, but you can edit the name. The important part is the arguments after the binary name.
 
 If you are running the server on a host with a screen and video card, you do not have to include the `--headless` part. The server will display the camera in the primary scene, which can be interesting and assist with debugging client connections and network interactions.
+
+Note that there is absolutely no difference between a server and a client build or the code. Every client can in theory be a server. Only these command line arguments cause an instance to take on the server role.
 
 ### Nginx Setup
 You need to serve the files up via a web server to allow users to download and run the game in the browser.  
@@ -172,7 +174,7 @@ Note that the game itself, the server instance, must be running on the same serv
 Notice that it is serving a list of file types directly if you ask for them, so it will respond to requests for the files users need.  
 Then notice that if someone goes to /server/ it proxies their connection to the local 9090 port that your Godot game instance runs on.  
 
-The primary reason for proxying instead of just opening a direct port is that Nginx can now provide SSL for Websocket using the same certificate as the rest of the site.  
+The primary reason for proxying instead of just opening a direct port is that Nginx can now provide a secure SSL connection for Websocket using the same certificate as the rest of the site. Web browsers get cranky if you do not use SSL or if you try to connect to a non-SSL Websocket from an HTTPS loaded site. 
 
 Some other important ingredients are:
  - The Cross-Origin- headers that are required.
@@ -184,7 +186,15 @@ then I suggest using letsencrypt to then set up SSL certificates using certbot.
 https://www.nginx.com/blog/using-free-ssltls-certificates-from-lets-encrypt-with-nginx/
 
 ### My Deploy Script
-TODO: Copy it into this repo and explain it.
+
+Under `export-helpers` there is a script called `deploySpaceGame.sh` which I use for deploying this game to my server.  
+I've included it in this repository in case it may be useful as an example to others for how to run Godot to build games from a script and various tidbits on how to package up games for deploying on the web.  
+It is necessarily somewhat custom to my use case, but it does use command line parameters for all of the personal settings, so anyone can use it.  
+Run the script with no parameters, or look at the top of it to see how to use it.  
+
+There are also other scripts in folders under `export-helpers` that are used for various deploy tasks.  
+`run-server.sh` - Runs the server.
+`restart-server.sh` - Runs the game with a special command line that tells it to call the server and ask it to shut down gracefully.
 
 # Help
 
