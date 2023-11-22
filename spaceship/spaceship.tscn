@@ -63,7 +63,7 @@ shape = SubResource("BoxShape3D_neoav")
 transform = Transform3D(-2, 0, -1.74846e-07, 0, 2, 0, 1.74846e-07, 0, -2, 25, 1, 9.691)
 
 [node name="Writing On The Wall" type="Label3D" parent="."]
-transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0.558425, 2.25442, -3.07948)
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0.500121, 2.25442, -3.07948)
 pixel_size = 0.001
 text = "(The Doctor speaks to a man approaching them.)
 DOCTOR: Excuse me, have you seen Calufrax?
