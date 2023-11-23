@@ -1,0 +1,19 @@
+[gd_scene load_steps=2 format=3 uid="uid://didxmc716vc5a"]
+
+[ext_resource type="PackedScene" uid="uid://b3yt8en1ht1hx" path="res://spaceship/ramp_hallway/ramp_hallway.glb" id="1_v0cps"]
+
+[node name="Ramp Hallway" type="Node3D"]
+
+[node name="ramp_hallway" parent="." instance=ExtResource("1_v0cps")]
+
+[node name="SpotLight3D" type="SpotLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, -3.29918, 3.27217, -4.10396)
+spot_angle = 70.0
+
+[node name="SpotLight3D2" type="SpotLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, -3.4981, 6.28373, -15.7647)
+spot_angle = 70.0
+
+[node name="SpotLight3D3" type="SpotLight3D" parent="."]
+transform = Transform3D(4.37114e-08, -3.82137e-15, -1, -8.74228e-08, -1, 0, -1, 8.74228e-08, -4.37114e-08, -8.20989, 3.85206, -9.92791)
+spot_angle = 70.0

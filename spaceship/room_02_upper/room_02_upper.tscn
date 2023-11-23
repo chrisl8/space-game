@@ -1,0 +1,33 @@
+[gd_scene load_steps=4 format=3 uid="uid://bjn42p8ao5ivk"]
+
+[ext_resource type="PackedScene" uid="uid://3h80hkp7adm5" path="res://spaceship/room_02_upper/room_02_upper.glb" id="1_6pajr"]
+[ext_resource type="PackedScene" uid="uid://cm2b8wui16i" path="res://posters/purple_running_runes/purple_running_runes_poster.tscn" id="2_aksv4"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_pfkjw"]
+size = Vector3(5, 2, 0.75)
+
+[node name="Room 2 Upper" type="Node3D"]
+
+[node name="room_02_upper" parent="." instance=ExtResource("1_6pajr")]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 10, -3.5, -20)
+
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.0423, 3.19803, -5.23849)
+omni_range = 14.425
+omni_attenuation = 0.019915
+
+[node name="Window Poster 1" parent="." instance=ExtResource("2_aksv4")]
+transform = Transform3D(-2, 0, -1.74846e-07, 0, 2, 0, 1.74846e-07, 0, -2, 7, 2.5, 0)
+
+[node name="Window Poster 2" parent="." instance=ExtResource("2_aksv4")]
+transform = Transform3D(-2, 0, -1.74846e-07, 0, 2, 0, 1.74846e-07, 0, -2, 5, 2.5, 0)
+
+[node name="Window Poster 3" parent="." instance=ExtResource("2_aksv4")]
+transform = Transform3D(-2, 0, -1.74846e-07, 0, 2, 0, 1.74846e-07, 0, -2, 3, 2.5, 0)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.78723, 2.12723, 0)
+
+[node name="No Fall Out Window" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.216012, 0, 0.365388)
+shape = SubResource("BoxShape3D_pfkjw")

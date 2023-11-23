@@ -1,15 +1,20 @@
-[gd_scene load_steps=12 format=3 uid="uid://cbs4s4ea2n473"]
+[gd_scene load_steps=17 format=3 uid="uid://cbs4s4ea2n473"]
 
 [ext_resource type="Script" path="res://spaceship/spaceship.gd" id="1_e1est"]
 [ext_resource type="PackedScene" uid="uid://bywfoekpnmak5" path="res://spaceship/room_02/room_02.tscn" id="2_xjddl"]
 [ext_resource type="PackedScene" uid="uid://c4lai1ecyvqnu" path="res://posters/data_flow_poster/data_flow_poster.tscn" id="3_5q6ig"]
+[ext_resource type="PackedScene" uid="uid://c7pr28bafmjk2" path="res://spaceship/room_02_lower/room_02_lower.tscn" id="3_alk47"]
 [ext_resource type="PackedScene" uid="uid://bxqtac3ll8ncv" path="res://posters/controls/controls.tscn" id="4_fi60v"]
+[ext_resource type="PackedScene" uid="uid://bjn42p8ao5ivk" path="res://spaceship/room_02_upper/room_02_upper.tscn" id="4_i7g5g"]
 [ext_resource type="AudioStream" uid="uid://byj2ogpqy27gg" path="res://spaceship/intro_melo_01.ogg" id="4_wc1ck"]
 [ext_resource type="PackedScene" uid="uid://pdx1ljphijan" path="res://things/vending_machine/vending_machine.tscn" id="5_7bub8"]
+[ext_resource type="PackedScene" uid="uid://cam7dfgbq1at0" path="res://spaceship/room_ceiling/room_ceiling.tscn" id="5_a4ruq"]
 [ext_resource type="PackedScene" uid="uid://viddguc81rrv" path="res://spaceship/room_03/room_03.tscn" id="6_u88hu"]
 [ext_resource type="PackedScene" uid="uid://1ct1i8smg5ki" path="res://spaceship/hallway_-1/Hallway_-1.tscn" id="7_4y50c"]
 [ext_resource type="PackedScene" uid="uid://cm2b8wui16i" path="res://posters/purple_running_runes/purple_running_runes_poster.tscn" id="8_qy7mq"]
 [ext_resource type="Script" path="res://addons/Mirror/Mirror/Mirror.gd" id="9_ruxjs"]
+[ext_resource type="PackedScene" uid="uid://didxmc716vc5a" path="res://spaceship/ramp_hallway/ramp_hallway.tscn" id="11_hgoua"]
+[ext_resource type="PackedScene" uid="uid://4ntboh2ersm8" path="res://spaceship/door/door.tscn" id="12_6i0k6"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_neoav"]
 size = Vector3(1, 1.01678, 1)
@@ -22,8 +27,14 @@ script = ExtResource("1_e1est")
 [node name="Room 03" parent="." instance=ExtResource("2_xjddl")]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 20, 0, -20)
 
-[node name="Room 04" parent="." instance=ExtResource("2_xjddl")]
-transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 0, -20)
+[node name="Room 2 Lower" parent="." instance=ExtResource("3_alk47")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.5, 0)
+
+[node name="Room 2 Upper" parent="." instance=ExtResource("4_i7g5g")]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 10, 0, -20)
+
+[node name="Room Ceiling" parent="." instance=ExtResource("5_a4ruq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -10)
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(0.723762, 0, -0.690049, 0, 1, 0, 0.690049, 0, 0.723762, 1, 2, -1)
@@ -45,6 +56,15 @@ transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 19, 1.
 
 [node name="Room 05" parent="." instance=ExtResource("6_u88hu")]
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 30, 0, 0)
+
+[node name="Ramp Hallway" parent="." instance=ExtResource("11_hgoua")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.5, 0)
+
+[node name="Door" parent="." instance=ExtResource("12_6i0k6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.5, 0)
+
+[node name="Door2" parent="." instance=ExtResource("12_6i0k6")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 20, -3.5, 0)
 
 [node name="Hallway_-1" parent="." instance=ExtResource("7_4y50c")]
 transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 20, 0, -10)
