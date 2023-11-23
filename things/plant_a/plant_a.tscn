@@ -42,6 +42,7 @@ properties/3/replication_mode = 2
 [node name="RigidBody3D" type="RigidBody3D" node_paths=PackedStringArray("leafs")]
 collision_layer = 8
 collision_mask = 11
+mass = 0.1
 linear_damp = 1.0
 angular_damp = 1.0
 script = ExtResource("1_1mur0")

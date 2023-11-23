@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://cbs4s4ea2n473"]
+[gd_scene load_steps=13 format=3 uid="uid://cbs4s4ea2n473"]
 
 [ext_resource type="Script" path="res://spaceship/spaceship.gd" id="1_e1est"]
 [ext_resource type="PackedScene" uid="uid://bywfoekpnmak5" path="res://spaceship/room_02/room_02.tscn" id="2_xjddl"]
@@ -11,19 +11,15 @@
 [ext_resource type="PackedScene" uid="uid://cm2b8wui16i" path="res://posters/purple_running_runes/purple_running_runes_poster.tscn" id="8_qy7mq"]
 [ext_resource type="Script" path="res://addons/Mirror/Mirror/Mirror.gd" id="9_ruxjs"]
 
+[sub_resource type="NavigationMesh" id="NavigationMesh_as2ix"]
+vertices = PackedVector3Array(0.5, 4.5, -6.75, 10.5, 4.5, -6.75, 10.5, 4.5, -8.75, 10.5, 4.5, -8.75, 12.75, 4.5, -9, 12.75, 4.5, -19.5, 10.5, 4.5, -8.75, 12.75, 4.5, -19.5, 0.5, 4.5, -19.5, 0.5, 4.5, -6.75, 21.5, 4.5, -9, 21.75, 4.5, -9.5, 19.5, 4.5, -9.75, 12.75, 4.5, -9, 19.5, 4.5, -9.75, 19.5, 4.5, -19.5, 12.75, 4.5, -19.5, 12.75, 4.5, -9, 10, 1, -14.75, 10, 1, -15.25, 9.25, 1, -15.25, 8.75, 1, -14, 1.5, 1, -18.5, 1.5, 1, -11.5, 4, 1, -11.5, 8.75, 1, -16, 8.75, 1, -18.5, 4, 1, -11.5, 5.25, 1, -10.25, 6, 1, -11.5, 8.75, 1, -14, 9.25, 1, -15.25, 8.75, 1, -16, 4, 1, -11.5, 6, 1, -11.5, 8, 1, -11.5, 8.75, 1, -12.25, 8.75, 1, -14, 6, 1, -11.5, 14.5, 1, -11, 14.75, 1, -10, 15.25, 1, -10, 16, 1, -11.25, 17.75, 1, -14.75, 18.5, 1, -15, 18.5, 1, -18.5, 11.25, 1, -15.75, 10, 1, -15.25, 10, 1, -14.75, 11.5, 1, -14, 11.25, 1, -18.5, 11.25, 1, -15.75, 11.5, 1, -14, 14.5, 1, -11, 17.75, 1, -14.75, 18.5, 1, -18.5, 16, 1, -11.25, 18.5, 1, -11.25, 17.75, 1, -12.25, 11.5, 1, -14, 11.5, 1, -12, 12.25, 1, -11.25, 14.5, 1, -11, 14.5, 1, -11, 16, 1, -11.25, 17.75, 1, -12.25, 17.75, 1, -14.75, 15.25, 1, -10, 14.75, 1, -10, 14.25, 1, -8.75, 16, 1, -8.5, 11.25, 1, -5.75, 10.25, 1, -4.75, 11.5, 1, -4, 16, 1, -8.5, 11.5, 1, -4, 11.5, 1, -1, 24.5, 1, -1, 28.5, 1, -8.5, 14.25, 1, -8.75, 11.25, 1, -8.75, 11.25, 1, -5.75, 11.5, 1, -4, 16, 1, -8.5, 25, 1, -0.5, 24.75, 1, 9, 25.5, 1, 9, 25.25, 1, -0.5, 24.5, 1, -1, 25, 1, -0.5, 25.25, 1, -0.5, 26, 1, -1.25, 28.5, 1, -8.5, 26, 1, -1.25, 28.5, 1, -1.25, 28.5, 1, -8.5, 5.75, 1, -8.75, 4.75, 1, -9.75, 4.25, 1, -8.75, 8.5, 1, -4, 9.75, 1, -5, 8.5, 1, -6, 8.5, 1, -6, 8.5, 1, -8, 7.75, 1, -8.75, 5.75, 1, -8.75, 1.5, 1, -1.5, 8.5, 1, -1.5, 8.5, 1, -4, 4.25, 1, -8.75, 1.5, 1, -8.75, 8.5, 1, -6, 5.75, 1, -8.75, 4.25, 1, -8.75, 8.5, 1, -4, 28.75, 4.75, -8.5, 29.5, 4.5, -8.5, 29.5, 4.5, -9.5, 21.75, 4.5, -9.5, 21.5, 4.5, -9, 24, 4.5, -8.75, 23.75, 5.5, -7.75, 21.75, 6, -3.25, 28.75, 6, -3.25, 28.75, 4.75, -8.5, 23.25, 6, -6.625, 28.75, 6, -7.1875, 23.75, 5.5, -7.75, 21.75, 5.5, -7.75, 21.75, 6, -3.25, 23.25, 6, -6.625, 21.75, 6, -6.625, 28.75, 4.75, -8.5, 24, 4.5, -8.75, 23.75, 5.5, -7.75, 21.75, 6, -3.25, 21.75, 5.5, -7.75, 11.5, 6, -6.75, 11.5, 6, -3.25, 21.75, 6, -6.625, 10.75, 4.5, -1, 10.5, 4.5, -6.75, 0.5, 4.5, -6.75, 0.5, 4.5, -0.5, 29.5, 4.5, -0.25, 29.5, 4.5, -1.25, 10.75, 4.5, -1, 0.5, 4.5, -0.5, 24, 3.75, 9, 25.25, 4.25, 9.5, 25.25, 4, 0.75, 24, 3.75, 0.75)
+polygons = [PackedInt32Array(2, 1, 0), PackedInt32Array(5, 4, 3), PackedInt32Array(9, 8, 6), PackedInt32Array(6, 8, 7), PackedInt32Array(11, 10, 12), PackedInt32Array(12, 10, 13), PackedInt32Array(15, 14, 16), PackedInt32Array(16, 14, 17), PackedInt32Array(19, 18, 20), PackedInt32Array(20, 18, 21), PackedInt32Array(23, 22, 24), PackedInt32Array(24, 22, 25), PackedInt32Array(25, 22, 26), PackedInt32Array(29, 28, 27), PackedInt32Array(31, 30, 32), PackedInt32Array(32, 30, 34), PackedInt32Array(32, 34, 33), PackedInt32Array(36, 35, 37), PackedInt32Array(37, 35, 38), PackedInt32Array(40, 39, 41), PackedInt32Array(41, 39, 42), PackedInt32Array(45, 44, 43), PackedInt32Array(47, 46, 48), PackedInt32Array(48, 46, 49), PackedInt32Array(51, 50, 52), PackedInt32Array(52, 50, 53), PackedInt32Array(53, 50, 54), PackedInt32Array(54, 50, 55), PackedInt32Array(58, 57, 56), PackedInt32Array(60, 59, 61), PackedInt32Array(61, 59, 62), PackedInt32Array(64, 63, 65), PackedInt32Array(65, 63, 66), PackedInt32Array(68, 67, 69), PackedInt32Array(69, 67, 70), PackedInt32Array(73, 72, 71), PackedInt32Array(75, 74, 76), PackedInt32Array(76, 74, 77), PackedInt32Array(77, 74, 78), PackedInt32Array(79, 83, 80), PackedInt32Array(80, 83, 81), PackedInt32Array(81, 83, 82), PackedInt32Array(87, 86, 84), PackedInt32Array(84, 86, 85), PackedInt32Array(89, 88, 90), PackedInt32Array(90, 88, 91), PackedInt32Array(91, 88, 92), PackedInt32Array(95, 94, 93), PackedInt32Array(98, 97, 96), PackedInt32Array(101, 100, 99), PackedInt32Array(103, 102, 104), PackedInt32Array(104, 102, 105), PackedInt32Array(107, 106, 108), PackedInt32Array(108, 106, 109), PackedInt32Array(109, 106, 110), PackedInt32Array(112, 111, 113), PackedInt32Array(113, 111, 114), PackedInt32Array(116, 115, 117), PackedInt32Array(117, 115, 120), PackedInt32Array(117, 120, 118), PackedInt32Array(118, 120, 119), PackedInt32Array(124, 126, 121), PackedInt32Array(121, 126, 125), PackedInt32Array(125, 126, 123), PackedInt32Array(125, 123, 122), PackedInt32Array(127, 130, 128), PackedInt32Array(128, 130, 131), PackedInt32Array(131, 130, 129), PackedInt32Array(132, 134, 133), PackedInt32Array(136, 139, 137), PackedInt32Array(137, 139, 135), PackedInt32Array(137, 135, 138), PackedInt32Array(141, 140, 142), PackedInt32Array(142, 140, 143), PackedInt32Array(145, 144, 146), PackedInt32Array(146, 144, 147), PackedInt32Array(151, 150, 148), PackedInt32Array(148, 150, 149)]
+
 [sub_resource type="BoxShape3D" id="BoxShape3D_neoav"]
 size = Vector3(1, 1.01678, 1)
 
 [node name="Spaceship" type="Node3D"]
 script = ExtResource("1_e1est")
-
-[node name="Room 01" parent="." instance=ExtResource("2_xjddl")]
-
-[node name="Room 03" parent="." instance=ExtResource("2_xjddl")]
-transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 20, 0, -20)
-
-[node name="Room 04" parent="." instance=ExtResource("2_xjddl")]
-transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 0, -20)
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(0.723762, 0, -0.690049, 0, 1, 0, 0.690049, 0, 0.723762, 1, 2, -1)
@@ -39,29 +35,6 @@ transform = Transform3D(3.04809, 0, 0, 0, 1.82801, 0, 0, 0, 2, 2.29905, 2.05461,
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("4_wc1ck")
 volume_db = -7.381
-
-[node name="vending_machine" parent="." instance=ExtResource("5_7bub8")]
-transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 19, 1.75, -13.5)
-
-[node name="Room 05" parent="." instance=ExtResource("6_u88hu")]
-transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 30, 0, 0)
-
-[node name="Hallway_-1" parent="." instance=ExtResource("7_4y50c")]
-transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 20, 0, -10)
-
-[node name="OmniLight3D" type="OmniLight3D" parent="Hallway_-1"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18.8825, 1.71338, -5.01311)
-omni_range = 2.908
-omni_attenuation = 2.82842
-
-[node name="Window Poster 1" parent="." instance=ExtResource("8_qy7mq")]
-transform = Transform3D(-2, 0, -1.74846e-07, 0, 2, 0, 1.74846e-07, 0, -2, 25, 3, 9.691)
-
-[node name="StaticBody3D" type="StaticBody3D" parent="Window Poster 1"]
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Window Poster 1/StaticBody3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, -0.5)
-shape = SubResource("BoxShape3D_neoav")
 
 [node name="Window Poster 2" parent="." instance=ExtResource("8_qy7mq")]
 transform = Transform3D(-2, 0, -1.74846e-07, 0, 2, 0, 1.74846e-07, 0, -2, 25, 1, 9.691)
@@ -120,3 +93,37 @@ outline_size = 0
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 9.49, 2.334, -2.28)
 script = ExtResource("9_ruxjs")
 ResolutionPerUnit = 1000
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
+navigation_mesh = SubResource("NavigationMesh_as2ix")
+
+[node name="Room 01" parent="NavigationRegion3D" instance=ExtResource("2_xjddl")]
+
+[node name="Room 03" parent="NavigationRegion3D" instance=ExtResource("2_xjddl")]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 20, 0, -20)
+
+[node name="Room 04" parent="NavigationRegion3D" instance=ExtResource("2_xjddl")]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 0, -20)
+
+[node name="vending_machine" parent="NavigationRegion3D" instance=ExtResource("5_7bub8")]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 19, 1.75, -13.5)
+
+[node name="Room 05" parent="NavigationRegion3D" instance=ExtResource("6_u88hu")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 30, 0, 0)
+
+[node name="Hallway_-1" parent="NavigationRegion3D" instance=ExtResource("7_4y50c")]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 20, 0, -10)
+
+[node name="OmniLight3D" type="OmniLight3D" parent="NavigationRegion3D/Hallway_-1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18.8825, 1.71338, -5.01311)
+omni_range = 2.908
+omni_attenuation = 2.82842
+
+[node name="Window Poster 1" parent="NavigationRegion3D" instance=ExtResource("8_qy7mq")]
+transform = Transform3D(-2, 0, -1.74846e-07, 0, 2, 0, 1.74846e-07, 0, -2, 25, 3, 9.691)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="NavigationRegion3D/Window Poster 1"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/Window Poster 1/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, -0.5)
+shape = SubResource("BoxShape3D_neoav")

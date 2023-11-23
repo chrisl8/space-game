@@ -35,9 +35,25 @@ window/size/always_on_top=true
 
 enabled=PackedStringArray("res://addons/Mirror/plugin.cfg")
 
+[file_customization]
+
+folder_colors={
+"res://player/": "blue",
+"res://things/": "teal",
+"res://things/Floater/": "teal",
+"res://things/Transport Bot/": "teal",
+"res://things/ball/": "teal",
+"res://things/chair/": "teal",
+"res://things/fish/": "teal",
+"res://things/held/": "teal",
+"res://things/plant_a/": "teal",
+"res://things/vending_machine/": "teal"
+}
+
 [filesystem]
 
 import/blender/enabled=false
+import/fbx/enabled=false
 
 [input]
 

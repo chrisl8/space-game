@@ -5,6 +5,7 @@ var Ball: Resource = preload("res://things/ball/ball.tscn")
 var Fish: Resource = preload("res://things/fish/fish.tscn")
 var Floater: Resource = preload("res://things/Floater/Floater.tscn")
 var PlantA: Resource = preload("res://things/plant_a/plant_a.tscn")
+var TransportBot: Resource = preload("res://things/Transport Bot/Transport Bot.tscn")
 var done_once: bool = false
 
 @onready var things_spawning_node: Node = get_node("../Main/Things")
@@ -33,6 +34,8 @@ func thing(thing_name: String, id: int, spawn_position: Vector3 = Vector3.ZERO) 
 				new_thing = PlantA.instantiate()
 			"Chair":
 				new_thing = Chair.instantiate()
+			"Transport Bot":
+				new_thing = TransportBot.instantiate()
 			_:
 				printerr("Invalid thing to spawn name: ", thing_name)
 				return
@@ -66,6 +69,17 @@ func things() -> void:
 		)
 		thing("PlantA", plants_to_spawn, plant_position)
 		plants_to_spawn -= 1
+		
+	# Transport bots
+	var TransportBotsToSpawn: int = 1
+	while TransportBotsToSpawn > 0:
+		var BotPosition: Vector3 = Vector3(
+			17 + RandomNumberGenerator.new().randf_range(-1.0, 1.0),
+			1,
+			-17 + RandomNumberGenerator.new().randf_range(-1.0, 1.0)
+		)
+		thing("Transport Bot", TransportBotsToSpawn, BotPosition)
+		TransportBotsToSpawn -= 1
 
 	# Things to only spawn once, even if they go away
 	# Things that can be picked up will disappear when picked up,

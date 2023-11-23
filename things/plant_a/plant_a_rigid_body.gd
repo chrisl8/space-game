@@ -7,7 +7,6 @@ extends RigidBody3D
 
 var leaf_states: Array[bool] = []
 
-
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	set_physics_process(Globals.is_server)
