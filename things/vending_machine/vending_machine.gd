@@ -87,7 +87,7 @@ func _ready() -> void:
 				set_screen_text.rpc(str(thing_name_to_vend, "!"))
 				Helpers.log_print(str(thing_name_to_vend, "!"))
 				Spawner.place_thing(
-					str(thing_name_to_vend, "-", thing_id_to_vend), Vector3(18.0, 3.0, -13.7)
+					str(thing_name_to_vend, "-", thing_id_to_vend), Vector3(17.5, 3.0, -13.7)
 				)
 			else:
 				set_screen_text.rpc(str("No ", thing_name_to_vend, "! =("))
