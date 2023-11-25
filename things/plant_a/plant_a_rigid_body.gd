@@ -20,7 +20,13 @@ func _ready() -> void:
 			leaf_states.append(false)
 		else:
 			leaf_states.append(true)
-
+	if(Globals.is_server):
+		while(Globals.PottedPlants.find(null) != -1):
+			var IndexToRemoveAt = Globals.PottedPlants.find(null)
+			Globals.PottedPlants.remove_at(IndexToRemoveAt)
+			Globals.TakenPlanets.remove_at(IndexToRemoveAt)
+		Globals.PottedPlants.append(self)
+			
 
 func _process(delta: float) -> void:
 	process_leaves(delta)

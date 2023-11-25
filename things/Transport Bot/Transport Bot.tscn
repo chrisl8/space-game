@@ -6,78 +6,76 @@
 [ext_resource type="PackedScene" uid="uid://dvg38d1r2n1i6" path="res://things/Transport Bot/Leg.tscn" id="2_r7nb8"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_idagn"]
-size = Vector3(0.580164, 0.425118, 0.587728)
+size = Vector3(0.865805, 0.628313, 0.857992)
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_tu2hn"]
-properties/0/path = NodePath(".:position")
+properties/0/path = NodePath(".:spawn_position")
 properties/0/spawn = true
 properties/0/replication_mode = 0
-properties/1/path = NodePath(".:rotation")
+properties/1/path = NodePath(".:position")
 properties/1/spawn = true
-properties/1/replication_mode = 0
-properties/2/path = NodePath("NavigationAgent3D/RigidBody3D:linear_velocity")
+properties/1/replication_mode = 2
+properties/2/path = NodePath(".:rotation")
 properties/2/spawn = true
 properties/2/replication_mode = 2
-properties/3/path = NodePath("NavigationAgent3D/RigidBody3D:angular_damp_mode")
+properties/3/path = NodePath(".:linear_velocity")
 properties/3/spawn = true
 properties/3/replication_mode = 2
-properties/4/path = NodePath(".:spawn_position")
+properties/4/path = NodePath(".:angular_velocity")
 properties/4/spawn = true
-properties/4/replication_mode = 0
+properties/4/replication_mode = 2
 
-[node name="Transport Bot2" type="Node3D" node_paths=PackedStringArray("PhysicsBody", "NavAgent")]
+[node name="Transport Bot2" type="RigidBody3D" node_paths=PackedStringArray("NavAgent")]
+axis_lock_angular_x = true
+axis_lock_angular_z = true
+angular_damp = 0.5
 script = ExtResource("1_iqsp8")
-PhysicsBody = NodePath("NavigationAgent3D/RigidBody3D")
 NavAgent = NodePath("NavigationAgent3D")
+MovementVelocity = 2.0
 
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
 
-[node name="RigidBody3D" type="RigidBody3D" parent="NavigationAgent3D"]
-freeze = true
-freeze_mode = 1
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationAgent3D/RigidBody3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00229001, -0.0996808, -0.00691719)
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00242946, -0.139301, -0.000284687)
 shape = SubResource("BoxShape3D_idagn")
 
-[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="NavigationAgent3D/RigidBody3D"]
-root_path = NodePath("../../..")
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_tu2hn")
 
-[node name="Transport Bot" parent="NavigationAgent3D/RigidBody3D" instance=ExtResource("1_vny7o")]
-transform = Transform3D(5, 0, 0, 0, -2.18557e-07, 5, 0, -5, -2.18557e-07, 0, 0, 0)
+[node name="Transport Bot" parent="." instance=ExtResource("1_vny7o")]
+transform = Transform3D(7.5, 0, 0, 0, -3.27835e-07, 7.5, 0, -7.5, -3.27835e-07, 0, 0, 0)
 
-[node name="1" parent="NavigationAgent3D/RigidBody3D/Transport Bot" index="0"]
+[node name="1" parent="Transport Bot" index="0"]
 material_override = ExtResource("2_hi3bb")
 
-[node name="2" parent="NavigationAgent3D/RigidBody3D/Transport Bot" index="1"]
+[node name="2" parent="Transport Bot" index="1"]
 visible = false
 
-[node name="7" parent="NavigationAgent3D/RigidBody3D/Transport Bot" index="2"]
+[node name="7" parent="Transport Bot" index="2"]
 visible = false
 
-[node name="3" parent="NavigationAgent3D/RigidBody3D/Transport Bot" index="3"]
+[node name="3" parent="Transport Bot" index="3"]
 visible = false
 
-[node name="5" parent="NavigationAgent3D/RigidBody3D/Transport Bot" index="4"]
+[node name="5" parent="Transport Bot" index="4"]
 visible = false
 
-[node name="4" parent="NavigationAgent3D/RigidBody3D/Transport Bot" index="5"]
+[node name="4" parent="Transport Bot" index="5"]
 visible = false
 
-[node name="6" parent="NavigationAgent3D/RigidBody3D/Transport Bot" index="6"]
+[node name="6" parent="Transport Bot" index="6"]
 visible = false
 
-[node name="Leg" parent="NavigationAgent3D/RigidBody3D" instance=ExtResource("2_r7nb8")]
-transform = Transform3D(5, 0, 0, 0, -2.18557e-07, 5, 0, -5, -2.18557e-07, 0, 0, 0)
+[node name="Leg" parent="." instance=ExtResource("2_r7nb8")]
+transform = Transform3D(7.5, 0, 0, 0, -3.27835e-07, 7.5, 0, -7.5, -3.27835e-07, 0, 0, 0)
 
-[node name="Leg2" parent="NavigationAgent3D/RigidBody3D" instance=ExtResource("2_r7nb8")]
-transform = Transform3D(0, 5, 2.18557e-07, -8.88712e-15, -2.18557e-07, 5, 5, 0, 7.10543e-15, 0, 0, 0)
+[node name="Leg2" parent="." instance=ExtResource("2_r7nb8")]
+transform = Transform3D(-3.27835e-07, 7.5, 3.27835e-07, 0, -3.27835e-07, 7.5, 7.5, 3.27835e-07, 1.43301e-14, 0, 0, 0)
 
-[node name="Leg3" parent="NavigationAgent3D/RigidBody3D" instance=ExtResource("2_r7nb8")]
-transform = Transform3D(-5, -2.18557e-07, 1.10471e-15, -8.88712e-15, -2.18557e-07, 5, -2.18557e-07, 5, 2.18557e-07, 0, 0, 0)
+[node name="Leg3" parent="." instance=ExtResource("2_r7nb8")]
+transform = Transform3D(-7.5, -1.13247e-06, -4.95018e-14, 0, -3.27835e-07, 7.5, -1.13247e-06, 7.5, 3.27835e-07, 0, 0, 0)
 
-[node name="Leg4" parent="NavigationAgent3D/RigidBody3D" instance=ExtResource("2_r7nb8")]
-transform = Transform3D(4.37114e-07, -5, -2.18557e-07, -8.88712e-15, -2.18557e-07, 5, -5, -4.37114e-07, 2.70784e-14, 0, 0, 0)
+[node name="Leg4" parent="." instance=ExtResource("2_r7nb8")]
+transform = Transform3D(5.66234e-07, -7.5, -3.27835e-07, 0, -3.27835e-07, 7.5, -7.5, -5.66234e-07, -2.47509e-14, 0, 0, 0)
 
-[editable path="NavigationAgent3D/RigidBody3D/Transport Bot"]
+[editable path="Transport Bot"]
