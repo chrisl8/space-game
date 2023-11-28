@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://cxx0juj8ck21h"
-path="res://.godot/imported/corner_screen.glb-3588e1cf5b25bb0c675ca83ea7c8b8b4.scn"
+uid="uid://dpiwyh7v3kwi7"
+path="res://.godot/imported/screen_for_box_rooms.glb-f6fb1d2286b3ba5a1551bd5742bdf9c1.scn"
 
 [deps]
 
-source_file="res://spaceship/corner_screen/corner_screen.glb"
-dest_files=["res://.godot/imported/corner_screen.glb-3588e1cf5b25bb0c675ca83ea7c8b8b4.scn"]
+source_file="res://spaceship/screen_for_box_rooms/screen_for_box_rooms.glb"
+dest_files=["res://.godot/imported/screen_for_box_rooms.glb-f6fb1d2286b3ba5a1551bd5742bdf9c1.scn"]
 
 [params]
 

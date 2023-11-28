@@ -1,7 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://cuj4unkuu2w7o"]
-
-[ext_resource type="PackedScene" uid="uid://cxx0juj8ck21h" path="res://spaceship/corner_screen/corner_screen.glb" id="1_0epiy"]
-
-[node name="CornerScreen" type="Node3D"]
-
-[node name="corner_screen" parent="." instance=ExtResource("1_0epiy")]

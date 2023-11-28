@@ -31,6 +31,9 @@ animation/remove_immutable_tracks=true
 import_script/path=""
 _subresources={
 "nodes": {
+"PATH:root002/root": {
+"import/skip_import": true
+},
 "PATH:root002/root001": {
 "generate/physics": true,
 "physics/shape_type": 2

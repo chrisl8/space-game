@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3 uid="uid://cmqjl8pf8eroi"]
+
+[ext_resource type="PackedScene" uid="uid://dpiwyh7v3kwi7" path="res://spaceship/screen_for_box_rooms/screen_for_box_rooms.glb" id="1_axylu"]
+[ext_resource type="Script" path="res://spaceship/screen_for_box_rooms/screen_for_box_rooms.gd" id="1_rits8"]
+
+[node name="ScreenForBoxRooms" type="Node3D"]
+script = ExtResource("1_rits8")
+
+[node name="screen_for_box_rooms" parent="." instance=ExtResource("1_axylu")]
+
+[node name="ScreenText" type="Label3D" parent="."]
+transform = Transform3D(0.425866, -0.5, -0.5, 0, 0.707107, -0.707107, 0.425866, 0.5, 0.5, 8.27118, 3.04083, -8.27118)
+text = "Do not read this!"
+autowrap_mode = 3

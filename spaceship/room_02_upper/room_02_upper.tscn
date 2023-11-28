@@ -1,6 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://bjn42p8ao5ivk"]
+[gd_scene load_steps=5 format=3 uid="uid://bjn42p8ao5ivk"]
 
 [ext_resource type="PackedScene" uid="uid://3h80hkp7adm5" path="res://spaceship/room_02_upper/room_02_upper.glb" id="1_6pajr"]
+[ext_resource type="PackedScene" uid="uid://cmqjl8pf8eroi" path="res://spaceship/screen_for_box_rooms/screen_for_box_rooms.tscn" id="2_1717m"]
 [ext_resource type="PackedScene" uid="uid://cm2b8wui16i" path="res://posters/purple_running_runes/purple_running_runes_poster.tscn" id="2_aksv4"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_pfkjw"]
@@ -15,6 +16,9 @@ transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 10, -3
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.0423, 3.19803, -5.23849)
 omni_range = 14.425
 omni_attenuation = 0.019915
+
+[node name="ScreenForBoxRooms" parent="." instance=ExtResource("2_1717m")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 10, 0, 0)
 
 [node name="Window Poster 1" parent="." instance=ExtResource("2_aksv4")]
 transform = Transform3D(-2, 0, -1.74846e-07, 0, 2, 0, 1.74846e-07, 0, -2, 7, 2.5, 0)

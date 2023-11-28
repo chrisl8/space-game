@@ -18,4 +18,4 @@ func _process(delta: float) -> void:
 		screen_current_text += 1
 		if screen_current_text > screen_text.size():
 			screen_current_text = 1
-		get_node("Screen Text").text = screen_text[screen_current_text]
+		$ScreenText.text = screen_text[screen_current_text]
