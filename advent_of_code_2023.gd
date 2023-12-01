@@ -73,9 +73,7 @@ func advent_of_code_day_01() -> void:
 			else:
 				last_digit = digit_text
 		list_of_line_values.append(int(str(first_digit, last_digit)))
-		print(first_digit, " ", last_digit)
 	var answer_two: int = 0
 	for line_value: int in list_of_line_values:
 		answer_two += line_value
-	print(answer_two)
 	Globals.advent_of_code_answer = str(Globals.advent_of_code_answer, "\n2: ", answer_two)
