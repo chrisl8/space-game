@@ -21,6 +21,7 @@ Globals="*res://global_variables.gd"
 Helpers="*res://helper_functions.gd"
 Network="*res://network_websocket.gd"
 Spawner="*res://spawner.gd"
+AdventOfCode2023="*res://advent_of_code_2023.gd"
 
 [debug]
 
