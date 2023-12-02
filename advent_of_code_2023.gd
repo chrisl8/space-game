@@ -139,16 +139,5 @@ func advent_of_code_day_02() -> String:
 			answer_one += game_id
 		var minimum_set_power: int = min_red_cubes * min_green_cubes * min_blue_cubes
 		answer_two += minimum_set_power
-		print(
-			game_id,
-			" ",
-			min_red_cubes,
-			" ",
-			min_green_cubes,
-			" ",
-			min_blue_cubes,
-			" ",
-			minimum_set_power
-		)
 	answer_text = str(answer_text, "1: ", answer_one, "\n2: ", answer_two)
 	return answer_text
