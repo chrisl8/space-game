@@ -2,6 +2,14 @@ extends Node
 
 # Call the day you want to in the _ready() function.
 # Within that day function you must set the puzzle_input variable to the input data.
+
+# In order to maximize my likelihood of doing each one,
+# I'm just racing to the answer, so I'm skipping niceties
+# like reading data from a file and formatting it.
+# I just use a text editor to replace the line breaks with \n
+# and then using that to split the string into an array,
+# because I find that super fast to do and it works well.
+
 # Each line must be separated with a \n in the String, as I did not provide code to do that.
 
 
