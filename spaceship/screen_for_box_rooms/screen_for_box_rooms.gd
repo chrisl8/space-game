@@ -10,15 +10,12 @@ var screen_current_text: int = 0
 var screen_update_interval: int = 10
 var screen_time: float = screen_update_interval
 
-# func _process(delta: float) -> void:
-# 	screen_time += delta
-# 	if screen_time > screen_update_interval:
-# 		screen_time = 0
-# 		screen_current_text += 1
-# 		if screen_current_text > screen_text.size():
-# 			screen_current_text = 1
-# 		$ScreenText.text = screen_text[screen_current_text]
 
-
-func _ready() -> void:
-	$ScreenText.text = str(Globals.advent_of_code_answer)
+func _process(delta: float) -> void:
+	screen_time += delta
+	if screen_time > screen_update_interval:
+		screen_time = 0
+		screen_current_text += 1
+		if screen_current_text > screen_text.size():
+			screen_current_text = 1
+		$ScreenText.text = screen_text[screen_current_text]

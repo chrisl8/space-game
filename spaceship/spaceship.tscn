@@ -87,7 +87,7 @@ shape = SubResource("BoxShape3D_neoav")
 transform = Transform3D(-2, 0, -1.74846e-07, 0, 2, 0, 1.74846e-07, 0, -2, 25, 1, 9.691)
 
 [node name="Writing On The Wall" type="Label3D" parent="."]
-transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0.500121, 2.25442, -3.07948)
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0.5, 2.254, -3.079)
 pixel_size = 0.001
 text = "(The Doctor speaks to a man approaching them.)
 DOCTOR: Excuse me, have you seen Calufrax?
@@ -134,6 +134,15 @@ ROMANA: What I said was, no K9, you mustn't (pause) fetch the Doctor.
 GUARD: You're mad. Move.
 (The guard takes Romana away. K9 trundles off.)"
 font_size = 25
+outline_size = 0
+
+[node name="Advent Of Code 2023" type="Label3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0.6, -1.224, -7.298)
+pixel_size = 0.001
+modulate = Color(0.341176, 0.356863, 1, 1)
+text = "2023
+Advent of Code"
+font_size = 36
 outline_size = 0
 
 [node name="Mirror" type="Node3D" parent="."]

@@ -7,6 +7,7 @@ func _ready() -> void:
 		Globals.intro_music_has_played = true
 		$AudioStreamPlayer.play()
 	display_how_to_quit_toast()
+	$"Advent Of Code 2023".text = str(Globals.advent_of_code_answer)
 
 
 func display_how_to_quit_toast() -> void:
