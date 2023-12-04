@@ -14,18 +14,20 @@ extends Node
 
 
 func _ready() -> void:
-	Globals.advent_of_code_answer = str(
-		Globals.advent_of_code_answer, "Day One:\n", advent_of_code_day_01(), "\n"
-	)
-	Globals.advent_of_code_answer = str(
-		Globals.advent_of_code_answer, "Day Two:\n", advent_of_code_day_02(), "\n"
-	)
-	Globals.advent_of_code_answer = str(
-		Globals.advent_of_code_answer, "Day Three:\n", advent_of_code_day_03(), "\n"
-	)
-	Globals.advent_of_code_answer = str(
-		Globals.advent_of_code_answer, "Day Four:\n", advent_of_code_day_04(), "\n"
-	)
+	if !Globals.is_server:
+		# Server cannot see the text anyway
+		Globals.advent_of_code_answer = str(
+			Globals.advent_of_code_answer, "Day One:\n", advent_of_code_day_01(), "\n"
+		)
+		Globals.advent_of_code_answer = str(
+			Globals.advent_of_code_answer, "Day Two:\n", advent_of_code_day_02(), "\n"
+		)
+		Globals.advent_of_code_answer = str(
+			Globals.advent_of_code_answer, "Day Three:\n", advent_of_code_day_03(), "\n"
+		)
+		Globals.advent_of_code_answer = str(
+			Globals.advent_of_code_answer, "Day Four:\n", advent_of_code_day_04(), "\n"
+		)
 
 
 func advent_of_code_day_01() -> String:
@@ -247,4 +249,38 @@ func advent_of_code_day_04() -> String:
 						row_score = 1
 		answer_one += row_score
 	answer_text = str(answer_text, "1: ", answer_one)
+
+	# Part 2 - This is madness
+	var card_data: Dictionary = {}
+	var highest_card_data_entry: int = 0
+	for line: String in array_of_lines:
+		var row_winning_number_count: int = 0
+		var card_id_array: Array = line.split(":")[0].strip_edges().split(" ")
+		var card_id: int = int(card_id_array[card_id_array.size() - 1])
+		var card_number_groups: PackedStringArray = line.replace("  ", " ").split(":")[1].split("|")
+		var winning_numbers: PackedStringArray = card_number_groups[0].strip_edges().split(" ")
+		var had_numbers: PackedStringArray = card_number_groups[1].strip_edges().split(" ")
+		for winning_number: String in winning_numbers:
+			for had_number: String in had_numbers:
+				if had_number == winning_number:
+					row_winning_number_count += 1
+		card_data[card_id] = {
+			"winning_numbers": winning_numbers,
+			"had_numbers": had_numbers,
+			"card_count": 1,
+			"winning_number_count": row_winning_number_count
+		}
+		highest_card_data_entry = card_id
+	for entry: int in range(1, highest_card_data_entry + 1):
+		if card_data[entry].winning_number_count > 0:
+			for i: int in range(1, card_data[entry].card_count + 1):
+				for j: int in range(1, card_data[entry].winning_number_count + 1):
+					if card_data.has(entry+j):
+						card_data[entry+j].card_count = card_data[entry+j].card_count + 1
+
+	# Count the cards
+	var answer_two: int = 0
+	for entry: int in card_data:
+		answer_two += card_data[entry].card_count
+	answer_text = str(answer_text, "\n2: ", answer_two)
 	return answer_text
