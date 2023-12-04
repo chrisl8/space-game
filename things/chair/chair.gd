@@ -39,7 +39,8 @@ func unselect(other_name: String) -> void:
 	$SpotLight3D.visible = false
 
 
-@rpc("any_peer", "call_remote") func grab() -> void:
+@rpc("any_peer", "call_remote")
+func grab() -> void:
 	Helpers.log_print(
 		str(
 			"I (",

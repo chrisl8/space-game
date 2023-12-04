@@ -48,7 +48,8 @@ func _ready() -> void:
 			)
 
 
-@rpc() func depress_button(button_node_name: String, button_node_path: NodePath) -> void:
+@rpc()
+func depress_button(button_node_name: String, button_node_path: NodePath) -> void:
 	var button_node: Node = get_node_or_null(button_node_path)
 	if button_node:
 		button_node.position.z = (
@@ -60,7 +61,8 @@ func _ready() -> void:
 		)
 
 
-@rpc("any_peer") func server_button_clicked(
+@rpc("any_peer")
+func server_button_clicked(
 	button_node_name: String, button_index: int, button_node_path: NodePath
 ) -> void:
 	if Globals.is_server:
@@ -115,6 +117,7 @@ func _on_static_body_3d_input_event(
 			server_button_clicked.rpc(button_node_name, button_index, button_node_path)
 
 
-@rpc() func set_screen_text(text: String) -> void:
+@rpc()
+func set_screen_text(text: String) -> void:
 	var screen: Node3D = get_node_or_null("Screen Text")
 	screen.text = text

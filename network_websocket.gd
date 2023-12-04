@@ -245,7 +245,8 @@ func send_data_to(id: int, msg_type: Message, data: String) -> void:
 	rpc_id(id, "data_received", send_data)
 
 
-@rpc("any_peer") func data_received(data: String) -> void:
+@rpc("any_peer")
+func data_received(data: String) -> void:
 	var sender_id: int = multiplayer.get_remote_sender_id()
 
 	var json: JSON = JSON.new()

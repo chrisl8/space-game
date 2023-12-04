@@ -506,7 +506,8 @@ func relative_input() -> Vector3:
 	return move.normalized()
 
 
-@rpc() func update_player_collider_height(height: float) -> void:
+@rpc()
+func update_player_collider_height(height: float) -> void:
 	if get_multiplayer_authority() == multiplayer.get_remote_sender_id():
 		$Collision.shape.height = height
 
@@ -559,7 +560,8 @@ func _on_personal_space_body_exited(body: Node3D) -> void:
 # Spawning and dropping the "thing" must be an RPC because all "copies" of the player
 # must do this to sync the view of them holding/not holding the thing across players views
 # of this player.
-@rpc("any_peer", "call_local") func spawn_player_held_thing(grabbed_item_name: String) -> void:
+@rpc("any_peer", "call_local")
+func spawn_player_held_thing(grabbed_item_name: String) -> void:
 	var parsed_thing_name: Dictionary = Helpers.parse_thing_name(grabbed_item_name)
 	Helpers.log_print(
 		str(parsed_thing_name.name, " ", parsed_thing_name.id, " picked up by ", name),
@@ -581,7 +583,8 @@ func _on_personal_space_body_exited(body: Node3D) -> void:
 	holding_things_joint.node_b = held_item.get_path()
 
 
-@rpc("call_local") func _drop_held_thing() -> void:
+@rpc("call_local")
+func _drop_held_thing() -> void:
 	Helpers.log_print(
 		str(held_item.name, " dropped by ", multiplayer.get_remote_sender_id()), "Cornflowerblue"
 	)
