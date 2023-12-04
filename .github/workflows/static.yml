@@ -38,7 +38,7 @@ jobs:
       shell: bash
 
     - id: install-gdtoolkit
-      run: pip install git+https://github.com/Scony/godot-gdscript-toolkit.git
+      run: pip install "gdtoolkit==4.*"
       shell: bash
     
     - id: run-gdformat
