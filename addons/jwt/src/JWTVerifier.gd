@@ -33,7 +33,7 @@ func verify_signature(jwt_decoder: JWTDecoder) -> bool:
 func verify_claim_values(jwt_decoder: JWTDecoder, expected_claims: Dictionary) -> bool:
     for claim in expected_claims.keys(): 
         match claim:
-            JWTClaims.Public.EXPRIES_AT:
+            JWTClaims.Public.EXPIRES_AT:
                 if not assert_valid_date_claim(jwt_decoder.get_expires_at(), expected_claims.get(claim), true):
                     self.exception = "The Token has expired on %s." % Time.get_datetime_string_from_unix_time(jwt_decoder.get_expires_at())
                     return false
@@ -66,7 +66,7 @@ func verify_claim_values(jwt_decoder: JWTDecoder, expected_claims: Dictionary) -
                     return false
     return true
 
-func assert_claim_present(jew_decoder: JWTDecoder, claim: String) -> bool:
+func assert_claim_present(jwt_decoder: JWTDecoder, claim: String) -> bool:
     return jwt_decoder.get_claims().has(claim)
 
 func assert_claim_value(jwt_decoder: JWTDecoder, claim: String) -> bool:
