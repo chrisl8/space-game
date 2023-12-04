@@ -23,6 +23,9 @@ func _ready() -> void:
 	Globals.advent_of_code_answer = str(
 		Globals.advent_of_code_answer, "Day Three:\n", advent_of_code_day_03(), "\n"
 	)
+	Globals.advent_of_code_answer = str(
+		Globals.advent_of_code_answer, "Day Four:\n", advent_of_code_day_04(), "\n"
+	)
 
 
 func advent_of_code_day_01() -> String:
@@ -221,4 +224,27 @@ func advent_of_code_day_03() -> String:
 			answer_two += gears[entry][0] * gears[entry][1]
 
 	answer_text = str(answer_text, "\n2: ", answer_two)
+	return answer_text
+
+func advent_of_code_day_04() -> String:
+	var answer_text: String = ""
+	var puzzle_input: String = "Card 1: 41 48 83 86 17 | 83 86  6 31 17  9 48 53\nCard 2: 13 32 20 16 61 | 61 30 68 82 17 32 24 19\nCard 3:  1 21 53 59 44 | 69 82 63 72 16 21 14  1\nCard 4: 41 92 73 84 69 | 59 84 76 51 58  5 54 83\nCard 5: 87 83 26 28 32 | 88 30 70 12 93 22 82 36\nCard 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11"
+	var array_of_lines: PackedStringArray = puzzle_input.split("\n")
+
+	# Part 1
+	var answer_one: int = 0
+	for line: String in array_of_lines:
+		var row_score: int = 0
+		var card_number_groups: PackedStringArray = line.replace("  ", " ").split(":")[1].split("|")
+		var winning_numbers: PackedStringArray = card_number_groups[0].strip_edges().split(" ")
+		var had_numbers: PackedStringArray = card_number_groups[1].strip_edges().split(" ")
+		for winning_number: String in winning_numbers:
+			for had_number: String in had_numbers:
+				if had_number == winning_number:
+					if row_score > 0:
+						row_score = row_score * 2
+					else:
+						row_score = 1
+		answer_one += row_score
+	answer_text = str(answer_text, "1: ", answer_one)
 	return answer_text
