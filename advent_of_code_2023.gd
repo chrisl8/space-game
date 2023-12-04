@@ -156,8 +156,6 @@ func advent_of_code_day_03() -> String:
 	var puzzle_input: String = "467..114..\n...*......\n..35..633.\n......#...\n617*......\n.....+.58.\n..592.....\n......755.\n...$.*....\n.664.598.."
 	var array_of_lines: PackedStringArray = puzzle_input.split("\n")
 
-	# Part 1
-
 	var is_symbol_regex: RegEx = RegEx.new()
 	is_symbol_regex.compile("\\*|#|\\$|\\+|/|&|%|@|-|=")
 
@@ -166,6 +164,19 @@ func advent_of_code_day_03() -> String:
 
 	var find_numbers_in_string: RegEx = RegEx.new()
 	find_numbers_in_string.compile("[\\w\\d]+")
+
+	var process_line: Callable = func(line_index_to_search: int, starting_position: int, ending_position: int) -> Dictionary:
+		var result: Dictionary = {
+			"number_is_valid": false,
+			"might_be_a_gear": false
+		}
+		for character_index: int in array_of_lines[line_index_to_search].length():
+			if character_index >= starting_position and character_index < ending_position:
+				if is_symbol_regex.search(array_of_lines[line_index_to_search][character_index]):
+					result.number_is_valid = true
+				if might_be_a_gear_regex.search(array_of_lines[line_index_to_search][character_index]):
+					result.might_be_a_gear = true
+		return result
 
 	var answer_one: int = 0
 
@@ -178,41 +189,27 @@ func advent_of_code_day_03() -> String:
 			if starting_position < 0:
 				starting_position = 0
 			var ending_position: int = regex_match.get_end() + 1
-			var line_index_to_search: int = line_index - 1
+			var process_line_results: Dictionary
 			if line_index > 0:
-				for character_index: int in array_of_lines[line_index_to_search].length():
-					if character_index >= starting_position and character_index <= ending_position:
-						if is_symbol_regex.search(
-							array_of_lines[line_index_to_search][character_index]
-						):
-							number_is_valid = true
-						if might_be_a_gear_regex.search(
-							array_of_lines[line_index - 1][character_index]
-						):
-							might_be_a_gear = true
-			line_index_to_search = line_index
-			for character_index: int in array_of_lines[line_index_to_search].length():
-				if character_index >= starting_position and character_index <= ending_position:
-					if is_symbol_regex.search(
-						array_of_lines[line_index_to_search][character_index]
-					):
-						number_is_valid = true
-					if might_be_a_gear_regex.search(
-						array_of_lines[line_index_to_search][character_index]
-					):
-						might_be_a_gear = true
-			line_index_to_search = line_index + 1
-			if array_of_lines.size() > line_index_to_search:
-				for character_index: int in array_of_lines[line_index_to_search].length():
-					if character_index >= starting_position and character_index <= ending_position:
-						if is_symbol_regex.search(
-							array_of_lines[line_index_to_search][character_index]
-						):
-							number_is_valid = true
-						if might_be_a_gear_regex.search(
-							array_of_lines[line_index_to_search][character_index]
-						):
-							might_be_a_gear = true
+				process_line_results = process_line.call(line_index -1, starting_position, ending_position)
+				if process_line_results.number_is_valid:
+					number_is_valid = true
+				if process_line_results.might_be_a_gear:
+					might_be_a_gear = true
+
+			process_line_results = process_line.call(line_index, starting_position, ending_position)
+			if process_line_results.number_is_valid:
+				number_is_valid = true
+			if process_line_results.might_be_a_gear:
+				might_be_a_gear = true
+
+			if array_of_lines.size() > line_index + 1:
+				process_line_results = process_line.call(line_index + 1, starting_position, ending_position)
+				if process_line_results.number_is_valid:
+					number_is_valid = true
+				if process_line_results.might_be_a_gear:
+					might_be_a_gear = true
+
 			if number_is_valid:
 				answer_one += int(regex_match.get_string())
 			if might_be_a_gear:
