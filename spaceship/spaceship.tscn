@@ -149,3 +149,8 @@ outline_size = 0
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 9.49, 2.334, -2.28)
 script = ExtResource("9_ruxjs")
 ResolutionPerUnit = 1000
+
+[node name="Mirror2" type="Node3D" parent="."]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 2.56471, -1.2385, -9.49687)
+script = ExtResource("9_ruxjs")
+ResolutionPerUnit = 1000

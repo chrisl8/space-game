@@ -79,9 +79,12 @@ func _ready() -> void:
 		# Set my own player camera to be current camera
 		camera.make_current()
 		# Set up the mirror camera for this player
-		var spaceship_node: Node3D = get_node_or_null("/root/Main/Level/game_scene/Mirror")
-		if spaceship_node:
-			spaceship_node.MainCamPath = camera.get_path()
+		var spaceship_mirror_node: Node3D = get_node_or_null("/root/Main/Level/game_scene/Mirror")
+		if spaceship_mirror_node:
+			spaceship_mirror_node.MainCamPath = camera.get_path()
+		var spaceship_mirror_node2: Node3D = get_node_or_null("/root/Main/Level/game_scene/Mirror2")
+		if spaceship_mirror_node2:
+			spaceship_mirror_node2.MainCamPath = camera.get_path()
 
 	# Set capsule variables for use later
 	original_player_collider_height = player_collider.height
