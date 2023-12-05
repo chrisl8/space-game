@@ -28,6 +28,9 @@ func _ready() -> void:
 		Globals.advent_of_code_answer = str(
 			Globals.advent_of_code_answer, "Day Four:\n", advent_of_code_day_04(), "\n"
 		)
+		Globals.advent_of_code_answer = str(
+			Globals.advent_of_code_answer, "Day Five:\n", advent_of_code_day_05(), "\n"
+		)
 
 
 func advent_of_code_day_01() -> String:
@@ -282,5 +285,23 @@ func advent_of_code_day_04() -> String:
 	var answer_two: int = 0
 	for entry: int in card_data:
 		answer_two += card_data[entry].card_count
+	answer_text = str(answer_text, "\n2: ", answer_two)
+	return answer_text
+
+func advent_of_code_day_05() -> String:
+	var answer_text: String = ""
+	# Part 1
+	# Example from Part 1 instructions:
+	var puzzle_input: String = "1abc2\npqr3stu8vwx\na1b2c3d4e5f\ntreb7uchet"
+	# In this example, the calibration values of these four lines are 12, 38, 15, and 77. Adding these together produces 142.
+
+	var array_of_lines: PackedStringArray = puzzle_input.split("\n")
+
+	var answer_one: int = 0
+
+	answer_text = str(answer_text, "1: ", answer_one)
+	
+	var answer_two: int = 0
+
 	answer_text = str(answer_text, "\n2: ", answer_two)
 	return answer_text
