@@ -159,6 +159,32 @@ func advent_of_code_day_02() -> String:
 	return answer_text
 
 
+func process_line_for_day_03(
+	array_of_lines: PackedStringArray,
+	gears: Dictionary,
+	is_symbol_regex: RegEx,
+	might_be_a_gear_regex: RegEx,
+	line_index_to_search: int,
+	starting_position: int,
+	ending_position: int,
+	part_number: int
+) -> Dictionary:
+	var result: Dictionary = {
+		"number_is_valid": false,
+	}
+	for character_index: int in array_of_lines[line_index_to_search].length():
+		if character_index >= starting_position and character_index < ending_position:
+			if is_symbol_regex.search(array_of_lines[line_index_to_search][character_index]):
+				result.number_is_valid = true
+			if might_be_a_gear_regex.search(array_of_lines[line_index_to_search][character_index]):
+				result.might_be_a_gear = true
+				if not gears.has(str(line_index_to_search, "-", character_index)):
+					gears[str(line_index_to_search, "-", character_index)] = [part_number]
+				else:
+					gears[str(line_index_to_search, "-", character_index)].append(part_number)
+	return result
+
+
 func advent_of_code_day_03() -> String:
 	var answer_text: String = ""
 	var puzzle_input: String = "467..114..\n...*......\n..35..633.\n......#...\n617*......\n.....+.58.\n..592.....\n......755.\n...$.*....\n.664.598.."
@@ -175,22 +201,6 @@ func advent_of_code_day_03() -> String:
 
 	var gears: Dictionary = {}
 
-	var process_line: Callable = func(line_index_to_search: int, starting_position: int, ending_position: int, part_number: int) -> Dictionary:
-		var result: Dictionary = {
-			"number_is_valid": false,
-		}
-		for character_index: int in array_of_lines[line_index_to_search].length():
-			if character_index >= starting_position and character_index < ending_position:
-				if is_symbol_regex.search(array_of_lines[line_index_to_search][character_index]):
-					result.number_is_valid = true
-				if might_be_a_gear_regex.search(array_of_lines[line_index_to_search][character_index]):
-					result.might_be_a_gear = true
-					if not gears.has(str(line_index_to_search, "-", character_index)):
-						gears[str(line_index_to_search, "-", character_index)] = [part_number]
-					else:
-						gears[str(line_index_to_search, "-", character_index)].append(part_number)
-		return result
-
 	var answer_one: int = 0
 
 	for line_index: int in array_of_lines.size():
@@ -204,16 +214,43 @@ func advent_of_code_day_03() -> String:
 			var ending_position: int = regex_match.get_end() + 1
 			var process_line_results: Dictionary
 			if line_index > 0:
-				process_line_results = process_line.call(line_index -1, starting_position, ending_position, part_number)
+				process_line_results = process_line_for_day_03(
+					array_of_lines,
+					gears,
+					is_symbol_regex,
+					might_be_a_gear_regex,
+					line_index - 1,
+					starting_position,
+					ending_position,
+					part_number
+				)
 				if process_line_results.number_is_valid:
 					number_is_valid = true
 
-			process_line_results = process_line.call(line_index, starting_position, ending_position, part_number)
+			process_line_results = process_line_for_day_03(
+				array_of_lines,
+				gears,
+				is_symbol_regex,
+				might_be_a_gear_regex,
+				line_index,
+				starting_position,
+				ending_position,
+				part_number
+			)
 			if process_line_results.number_is_valid:
 				number_is_valid = true
 
 			if array_of_lines.size() > line_index + 1:
-				process_line_results = process_line.call(line_index + 1, starting_position, ending_position, part_number)
+				process_line_results = process_line_for_day_03(
+					array_of_lines,
+					gears,
+					is_symbol_regex,
+					might_be_a_gear_regex,
+					line_index + 1,
+					starting_position,
+					ending_position,
+					part_number
+				)
 				if process_line_results.number_is_valid:
 					number_is_valid = true
 
@@ -230,6 +267,7 @@ func advent_of_code_day_03() -> String:
 
 	answer_text = str(answer_text, "\n2: ", answer_two)
 	return answer_text
+
 
 func advent_of_code_day_04() -> String:
 	var answer_text: String = ""
@@ -278,8 +316,8 @@ func advent_of_code_day_04() -> String:
 		if card_data[entry].winning_number_count > 0:
 			for i: int in range(1, card_data[entry].card_count + 1):
 				for j: int in range(1, card_data[entry].winning_number_count + 1):
-					if card_data.has(entry+j):
-						card_data[entry+j].card_count = card_data[entry+j].card_count + 1
+					if card_data.has(entry + j):
+						card_data[entry + j].card_count = card_data[entry + j].card_count + 1
 
 	# Count the cards
 	var answer_two: int = 0
