@@ -326,19 +326,28 @@ func advent_of_code_day_04() -> String:
 	answer_text = str(answer_text, "\n2: ", answer_two)
 	return answer_text
 
+
+# See https://github.com/winston-yallow/aoc-godot/blob/main/addons/aoc/dock.gd
+func get_data_for_day(day: int) -> String:
+	var input_path: String = "res://advent_of_code_2023/day_%d_input.txt" % day
+	if FileAccess.file_exists(input_path):
+		var input_file: FileAccess = FileAccess.open(input_path, FileAccess.READ)
+		return input_file.get_as_text()
+
+	return ""
+
+
 func advent_of_code_day_05() -> String:
 	var answer_text: String = ""
-	# Part 1
-	# Example from Part 1 instructions:
-	var puzzle_input: String = "1abc2\npqr3stu8vwx\na1b2c3d4e5f\ntreb7uchet"
-	# In this example, the calibration values of these four lines are 12, 38, 15, and 77. Adding these together produces 142.
+	var puzzle_input: String = get_data_for_day(5)
+	print(puzzle_input.split("\r\n"))
 
 	var array_of_lines: PackedStringArray = puzzle_input.split("\n")
 
 	var answer_one: int = 0
 
 	answer_text = str(answer_text, "1: ", answer_one)
-	
+
 	var answer_two: int = 0
 
 	answer_text = str(answer_text, "\n2: ", answer_two)
