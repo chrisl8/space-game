@@ -14,23 +14,27 @@ extends Node
 
 
 func _ready() -> void:
-	if !Globals.is_server:
-		# Server cannot see the text anyway
-		Globals.advent_of_code_answer = str(
-			Globals.advent_of_code_answer, "Day One:\n", advent_of_code_day_01(), "\n"
-		)
-		Globals.advent_of_code_answer = str(
-			Globals.advent_of_code_answer, "Day Two:\n", advent_of_code_day_02(), "\n"
-		)
-		Globals.advent_of_code_answer = str(
-			Globals.advent_of_code_answer, "Day Three:\n", advent_of_code_day_03(), "\n"
-		)
-		Globals.advent_of_code_answer = str(
-			Globals.advent_of_code_answer, "Day Four:\n", advent_of_code_day_04(), "\n"
-		)
-		Globals.advent_of_code_answer = str(
-			Globals.advent_of_code_answer, "Day Five:\n", advent_of_code_day_05(), "\n"
-		)
+	Globals.advent_of_code_answer = str(
+		Globals.advent_of_code_answer, "Day One:\n", advent_of_code_day_01(), "\n"
+	)
+	Globals.advent_of_code_answer = str(
+		Globals.advent_of_code_answer, "Day Two:\n", advent_of_code_day_02(), "\n"
+	)
+	Globals.advent_of_code_answer = str(
+		Globals.advent_of_code_answer, "Day Three:\n", advent_of_code_day_03(), "\n"
+	)
+	Globals.advent_of_code_answer = str(
+		Globals.advent_of_code_answer, "Day Four:\n", advent_of_code_day_04(), "\n"
+	)
+	Globals.advent_of_code_answer = str(
+		Globals.advent_of_code_answer, "Day Five:\n", advent_of_code_day_05(), "\n"
+	)
+	Globals.advent_of_code_answer = str(
+		Globals.advent_of_code_answer, "Day Six:\n", advent_of_code_day_06(), "\n"
+	)
+	Globals.advent_of_code_answer = str(
+		Globals.advent_of_code_answer, "Day Seven:\n", advent_of_code_day_07(), "\n"
+	)
 
 
 func advent_of_code_day_01() -> String:
@@ -329,6 +333,10 @@ func advent_of_code_day_04() -> String:
 
 # See https://github.com/winston-yallow/aoc-godot/blob/main/addons/aoc/dock.gd
 func get_data_for_day(day: int) -> String:
+	# Note that by default this file won't exist in the exported game.
+	# You will need to create the folder advent_of_code_2023 in the game's directory (with the .exe)
+	# and place the file in that folder all by hand.
+	# I think there is a way to explain to Godot how to do this for you, but by default you must do this by hand.
 	var input_path: String = "res://advent_of_code_2023/day_%d_input.txt" % day
 	if FileAccess.file_exists(input_path):
 		var input_file: FileAccess = FileAccess.open(input_path, FileAccess.READ)
@@ -337,18 +345,261 @@ func get_data_for_day(day: int) -> String:
 	return ""
 
 
+func get_puzzle_data(
+	puzzle_data: Dictionary, array_name: String, input_number: int, output_number: int
+) -> int:
+	for entry: Array in puzzle_data[array_name]:
+		if entry[1] <= input_number and input_number < entry[1] + entry[2]:
+			output_number = entry[0] + (input_number - entry[1])
+	return output_number
+
+
 func advent_of_code_day_05() -> String:
 	var answer_text: String = ""
 	var puzzle_input: String = get_data_for_day(5)
-	print(puzzle_input.split("\r\n"))
 
-	var array_of_lines: PackedStringArray = puzzle_input.split("\n")
+	var array_of_lines: PackedStringArray = puzzle_input.split("\r\n")
 
-	var answer_one: int = 0
+	var puzzle_data: Dictionary = {
+		"seeds": [],
+		"seed-to-soil_arrays": [],
+		"soil-to-fertilizer_arrays": [],
+		"fertilizer-to-water_arrays": [],
+		"water-to-light_arrays": [],
+		"light-to-temperature_arrays": [],
+		"temperature-to-humidity_arrays": [],
+		"humidity-to-location_arrays": [],
+	}
+
+	# Parse puzzle data into a very nice dictionary
+	var current_section: String = ""
+	var max_seed_number: int = 0
+	var max_location_number: int = 0
+	for line: String in array_of_lines:
+		if line.contains("seeds"):
+			var seeds_strings: Array = line.split(": ")[1].split(" ")
+			for seed_string: String in seeds_strings:
+				puzzle_data.seeds.append(int(seed_string))
+		elif line.contains("map"):
+			current_section = str(line.split(" ")[0], "_arrays")
+		elif current_section != "" and line != "":
+			var new_array: Array = []
+			for entry_string: String in line.split(" "):
+				new_array.append(int(entry_string))
+			puzzle_data[current_section].append(new_array)
+
+			if current_section == "seed-to-soil_arrays":
+				# We need to sort out what the highest seed number is so that we build a map of ALL seeds.
+				var max_input_number: int = new_array[1] + new_array[2] - 1
+				# -1 because the [2] is the length which includes [1] itself.
+				if max_input_number > max_seed_number:
+					max_seed_number = max_input_number
+			if current_section == "humidity-to-location_arrays":
+				# We need to sort out what the highest location number is so that I know where to start.
+				var max_input_number: int = new_array[1] + new_array[2] - 1
+				# -1 because the [2] is the length which includes [1] itself.
+				if max_input_number > max_location_number:
+					max_location_number = max_input_number
+
+	var answer_one: int = max_location_number
+	for seed_number: int in puzzle_data.seeds:
+		# seed-to-soil_map
+		var soil_number: int = seed_number
+		soil_number = get_puzzle_data(puzzle_data, "seed-to-soil_arrays", seed_number, soil_number)
+
+		# soil-to-fertilizer_map
+		var fertilizer_number: int = soil_number
+		fertilizer_number = get_puzzle_data(
+			puzzle_data, "soil-to-fertilizer_arrays", soil_number, fertilizer_number
+		)
+
+		# fertilizer-to-water_map
+		var water_number: int = fertilizer_number
+		water_number = get_puzzle_data(
+			puzzle_data, "fertilizer-to-water_arrays", fertilizer_number, water_number
+		)
+
+		# water-to-light_map
+		var light_number: int = water_number
+		light_number = get_puzzle_data(
+			puzzle_data, "water-to-light_arrays", water_number, light_number
+		)
+
+		# light-to-temperature_map
+		var temperature_number: int = light_number
+		temperature_number = get_puzzle_data(
+			puzzle_data, "light-to-temperature_arrays", light_number, temperature_number
+		)
+
+		# temperature-to-humidity_map
+		var humidity_number: int = temperature_number
+		humidity_number = get_puzzle_data(
+			puzzle_data, "temperature-to-humidity_arrays", temperature_number, humidity_number
+		)
+
+		# humidity-to-location_map
+		var location_number: int = humidity_number
+		location_number = get_puzzle_data(
+			puzzle_data, "humidity-to-location_arrays", humidity_number, location_number
+		)
+
+		# print(
+		# 	seed_number,
+		# 	" ",
+		# 	soil_number,
+		# 	" ",
+		# 	fertilizer_number,
+		# 	" ",
+		# 	water_number,
+		# 	" ",
+		# 	light_number,
+		# 	" ",
+		# 	temperature_number,
+		# 	" ",
+		# 	humidity_number,
+		# 	" ",
+		# 	location_number
+		# )
+
+		if location_number < answer_one:
+			answer_one = location_number
 
 	answer_text = str(answer_text, "1: ", answer_one)
 
-	var answer_two: int = 0
+	var answer_two: int = max_location_number
+
+	# TODO: Day 5 Part 2
+	# var range_start: int = 0  # Fortunately none start with 0, else we would need better logic
+	# for entry: int in puzzle_data.seeds:
+	# 	if range_start == 0:
+	# 		range_start = entry
+	# 	else:
+	# 		for seed_number: int in range(range_start, range_start + entry + 1):
+	# 			# seed-to-soil_map
+	# 			var soil_number: int = seed_number
+	# 			soil_number = get_puzzle_data(
+	# 				puzzle_data, "seed-to-soil_arrays", seed_number, soil_number
+	# 			)
+
+	# 			# soil-to-fertilizer_map
+	# 			var fertilizer_number: int = soil_number
+	# 			fertilizer_number = get_puzzle_data(
+	# 				puzzle_data, "soil-to-fertilizer_arrays", soil_number, fertilizer_number
+	# 			)
+
+	# 			# fertilizer-to-water_map
+	# 			var water_number: int = fertilizer_number
+	# 			water_number = get_puzzle_data(
+	# 				puzzle_data, "fertilizer-to-water_arrays", fertilizer_number, water_number
+	# 			)
+
+	# 			# water-to-light_map
+	# 			var light_number: int = water_number
+	# 			light_number = get_puzzle_data(
+	# 				puzzle_data, "water-to-light_arrays", water_number, light_number
+	# 			)
+
+	# 			# light-to-temperature_map
+	# 			var temperature_number: int = light_number
+	# 			temperature_number = get_puzzle_data(
+	# 				puzzle_data, "light-to-temperature_arrays", light_number, temperature_number
+	# 			)
+
+	# 			# temperature-to-humidity_map
+	# 			var humidity_number: int = temperature_number
+	# 			humidity_number = get_puzzle_data(
+	# 				puzzle_data,
+	# 				"temperature-to-humidity_arrays",
+	# 				temperature_number,
+	# 				humidity_number
+	# 			)
+
+	# 			# humidity-to-location_map
+	# 			var location_number: int = humidity_number
+	# 			location_number = get_puzzle_data(
+	# 				puzzle_data, "humidity-to-location_arrays", humidity_number, location_number
+	# 			)
+
+	# 			# print(
+	# 			# 	seed_number,
+	# 			# 	" ",
+	# 			# 	soil_number,
+	# 			# 	" ",
+	# 			# 	fertilizer_number,
+	# 			# 	" ",
+	# 			# 	water_number,
+	# 			# 	" ",
+	# 			# 	light_number,
+	# 			# 	" ",
+	# 			# 	temperature_number,
+	# 			# 	" ",
+	# 			# 	humidity_number,
+	# 			# 	" ",
+	# 			# 	location_number
+	# 			# )
+
+	# 			if location_number < answer_two:
+	# 				answer_two = location_number
+	# 		range_start = 0
 
 	answer_text = str(answer_text, "\n2: ", answer_two)
+	#print(answer_text)
+	return answer_text
+
+
+func split_string_on_whitespace(input: String) -> Array:
+	# Copied straight from https://docs.godotengine.org/en/stable/classes/class_regex.html
+	var regex: RegEx = RegEx.new()
+	regex.compile("\\S+")  # Negated whitespace character class.
+	var results: Array = []
+	for match in regex.search_all(input):
+		results.push_back(match.get_string())
+	return results
+
+
+func advent_of_code_day_06() -> String:
+	var answer_text: String = ""
+	var puzzle_input: String = get_data_for_day(6)
+
+	var array_of_lines: PackedStringArray = puzzle_input.split("\r\n")
+
+	var times: Array = split_string_on_whitespace(array_of_lines[0].split(":")[1])
+	var distances: Array = split_string_on_whitespace(array_of_lines[1].split(":")[1])
+
+	var winning_strategies_counts: Array = []
+	for race: int in range(times.size()):
+		var race_time: int = int(times[race])
+		var record_distance: int = int(distances[race])
+		var winning_strategies: int = 0
+		for button_time: int in range(race_time):
+			var speed: int = button_time
+			var move_time: int = race_time - button_time
+			var distance: int = speed * move_time
+			if distance > record_distance:
+				winning_strategies = winning_strategies + 1
+		winning_strategies_counts.append(winning_strategies)
+
+	var answer_one: int = 1
+	for entry: int in winning_strategies_counts:
+		answer_one = answer_one * entry
+	answer_text = str(answer_text, "1: ", answer_one)
+	var answer_two: int = 0
+	answer_text = str(answer_text, "\n2: ", answer_two)
+	#print(answer_text)
+	return answer_text
+
+
+func advent_of_code_day_07() -> String:
+	var answer_text: String = ""
+	var puzzle_input: String = get_data_for_day(7)
+
+	var array_of_lines: PackedStringArray = puzzle_input.split("\r\n")
+
+	print(array_of_lines)
+
+	var answer_one: int = 0
+	answer_text = str(answer_text, "1: ", answer_one)
+	var answer_two: int = 0
+	answer_text = str(answer_text, "\n2: ", answer_two)
+	print(answer_text)
 	return answer_text
