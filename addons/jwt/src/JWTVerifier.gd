@@ -11,11 +11,13 @@ enum JWTExceptions {
 	CLAIM_NOT_VALID
 }
 
+var exception: String
+
+
 var _jwt_decoder: JWTDecoder
 var _algorithm: JWTAlgorithm
 var _claims: Dictionary
 var _clock: int
-var exception: String
 
 
 func _init(algorithm: JWTAlgorithm, claims: Dictionary, clock: int):
@@ -31,7 +33,7 @@ func verify_algorithm(jwt_decoder: JWTDecoder, algorithm: JWTAlgorithm) -> bool:
 
 func verify_signature(jwt_decoder: JWTDecoder) -> bool:
 	self.exception = "The provided Algorithm doesn't match the one used to sign the JWT."
-	return _algorithm.verify(jwt_decoder)
+	return self._algorithm.verify(jwt_decoder)
 
 
 func verify_claim_values(jwt_decoder: JWTDecoder, expected_claims: Dictionary) -> bool:
@@ -118,12 +120,12 @@ func assert_valid_date_claim(date: int, leeway: int, should_be_future: bool) -> 
 
 func assert_valid_header(jwt_decoder: JWTDecoder) -> bool:
 	self.exception = "The header is empty or invalid."
-	return not jwt_decoder.header_claims.is_empty()
+	return not jwt_decoder.get_header_claims().is_empty()
 
 
 func assert_valid_payload(jwt_decoder: JWTDecoder) -> bool:
 	self.exception = "The payload is empty or invalid."
-	return not jwt_decoder.payload_claims.is_empty()
+	return not jwt_decoder.get_claims().is_empty()
 
 
 func verify(jwt: String) -> JWTExceptions:
@@ -132,7 +134,7 @@ func verify(jwt: String) -> JWTExceptions:
 		return JWTExceptions.INVALID_HEADER
 	if not assert_valid_payload(self._jwt_decoder):
 		return JWTExceptions.INVALID_PAYLOAD
-	if not verify_algorithm(self._jwt_decoder, _algorithm):
+	if not verify_algorithm(self._jwt_decoder, self._algorithm):
 		return JWTExceptions.ALGORITHM_MISMATCHING
 	if not verify_signature(self._jwt_decoder):
 		return JWTExceptions.INVALID_SIGNATURE

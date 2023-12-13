@@ -95,7 +95,7 @@ func load_level(scene: PackedScene) -> void:
 
 
 func generate_jwt(secret: String, player_uuid: String) -> String:
-	var jwt_algorithm: JWTAlgorithm = JWTAlgorithmBuilder.HS256(secret)
+	var jwt_algorithm: JWTAlgorithm = JWTAlgorithm.HS256.new(secret)
 	var jwt_builder: JWTBuilder = (
 		JWT
 		. create()
@@ -110,7 +110,7 @@ func generate_jwt(secret: String, player_uuid: String) -> String:
 
 func validate_and_decode_jwt(secret: String, jwt: String) -> Dictionary:
 	var content: Dictionary = {}
-	var jwt_algorithm: JWTAlgorithm = JWTAlgorithmBuilder.HS256(secret)
+	var jwt_algorithm: JWTAlgorithm = JWTAlgorithm.HS256.new(secret)
 	var jwt_verifier: JWTVerifier = JWT.require(jwt_algorithm).build()  # Reusable Verifier
 	if jwt_verifier.verify(jwt) == JWTVerifier.JWTExceptions.OK:
 		var jwt_decoder: JWTDecoder = JWT.decode(jwt)
