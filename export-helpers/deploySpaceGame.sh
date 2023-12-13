@@ -251,12 +251,13 @@ printf "\n${YELLOW}Syncing Builds to Server${NC}"
 printf "\n\t${YELLOW}Syncing Web Content${NC}\n"
 UNISON_ARGUMENTS=()
 UNISON_ARGUMENTS+=("${OUTPUT_PATH}")
-UNISON_ARGUMENTS+=("ssh://${REMOTE_HOST}//home/chrisl8/${GAME_NAME}")
+UNISON_ARGUMENTS+=("ssh://${USER}@${REMOTE_HOST}//home/${USER}/${GAME_NAME}")
 UNISON_ARGUMENTS+=(-force "${OUTPUT_PATH}")
 UNISON_ARGUMENTS+=(-path web)
 UNISON_ARGUMENTS+=(-auto)
 UNISON_ARGUMENTS+=(-batch)
-unison "${UNISON_ARGUMENTS[@]}" # -batch
+UNISON_ARGUMENTS+=(-sshcmd "ssh.exe")
+unison "${UNISON_ARGUMENTS[@]}"
 
 printf "\n\t${YELLOW}Syncing Linux Binary (for Server)${NC}\n"
 # Copy in the scripts for the Linux server
@@ -264,11 +265,11 @@ cp "${PROJECT_PATH}/export-helpers/server/run-server.sh" "${OUTPUT_PATH}/linux"
 cp "${PROJECT_PATH}/export-helpers/server/restart-server.sh" "${OUTPUT_PATH}/linux"
 
 UNISON_ARGUMENTS+=(-path linux)
-unison "${UNISON_ARGUMENTS[@]}" # -batch
+unison "${UNISON_ARGUMENTS[@]}"
 
 printf "\n${YELLOW}Restarting Server${NC}\n"
 # shellcheck disable=SC2029
-ssh "${REMOTE_HOST}" "cd ${OUTPUT_PATH}/linux;./restart-server.sh"
+ssh.exe "${USER}@${REMOTE_HOST}" "cd ${OUTPUT_PATH}/linux;./restart-server.sh"
 
 if [[ "${RAPID_DEPLOY}" == "false" ]] && ! [[ "${CLOUD_DRIVE_PATH}" == "" ]] && [[ -d ${CLOUD_DRIVE_PATH} ]]; then
   printf "\n${YELLOW}Syncing Cloud Copy${NC}\n"
