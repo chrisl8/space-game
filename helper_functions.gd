@@ -20,11 +20,21 @@ func log_print(text: String, color: String = "white") -> void:
 
 
 func generate_random_string(length: int) -> String:
-	var characters: String = "abcdefghijklmnopqrstuvwxyz0123456789"
+	var crypto: Crypto = Crypto.new()
+	var random_bytes: PackedByteArray = crypto.generate_random_bytes(length)
+
+	var characters: String = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_"
 	var word: String = ""
-	var n_char: int = len(characters)
-	for i in range(length):
-		word += characters[randi() % n_char]
+
+	# Use randi()
+	# for i in range(length):
+	# 	word += characters[randi() % len(characters)]
+
+	# Use crypto
+	var cursor: int = 0
+	for byte: int in random_bytes:
+		cursor += byte
+		word += characters[cursor % len(characters)]
 	return word
 
 
