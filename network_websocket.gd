@@ -111,7 +111,7 @@ func generate_jwt(secret: String, player_uuid: String) -> String:
 func validate_and_decode_jwt(secret: String, jwt: String) -> Dictionary:
 	var content: Dictionary = {}
 	var jwt_algorithm: JWTAlgorithm = JWTAlgorithm.HS256.new(secret)
-	var jwt_verifier: JWTVerifier = JWT.require(jwt_algorithm).build()  # Reusable Verifier
+	var jwt_verifier: JWTVerifier = JWT.require(jwt_algorithm).with_issuer("Space Game").build()
 	if jwt_verifier.verify(jwt) == JWTVerifier.JWTExceptions.OK:
 		var jwt_decoder: JWTDecoder = JWT.decode(jwt)
 		content = jwt_decoder.get_claims()
