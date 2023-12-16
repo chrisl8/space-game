@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="ToastStyle" load_steps=2 format=3 uid="uid://cddscgdyqna1t"]
 
-[ext_resource type="Script" path="res://addons/toast/style_resource/toast_style.gd" id="1"]
+[ext_resource type="Script" path="res://toast/style_resource/toast_style.gd" id="1"]
 
 [resource]
 script = ExtResource("1")
