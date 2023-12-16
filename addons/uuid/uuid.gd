@@ -4,7 +4,7 @@ extends Node
 
 const BYTE_MASK: int = 0b11111111
 
-static func uuidbin() -> Array[Variant]:
+static func uuidbin():
   randomize()
   # 16 random bytes with the bytes on index 6 and 8 modified
   return [
@@ -14,7 +14,7 @@ static func uuidbin() -> Array[Variant]:
     randi() & BYTE_MASK, randi() & BYTE_MASK, randi() & BYTE_MASK, randi() & BYTE_MASK,
   ]
 
-static func uuidbinrng(rng: RandomNumberGenerator) -> Array[Variant]:
+static func uuidbinrng(rng: RandomNumberGenerator):
   rng.randomize()
   return [
     rng.randi() & BYTE_MASK, rng.randi() & BYTE_MASK, rng.randi() & BYTE_MASK, rng.randi() & BYTE_MASK,
@@ -25,7 +25,7 @@ static func uuidbinrng(rng: RandomNumberGenerator) -> Array[Variant]:
 
 static func v4():
   # 16 random bytes with the bytes on index 6 and 8 modified
-  var b: Array[Variant] = uuidbin()
+  var b = uuidbin()
 
   return '%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x' % [
     # low
@@ -46,7 +46,7 @@ static func v4():
   
 static func v4_rng(rng: RandomNumberGenerator):
   # 16 random bytes with the bytes on index 6 and 8 modified
-  var b: Array[Variant] = uuidbinrng(rng)
+  var b = uuidbinrng(rng)
 
   return '%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x' % [
     # low

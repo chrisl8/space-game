@@ -33,7 +33,7 @@ window/size/always_on_top=true
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/Mirror/plugin.cfg")
+enabled=PackedStringArray("res://addons/Mirror/plugin.cfg", "res://addons/jwt/plugin.cfg")
 
 [filesystem]
 

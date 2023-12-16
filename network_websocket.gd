@@ -23,7 +23,7 @@ var level_scene: PackedScene = preload("res://spaceship/spaceship.tscn")
 #var level_scene: PackedScene = preload("res://character_test_level/character_test.tscn")
 
 var websocket_multiplayer_peer: WebSocketMultiplayerPeer
-var uuid_util: Resource = preload("res://addons/godot-uuid/uuid.gd")
+var uuid_util: Resource = preload("res://addons/uuid/uuid.gd")
 
 
 func _process(_delta: float) -> void:
