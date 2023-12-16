@@ -102,7 +102,6 @@ func display() -> void:
 
 
 func _animationEnded(whichAnimation: String) -> void:
-	Helpers.log_print(str("_animationEnded ", whichAnimation))
 	if whichAnimation == "toast_animations/start":
 		await get_tree().create_timer(toastDuration).timeout
 		animation.play("toast_animations/end")
