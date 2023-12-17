@@ -55,8 +55,8 @@ var held_item: Node
 
 @onready var player_collider: Shape3D = $Collision.shape  # Capsule collision shape of the player
 @onready var head: Node3D = $Head  # y-axis rotation node (look left and right)
-@onready var camera: Node = get_node("./Head/Camera3D")  # Camera3D node
-@onready var head_mesh: Node = get_node("./Head/HeadMesh")  # x-axis rotation node (look up and down)
+@onready var camera: Node = get_node("Head/Camera3D")  # Camera3D node
+@onready var head_mesh: Node = get_node("Head/HeadMesh")  # x-axis rotation node (look up and down)
 @onready var character_meshes: Node3D = $Character
 @onready var original_friction: float = player_physics_material.friction  # Editor friction value
 @onready var original_linear_damp: float = linear_damp
