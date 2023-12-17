@@ -12,7 +12,7 @@ Mirror properties that can be adjusted:
 
  ## Usage
 
- After the addon is enabled a custom node is added to godot under the spatial node.
+ After the addon is enabled a custom node is added to godot under the spatial node. 
 
  The main camera that renders the scene needs to be selected in the variables of the node. Only one camera is supported at a time. The plugin adds a secondary camera to the opposite side of the mirror relative to this camera and renders the image to the mirror surface.
 
