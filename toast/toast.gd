@@ -2,14 +2,14 @@
 # https://github.com/rares45/godot-toasts
 
 @tool
-extends Control
-
 class_name Toast
+
+extends Control
 
 signal done
 
-var labelText: String
-var toastDuration: float
+var label_text: String
+var toast_duration: float
 var style: ToastStyle
 
 #Nodes
@@ -22,8 +22,8 @@ func _init(
 	duration: float = 1,
 	toast_style: ToastStyle = preload("style_resource/default.tres")
 ) -> void:
-	labelText = text
-	toastDuration = duration
+	label_text = text
+	toast_duration = duration
 	if toast_style is ToastStyle:
 		style = toast_style
 	else:
@@ -39,43 +39,43 @@ func _ready() -> void:
 	#Setting the label
 	label = Label.new()
 
-	var styleBoxParser: StyleBoxFlat = StyleBoxFlat.new()
-	styleBoxParser.bg_color = style.backgroundColor
-	styleBoxParser.content_margin_bottom = style.contentMarginBottom
-	styleBoxParser.content_margin_left = style.contentMarginLeft
-	styleBoxParser.content_margin_right = style.contentMarginRight
-	styleBoxParser.content_margin_top = style.contentMarginTop
-	styleBoxParser.corner_radius_bottom_left = style.cornerRadius
-	styleBoxParser.corner_radius_bottom_right = style.cornerRadius
-	styleBoxParser.corner_radius_top_left = style.cornerRadius
-	styleBoxParser.corner_radius_top_right = style.cornerRadius
-	label.add_theme_stylebox_override("normal", styleBoxParser)
+	var style_box_parser: StyleBoxFlat = StyleBoxFlat.new()
+	style_box_parser.bg_color = style.background_color
+	style_box_parser.content_margin_bottom = style.content_margin_bottom
+	style_box_parser.content_margin_left = style.content_margin_left
+	style_box_parser.content_margin_right = style.content_margin_right
+	style_box_parser.content_margin_top = style.content_margin_top
+	style_box_parser.corner_radius_bottom_left = style.corner_radius
+	style_box_parser.corner_radius_bottom_right = style.corner_radius
+	style_box_parser.corner_radius_top_left = style.corner_radius
+	style_box_parser.corner_radius_top_right = style.corner_radius
+	label.add_theme_stylebox_override("normal", style_box_parser)
 
-	label.add_theme_color_override("font_color", style.fontColor)
-	label.text = labelText
+	label.add_theme_color_override("font_color", style.font_color)
+	label.text = label_text
 	match style.position:
-		ToastStyle.Position.Bottom:
-			if style.toastType == ToastStyle.Type.Float:
+		ToastStyle.Position.BOTTOM:
+			if style.toast_type == ToastStyle.Type.FLOAT:
 				label.anchor_bottom = 1.0
 				label.anchor_top = 1.0
 				label.anchor_left = 0.5
 				label.anchor_right = 0.5
 				label.offset_bottom = -60
-			elif style.toastType == ToastStyle.Type.Full:
+			elif style.toast_type == ToastStyle.Type.FULL:
 				label.anchor_bottom = 1.0
 				label.anchor_top = 1.0
 				label.anchor_left = 0
 				label.anchor_right = 1
 				label.offset_bottom = 0
 			label.grow_vertical = Control.GROW_DIRECTION_BEGIN
-		ToastStyle.Position.Top:
-			if style.toastType == ToastStyle.Type.Float:
+		ToastStyle.Position.TOP:
+			if style.toast_type == ToastStyle.Type.FLOAT:
 				label.anchor_bottom = 0
 				label.anchor_top = 0
 				label.anchor_left = 0.5
 				label.anchor_right = 0.5
 				label.margin_top = 60
-			elif style.toastType == ToastStyle.Type.Full:
+			elif style.toast_type == ToastStyle.Type.FULL:
 				label.anchor_bottom = 0
 				label.anchor_top = 0
 				label.anchor_left = 0
@@ -97,17 +97,17 @@ func _ready() -> void:
 
 func display() -> void:
 	animation.play("toast_animations/start")
-	animation.animation_finished.connect(_animationEnded)
+	animation.animation_finished.connect(_animation_ended)
 	visible = true
 
 
-func _animationEnded(whichAnimation: String) -> void:
-	if whichAnimation == "toast_animations/start":
-		await get_tree().create_timer(toastDuration).timeout
+func _animation_ended(which_animation: String) -> void:
+	if which_animation == "toast_animations/start":
+		await get_tree().create_timer(toast_duration).timeout
 		animation.play("toast_animations/end")
-	elif whichAnimation == "endAnimation":
+	elif which_animation == "endAnimation":
 		animation.play("toast_animations/end")
-		animation.disconnect("animation_finished", _animationEnded)
+		animation.disconnect("animation_finished", _animation_ended)
 		animation.connect("animation_finished", _done)
 
 

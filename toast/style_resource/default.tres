@@ -5,12 +5,12 @@
 [resource]
 script = ExtResource("1")
 position = 1
-toastType = 0
-backgroundColor = Color(0, 1, 1, 0.8)
+toast_type = 0
+background_color = Color(0, 1, 1, 0.8)
 fontColor = Color(0, 0, 0, 1)
-cornerRadius = 20
-contentMarginLeft = 20.0
-contentMarginRight = 20.0
-contentMarginTop = 10.0
-contentMarginBottom = 10.0
-textAlign = 1
+corner_radius = 20
+content_margin_left = 20.0
+content_margin_right = 20.0
+content_margin_top = 10.0
+content_margin_bottom = 10.0
+text_align = 1
