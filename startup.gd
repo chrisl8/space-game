@@ -18,10 +18,6 @@ var _instance_socket: TCPServer
 
 
 func _init() -> void:
-	if OS.is_debug_build() and run_server_in_debug:
-		Globals.url = debug_server_url
-	else:
-		Globals.url = production_server_url
 	if OS.is_debug_build():
 		# Check if this is the first instance of a debug run, so only one attempts to be the server
 		# It also provides us with a unique "instance number" for each debug instance of the game run by the editor
@@ -111,6 +107,11 @@ func _ready() -> void:
 	# See helper_functions.gd quit_gracefully()
 	# https://docs.godotengine.org/en/stable/tutorials/inputs/handling_quit_requests.html
 	get_tree().set_auto_accept_quit(false)
+
+	if OS.is_debug_build() and run_server_in_debug:
+		Globals.url = debug_server_url
+	else:
+		Globals.url = production_server_url
 
 	Network.reset.connect(connection_reset)
 	Network.close_popup.connect(force_close_popup)
