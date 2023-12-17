@@ -1,0 +1,10 @@
+--- /mnt/c/Dev/godot-mirror/addons/Mirror/Mirror/MirrorContainer.tscn	2023-12-15 13:44:34.585808800 -0600
++++ MirrorContainer.tscn	2023-12-15 23:41:49.966385600 -0600
+@@ -9,7 +9,6 @@
+ 
+ [node name="SubViewport" type="SubViewport" parent="."]
+ size = Vector2i(100, 100)
+-render_target_update_mode = 3
+ 
+ [node name="Camera3D" type="Camera3D" parent="SubViewport"]
+ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.406672, 1.21628, 8.51171)
