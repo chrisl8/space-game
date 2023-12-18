@@ -13,6 +13,8 @@ CLOUD_DRIVE_PATH=""
 # This can speed up testing.
 RAPID_DEPLOY=false
 
+BUILD_XR=false
+
 print_usage() {
   echo "Godot Game Deploy Script"
   echo "This is a script that I use to deploy my multiplayer web-based game to the server where it is hosted."
@@ -62,6 +64,9 @@ do
         case "$1" in
           --fast-web)
             RAPID_DEPLOY=true
+            ;;
+          --build-xr)
+            BUILD_XR=true
             ;;
           --godot-version)
             shift
@@ -171,6 +176,11 @@ if [[ "${RAPID_DEPLOY}" == "false" ]]; then
   mkdir -p "${OUTPUT_PATH}/windows"
   godot  --headless --quiet --path "${PROJECT_PATH}" --export-release 'Win' "${OUTPUT_PATH}/windows/${GAME_NAME}.exe"
 fi
+if [[ "${BUILD_XR}" == "true" ]]; then
+  printf "\n\t${YELLOW}XR${NC}\n"
+  mkdir -p "${OUTPUT_PATH}/xr"
+  godot  --headless --quiet --path "${PROJECT_PATH}-xr" --export-release 'Win' "${OUTPUT_PATH}/xr/${GAME_NAME}.exe"
+fi
 
 printf "\n${YELLOW}Cache Busting${NC}\n"
 # Most web servers and browsers are really bad about caching too aggressively when it comes to binary files
@@ -274,9 +284,9 @@ ssh.exe "${USER}@${REMOTE_HOST}" "cd ${OUTPUT_PATH}/linux;./restart-server.sh"
 if [[ "${RAPID_DEPLOY}" == "false" ]] && ! [[ "${CLOUD_DRIVE_PATH}" == "" ]] && [[ -d ${CLOUD_DRIVE_PATH} ]]; then
   printf "\n${YELLOW}Syncing Cloud Copy${NC}\n"
   UNISON_ARGUMENTS=()
-  UNISON_ARGUMENTS+=("${OUTPUT_PATH}/windows")
+  UNISON_ARGUMENTS+=("${OUTPUT_PATH}")
   UNISON_ARGUMENTS+=("${CLOUD_DRIVE_PATH}")
-  UNISON_ARGUMENTS+=(-force "${OUTPUT_PATH}/windows")
+  UNISON_ARGUMENTS+=(-force "${OUTPUT_PATH}")
   UNISON_ARGUMENTS+=(-perms 0)
   UNISON_ARGUMENTS+=(-dontchmod)
   UNISON_ARGUMENTS+=(-rsrc false)
