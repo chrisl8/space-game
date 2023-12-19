@@ -23,7 +23,7 @@ var button_panel_labels: Dictionary = {
 
 func _ready() -> void:
 	set_screen_text("Enter Code\nto\nVEND\nstuff")
-	var button_nodes: Array = get_node("Mesh/VendingMachineMesh/Left Panel").get_children()
+	var button_nodes: Array = get_node("Mesh/root/Left Panel/LeftPanelButtons").get_children()
 	for button_node: Node3D in button_nodes:
 		if button_panel_labels.has(button_node.name) and button_node.has_node("StaticBody3D"):
 			var button_static_body_node: Node3D = button_node.get_node("StaticBody3D")
