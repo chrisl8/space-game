@@ -1,11 +1,12 @@
-[gd_scene load_steps=6 format=3 uid="uid://cnckqfxi8eyk8"]
+[gd_scene load_steps=7 format=3 uid="uid://cnckqfxi8eyk8"]
 
 [ext_resource type="PhysicsMaterial" uid="uid://u55tuef0hp46" path="res://Physics/player.tres" id="1_2we4p"]
 [ext_resource type="Script" path="res://player/NewPlayerController.gd" id="2_3vwgq"]
+[ext_resource type="Texture2D" uid="uid://rtlda15irjtr" path="res://Items/PlayerBox.png" id="3_8dug6"]
 [ext_resource type="Texture2D" uid="uid://bwi88dcimnyfh" path="res://Items/Box.png" id="3_h2rqs"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_4uxh2"]
-size = Vector2(129, 169.5)
+size = Vector2(32, 64)
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_ir062"]
 properties/0/path = NodePath(".:linear_velocity")
@@ -31,7 +32,6 @@ properties/6/spawn = true
 properties/6/replication_mode = 2
 
 [node name="Player" type="RigidBody2D" groups=["players"]]
-position = Vector2(75, -11)
 collision_layer = 2
 collision_mask = 11
 physics_material_override = ExtResource("1_2we4p")
@@ -47,7 +47,6 @@ script = ExtResource("2_3vwgq")
 player_spawn_point = Vector2(0, 0)
 
 [node name="Collision" type="CollisionShape2D" parent="."]
-position = Vector2(0, -2.525)
 shape = SubResource("RectangleShape2D_4uxh2")
 
 [node name="PlayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
@@ -57,10 +56,10 @@ replication_config = SubResource("SceneReplicationConfig_ir062")
 position = Vector2(0, 0.63)
 
 [node name="Box" type="Sprite2D" parent="."]
-scale = Vector2(0.5, 0.5)
-texture = ExtResource("3_h2rqs")
+texture = ExtResource("3_8dug6")
 
 [node name="Box2" type="Sprite2D" parent="."]
+visible = false
 position = Vector2(0, -50)
 scale = Vector2(0.25, 0.25)
 texture = ExtResource("3_h2rqs")
