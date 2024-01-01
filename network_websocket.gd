@@ -345,35 +345,35 @@ func player_joined(id: int, data: String) -> void:
 		character.player = id  # Set player id.
 
 		# Use saved player position or randomize it around the spawn area
-		if (
-			Globals.player_save_data[player_uuid].has("position")
-			and Globals.player_save_data[player_uuid]["position"].has("x")
-			and Globals.player_save_data[player_uuid]["position"].has("y")
-			and Globals.player_save_data[player_uuid]["position"].has("z")
-		):
-			character.position = Vector3(
-				Globals.player_save_data[player_uuid]["position"]["x"],
-				Globals.player_save_data[player_uuid]["position"]["y"],
-				Globals.player_save_data[player_uuid]["position"]["z"]
-			)
-		else:
-			# Randomize character position.
-			#var pos: Vector2 = Vector2.from_angle(randf() * 2 * PI)
-			#const SPAWN_RANDOM: float = 2.0
-			character.position = Vector2((randf() - 0.5) * 600.0, randf() * 100.0)
+		# TODO: Reimplement this.
+		# if (
+		# 	Globals.player_save_data[player_uuid].has("position")
+		# 	and Globals.player_save_data[player_uuid]["position"].has("x")
+		# 	and Globals.player_save_data[player_uuid]["position"].has("y")
+		# 	and Globals.player_save_data[player_uuid]["position"].has("z")
+		# ):
+		# 	character.position = Vector3(
+		# 		Globals.player_save_data[player_uuid]["position"]["x"],
+		# 		Globals.player_save_data[player_uuid]["position"]["y"],
+		# 		Globals.player_save_data[player_uuid]["position"]["z"]
+		# 	)
+		# else:
+		# 	# Randomize character position.
+		# 	#var pos: Vector2 = Vector2.from_angle(randf() * 2 * PI)
+		# 	#const SPAWN_RANDOM: float = 2.0
+		# 	character.position = Vector2((randf() - 0.5) * 600.0, randf() * 100.0)
+
+		character.position = Vector2((randf() - 0.5) * 600.0, randf() * 100.0)
 
 		# Use saved player rotation if it exists
-		if (
-			Globals.player_save_data[player_uuid].has("rotation")
-			and Globals.player_save_data[player_uuid]["rotation"].has("x")
-			and Globals.player_save_data[player_uuid]["rotation"].has("y")
-			and Globals.player_save_data[player_uuid]["rotation"].has("z")
-		):
-			character.rotation = Vector3(
-				Globals.player_save_data[player_uuid]["rotation"]["x"],
-				Globals.player_save_data[player_uuid]["rotation"]["y"],
-				Globals.player_save_data[player_uuid]["rotation"]["z"]
-			)
+		if Globals.player_save_data[player_uuid].has("rotation"):
+			# TODO: Reimplement this.
+			Helpers.log_print(str("Rotation: ", Globals.player_save_data[player_uuid]["rotation"]))
+			# character.rotation = Vector3(
+			# 	Globals.player_save_data[player_uuid]["rotation"]["x"],
+			# 	Globals.player_save_data[player_uuid]["rotation"]["y"],
+			# 	Globals.player_save_data[player_uuid]["rotation"]["z"]
+			# )
 		character.name = str(id)
 		get_node("../Main/Players").add_child(character, true)
 		character.set_multiplayer_authority(character.player)
