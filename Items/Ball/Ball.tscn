@@ -1,0 +1,42 @@
+[gd_scene load_steps=6 format=3 uid="uid://bggbm2s34068s"]
+
+[ext_resource type="Script" path="res://Items/Ball/BallController.gd" id="1_gygkt"]
+[ext_resource type="Texture2D" uid="uid://bbok3i4ro1u0s" path="res://Items/Ball/Ball.png" id="2_g63ac"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_t2dte"]
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_14qyn"]
+properties/0/path = NodePath(".:linear_velocity")
+properties/0/spawn = true
+properties/0/replication_mode = 2
+properties/1/path = NodePath(".:angular_velocity")
+properties/1/spawn = true
+properties/1/replication_mode = 2
+properties/2/path = NodePath(".:position")
+properties/2/spawn = true
+properties/2/replication_mode = 2
+properties/3/path = NodePath(".:rotation")
+properties/3/spawn = true
+properties/3/replication_mode = 2
+
+[sub_resource type="QuadMesh" id="QuadMesh_16chs"]
+
+[node name="RigidBody3D" type="RigidBody2D"]
+collision_layer = 8
+collision_mask = 11
+mass = 10.0
+linear_damp = 1.0
+angular_damp = 1.0
+script = ExtResource("1_gygkt")
+
+[node name="CollisionShape3D" type="CollisionShape2D" parent="."]
+scale = Vector2(2.5, 2.5)
+shape = SubResource("CircleShape2D_t2dte")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_14qyn")
+
+[node name="MeshInstance2D" type="MeshInstance2D" parent="."]
+scale = Vector2(50, 50)
+mesh = SubResource("QuadMesh_16chs")
+texture = ExtResource("2_g63ac")

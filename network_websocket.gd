@@ -5,7 +5,7 @@ signal close_popup
 
 enum Message { PLAYER_JOINED, PLAYER_TOKEN, SHUTDOWN_SERVER }
 
-@export var player_spawn_point: Vector3 = Vector3(4, 1, -4)
+#@export var player_spawn_point: Vector2 = Vector2(0, 0)
 
 var ws: WebSocketPeer = WebSocketPeer.new()
 var ready_to_connect: bool = false
@@ -360,12 +360,10 @@ func player_joined(id: int, data: String) -> void:
 			)
 		else:
 			# Randomize character position.
-			var pos: Vector2 = Vector2.from_angle(randf() * 2 * PI)
-			const SPAWN_RANDOM: float = 2.0
-			character.position = Vector3(
-				player_spawn_point.x + (pos.x * SPAWN_RANDOM * randf()),
-				player_spawn_point.y,
-				player_spawn_point.z + (pos.y * SPAWN_RANDOM * randf())
+			#var pos: Vector2 = Vector2.from_angle(randf() * 2 * PI)
+			#const SPAWN_RANDOM: float = 2.0
+			character.position = Vector2(
+				0,0
 			)
 
 		# Use saved player rotation if it exists

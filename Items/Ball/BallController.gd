@@ -1,8 +1,8 @@
-extends RigidBody3D
+extends RigidBody2D
 
 @export var bounds_distance: int = 100
 @export var push_factor: float = 0.9
-@export var spawn_position: Vector3
+@export var spawn_position: Vector2
 
 var player_focused: String
 
@@ -11,7 +11,7 @@ func _ready() -> void:
 	if Globals.is_server and spawn_position:
 		position = spawn_position
 		# Only position, not rotation is currently passed in by the spawner
-		rotation.y = -45.0
+		rotation = -45.0
 
 
 func _physics_process(_delta: float) -> void:
@@ -20,8 +20,6 @@ func _physics_process(_delta: float) -> void:
 	if abs(position.x) > bounds_distance:
 		queue_free()
 	if abs(position.y) > bounds_distance:
-		queue_free()
-	if abs(position.z) > bounds_distance:
 		queue_free()
 
 
@@ -38,8 +36,7 @@ func unselect(other_name: String) -> void:
 	$SpotLight3D.visible = false
 
 
-@rpc("any_peer", "call_remote")
-func grab() -> void:
+@rpc("any_peer", "call_remote") func grab() -> void:
 	Helpers.log_print(
 		str(
 			"I (",
@@ -63,5 +60,5 @@ func my_name() -> String:
 	return get_parent().name
 
 
-func input_position(new_position: Vector3) -> void:
+func input_position(new_position: Vector2) -> void:
 	self.position = new_position
