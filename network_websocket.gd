@@ -152,11 +152,9 @@ func _peer_disconnected(id: int) -> void:
 		)
 		if player_uuid != "":
 			Globals.player_save_data[player_uuid]["position"] = {
-				"x": player.position.x, "y": player.position.y, "z": player.position.z
+				"x": player.position.x, "y": player.position.y
 			}
-			Globals.player_save_data[player_uuid]["rotation"] = {
-				"x": player.rotation.x, "y": player.rotation.y, "z": player.rotation.z
-			}
+			Globals.player_save_data[player_uuid]["rotation"] = player.rotation
 			Helpers.save_server_player_save_data_to_file()
 		player.queue_free()
 
@@ -362,9 +360,7 @@ func player_joined(id: int, data: String) -> void:
 			# Randomize character position.
 			#var pos: Vector2 = Vector2.from_angle(randf() * 2 * PI)
 			#const SPAWN_RANDOM: float = 2.0
-			character.position = Vector2(
-				(randf()-0.5)*600.0,randf()*100.0
-			)
+			character.position = Vector2((randf() - 0.5) * 600.0, randf() * 100.0)
 
 		# Use saved player rotation if it exists
 		if (
