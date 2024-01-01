@@ -150,7 +150,12 @@ func _peer_disconnected(id: int) -> void:
 			player.rotation,
 			"[/color]"
 		)
-		if player_uuid != "":
+		if (
+			player_uuid != ""
+			and player.position.x != NAN
+			and player.position.y != NAN
+			and player.rotation != NAN
+		):
 			Globals.player_save_data[player_uuid]["position"] = {
 				"x": player.position.x, "y": player.position.y
 			}
