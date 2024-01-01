@@ -3,15 +3,23 @@ extends RigidBody2D
 @export var player: int = -1
 @export var player_spawn_point: Vector2 = Vector2(4, 1.5)
 
+@export var SyncedPosition: Vector2 = Vector2(0,0):
+	set(new_value):
+			SyncedPosition = new_value
+			UpdateSyncedPosition = !IsLocal
+var UpdateSyncedPosition: bool = false
+
+@export var SyncedRotation: float = 0:
+	set(new_value):
+			SyncedRotation = new_value
+			UpdateSyncedRotation = !IsLocal
+var UpdateSyncedRotation: bool = false
 
 
-var is_grounded: bool  # Whether the player is considered to be touching a walkable slope
 
 @onready var camera: Node = get_node("./Camera2D")  # Camera3D node
 
-@export var SyncedVar: float = 1.0:
-	set(new_value):
-			SyncedVar = new_value
+
 
 var IsLocal: bool = false
 
@@ -24,14 +32,14 @@ func _ready() -> void:
 
 	if IsLocal:
 		camera.make_current()
-		position = Vector2(0,0)
+		#position = Vector2(randf()*2.0,0)
 	else:
 		if(multiplayer.is_server()):
 			camera.reparent(get_tree().get_root())
 			camera.position = Vector2(99999,99999)
 		else:
 			camera.queue_free()
-		freeze = true
+		#freeze = true
 
 func _input(event: InputEvent) -> void:
 	# Player look
@@ -67,6 +75,8 @@ func _physics_process(delta: float) -> void:
 	var move: Vector3 = relative_input()  # Get movement vector relative to player orientation
 	var move2: Vector2 = Vector2(move.x, move.z)  # Convert movement for Vector2 
 	linear_velocity = move2*1000.0
+	SyncedPosition = position
+	SyncedRotation = rotation
 
 # Get movement vector based on input, relative to the player's head transform
 func relative_input() -> Vector3:
@@ -84,6 +94,16 @@ func relative_input() -> Vector3:
 		move.x = input.x
 	# Normalize to prevent stronger diagonal forces
 	return move.normalized()
+
+func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
+	if(UpdateSyncedPosition and UpdateSyncedRotation):
+		state.transform = Transform2D(SyncedRotation, SyncedPosition)
+	elif (UpdateSyncedPosition):
+		state.transform = Transform2D(state.transform.get_rotation(), SyncedPosition)
+	elif(UpdateSyncedRotation):
+		state.transform = Transform2D(SyncedRotation, state.origin)
+
+
 
 func get_new_spawn_position() -> Vector2:
 

@@ -363,7 +363,7 @@ func player_joined(id: int, data: String) -> void:
 			#var pos: Vector2 = Vector2.from_angle(randf() * 2 * PI)
 			#const SPAWN_RANDOM: float = 2.0
 			character.position = Vector2(
-				0,0
+				(randf()-0.5)*600.0,randf()*100.0
 			)
 
 		# Use saved player rotation if it exists
