@@ -32,7 +32,6 @@ func _ready() -> void:
 
 	if IsLocal:
 		camera.make_current()
-		#position = Vector2(randf()*2.0,0)
 	else:
 		if(multiplayer.is_server()):
 			camera.reparent(get_tree().get_root())
@@ -59,7 +58,6 @@ func _process(_delta: float) -> void:
 
 
 func _physics_process(delta: float) -> void:
-
 	'''
 	if Input.is_action_pressed("sprint"):
 		print("SPRINTING")
@@ -69,19 +67,34 @@ func _physics_process(delta: float) -> void:
 		print("WALKING")
 	'''
 		
-	if(player != multiplayer.get_unique_id()):
-		print("ERROR")
 	### Movement
-	var move: Vector3 = relative_input()  # Get movement vector relative to player orientation
-	var move2: Vector2 = Vector2(move.x, move.z)  # Convert movement for Vector2 
-	linear_velocity = move2*1000.0
+	var MoveInput: Vector2 = relative_input()
+	
+	var Velocity: Vector2 = linear_velocity
+	if(abs(MoveInput.x) > 0.1):
+		Velocity = Vector2(MoveInput.x*1000.0,Velocity.y)
+	else:
+		var Damp: float = 5000.0
+		var Dampening: float = Velocity.x
+		if(Velocity.x < 0.0):
+			Dampening = Velocity.x - (Damp*delta) * (Velocity.x/abs(Velocity.x))
+			Dampening = clamp(Dampening,Velocity.x,0.0)
+		elif(Velocity.x > 0):
+			Dampening = Velocity.x - (Damp*delta) * (Velocity.x/abs(Velocity.x))
+			Dampening = clamp(Dampening,0.0,Velocity.x)
+
+		Velocity = Vector2(Dampening,Velocity.y)
+	if(abs(MoveInput.y) > 0.1):
+		Velocity = Vector2(Velocity.x,MoveInput.y*1000.0)
+	
+	linear_velocity = Velocity
 	SyncedPosition = position
 	SyncedRotation = rotation
 
 # Get movement vector based on input, relative to the player's head transform
-func relative_input() -> Vector3:
+func relative_input() -> Vector2:
 	# Initialize the movement vector
-	var move: Vector3 = Vector3()
+	var move: Vector2 = Vector2()
 	# Get cumulative input on axes
 	var input: Vector3 = Vector3()
 	if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
@@ -90,18 +103,22 @@ func relative_input() -> Vector3:
 		input.x += int(Input.is_action_pressed("move_right"))
 		input.x -= int(Input.is_action_pressed("move_left"))
 		# Add input vectors to movement relative to the direction the head is facing
-		move.z = -input.z
 		move.x = input.x
+		move.y = -input.z
 	# Normalize to prevent stronger diagonal forces
 	return move.normalized()
 
 func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
-	if(UpdateSyncedPosition and UpdateSyncedRotation):
-		state.transform = Transform2D(SyncedRotation, SyncedPosition)
-	elif (UpdateSyncedPosition):
-		state.transform = Transform2D(state.transform.get_rotation(), SyncedPosition)
-	elif(UpdateSyncedRotation):
-		state.transform = Transform2D(SyncedRotation, state.origin)
+	if(!IsLocal):
+		if(UpdateSyncedPosition and UpdateSyncedRotation):
+			state.transform = Transform2D(SyncedRotation, SyncedPosition)
+		elif (UpdateSyncedPosition):
+			state.transform = Transform2D(state.transform.get_rotation(), SyncedPosition)
+		elif(UpdateSyncedRotation):
+			state.transform = Transform2D(SyncedRotation, state.origin)
+		UpdateSyncedPosition = false
+		UpdateSyncedRotation = false
+
 
 
 

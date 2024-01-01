@@ -5,7 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://bwi88dcimnyfh" path="res://Items/Box.png" id="3_h2rqs"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_4uxh2"]
-size = Vector2(129, 179)
+size = Vector2(129, 169.5)
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_ir062"]
 properties/0/path = NodePath(".:linear_velocity")
@@ -31,22 +31,23 @@ properties/6/spawn = true
 properties/6/replication_mode = 2
 
 [node name="Player" type="RigidBody2D" groups=["players"]]
-position = Vector2(1, 0)
+position = Vector2(75, -11)
 collision_layer = 2
 collision_mask = 11
 physics_material_override = ExtResource("1_2we4p")
 can_sleep = false
+lock_rotation = true
 freeze_mode = 1
 continuous_cd = 1
 max_contacts_reported = 5
 contact_monitor = true
-linear_damp = 1.0
-angular_damp = 10.0
+linear_damp = 0.1
+angular_damp = 0.5
 script = ExtResource("2_3vwgq")
 player_spawn_point = Vector2(0, 0)
 
 [node name="Collision" type="CollisionShape2D" parent="."]
-position = Vector2(0, -27.5)
+position = Vector2(0, -2.525)
 shape = SubResource("RectangleShape2D_4uxh2")
 
 [node name="PlayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
@@ -60,6 +61,6 @@ scale = Vector2(0.5, 0.5)
 texture = ExtResource("3_h2rqs")
 
 [node name="Box2" type="Sprite2D" parent="."]
-position = Vector2(0, -84)
+position = Vector2(0, -50)
 scale = Vector2(0.25, 0.25)
 texture = ExtResource("3_h2rqs")

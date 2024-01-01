@@ -368,7 +368,7 @@ func player_joined(id: int, data: String) -> void:
 		# 	#const SPAWN_RANDOM: float = 2.0
 		# 	character.position = Vector2((randf() - 0.5) * 600.0, randf() * 100.0)
 
-		character.position = Vector2((randf() - 0.5) * 600.0, randf() * 100.0)
+		character.position = Vector2((randf() - 0.5)*2.0 * 400.0, randf() * 200.0)
 
 		# Use saved player rotation if it exists
 		if Globals.player_save_data[player_uuid].has("rotation"):
