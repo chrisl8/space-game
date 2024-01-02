@@ -47,15 +47,17 @@ script = ExtResource("2_3vwgq")
 player_spawn_point = Vector2(0, 0)
 
 [node name="Collision" type="CollisionShape2D" parent="."]
+position = Vector2(0, -32)
 shape = SubResource("RectangleShape2D_4uxh2")
 
 [node name="PlayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_ir062")
 
 [node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2(0, 0.63)
+position = Vector2(0, -31.37)
 
 [node name="Box" type="Sprite2D" parent="."]
+position = Vector2(0, -32)
 texture = ExtResource("3_8dug6")
 
 [node name="Box2" type="Sprite2D" parent="."]

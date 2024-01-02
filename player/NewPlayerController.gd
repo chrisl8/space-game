@@ -69,10 +69,11 @@ func _physics_process(delta: float) -> void:
 		
 	### Movement
 	var MoveInput: Vector2 = relative_input()
-	
+	var Speed: float = 200.0
+
 	var Velocity: Vector2 = linear_velocity
 	if(abs(MoveInput.x) > 0.1):
-		Velocity = Vector2(MoveInput.x*1000.0,Velocity.y)
+		Velocity = Vector2(MoveInput.x*Speed,Velocity.y)
 	else:
 		var Damp: float = 5000.0
 		var Dampening: float = Velocity.x
@@ -85,7 +86,7 @@ func _physics_process(delta: float) -> void:
 
 		Velocity = Vector2(Dampening,Velocity.y)
 	if(abs(MoveInput.y) > 0.1):
-		Velocity = Vector2(Velocity.x,MoveInput.y*1000.0)
+		Velocity = Vector2(Velocity.x,MoveInput.y*Speed)
 	
 	linear_velocity = Velocity
 	SyncedPosition = position
