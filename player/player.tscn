@@ -1,9 +1,14 @@
-[gd_scene load_steps=7 format=3 uid="uid://cnckqfxi8eyk8"]
+[gd_scene load_steps=8 format=3 uid="uid://cnckqfxi8eyk8"]
 
-[ext_resource type="PhysicsMaterial" uid="uid://u55tuef0hp46" path="res://Physics/player.tres" id="1_2we4p"]
-[ext_resource type="Script" path="res://player/NewPlayerController.gd" id="2_3vwgq"]
+[ext_resource type="Script" path="res://player/PlayerController.gd" id="1_ntq5g"]
 [ext_resource type="Texture2D" uid="uid://rtlda15irjtr" path="res://Items/PlayerBox.png" id="3_8dug6"]
 [ext_resource type="Texture2D" uid="uid://bwi88dcimnyfh" path="res://Items/Box.png" id="3_h2rqs"]
+
+[sub_resource type="GDScript" id="1"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_qk016"]
+friction = 0.0
+script = SubResource("1")
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_4uxh2"]
 size = Vector2(32, 64)
@@ -34,7 +39,7 @@ properties/6/replication_mode = 2
 [node name="Player" type="RigidBody2D" groups=["players"]]
 collision_layer = 2
 collision_mask = 11
-physics_material_override = ExtResource("1_2we4p")
+physics_material_override = SubResource("PhysicsMaterial_qk016")
 can_sleep = false
 lock_rotation = true
 freeze_mode = 1
@@ -43,7 +48,7 @@ max_contacts_reported = 5
 contact_monitor = true
 linear_damp = 0.1
 angular_damp = 0.5
-script = ExtResource("2_3vwgq")
+script = ExtResource("1_ntq5g")
 player_spawn_point = Vector2(0, 0)
 
 [node name="Collision" type="CollisionShape2D" parent="."]
