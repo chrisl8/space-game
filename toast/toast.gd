@@ -96,22 +96,18 @@ func _ready() -> void:
 
 
 func display() -> void:
+	Helpers.log_print("display()")
 	animation.play("toast_animations/start")
 	animation.animation_finished.connect(_animation_ended)
 	visible = true
 
 
 func _animation_ended(which_animation: String) -> void:
+	Helpers.log_print(which_animation)
 	if which_animation == "toast_animations/start":
 		await get_tree().create_timer(toast_duration).timeout
 		animation.play("toast_animations/end")
-	elif which_animation == "endAnimation":
-		animation.play("toast_animations/end")
-		animation.disconnect("animation_finished", _animation_ended)
-		animation.connect("animation_finished", _done)
-
-
-func _done() -> void:
-	animation.remove_animation("start")
-	queue_free()
-	emit_signal("done")
+	else:
+		animation.animation_finished.disconnect(_animation_ended)
+		queue_free()
+		emit_signal("done")
