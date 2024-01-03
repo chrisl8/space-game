@@ -35,6 +35,7 @@ func _ready() -> void:
 			camera.position = Vector2(99999, 99999)
 		else:
 			camera.queue_free()
+		gravity_scale = 0.0
 		#freeze = true
 
 
@@ -109,14 +110,3 @@ func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
 			state.transform = Transform2D(SyncedRotation, state.origin)
 		UpdateSyncedPosition = false
 		UpdateSyncedRotation = false
-
-
-func get_new_spawn_position() -> Vector2:
-	print("BBB")
-
-	if player != multiplayer.get_unique_id():
-		print("ERROR")
-
-	var pos: Vector2 = Vector2.from_angle(randf() * 2 * PI)
-	const SPAWN_RANDOM: float = 2.0
-	return Vector2(0.0 + (pos.x * SPAWN_RANDOM * randf()), 0.0 + (pos.y * SPAWN_RANDOM * randf()))
