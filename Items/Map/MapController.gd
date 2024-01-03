@@ -124,20 +124,14 @@ func SetCellData(Position: Vector2i, ID: Vector2i) -> void:
 	CurrentData[Position] = ID
 	set_cell(0,Position,0,ID)
 
-var ChangedDataBuffered: bool = false
 func PushChangedData() -> void:
-	if(!multiplayer.is_server()):
-		Helpers.log_print(str("af8ah0         3 ",!ChangedDataBuffered, " ",(len(ChangedData.keys()) > 0)))
-	if((!ChangedDataBuffered or multiplayer.is_server()) or len(ChangedData.keys()) > 0): # ### DAD SAYS! ### <- These are NEVER both true, so I set it to or just to hack it into existence
-		print("af8ah0         4")
+	if(len(ChangedData.keys()) > 0): # ### DAD SAYS! ### <- These are NEVER both true, so I set it to or just to hack it into existence
 		RPCSendChangedData.rpc(ChangedData)
-		ChangedDataBuffered = true
+		ChangedData.clear()
 
 @rpc("any_peer", "call_remote", "reliable")
 func RPCSendChangedData(Data: Dictionary) -> void:
-	Helpers.log_print("af8ah0         8")
 	if(multiplayer.is_server()):
-		Helpers.log_print("af8ah0         9")
 		var AcceptedChanges: Dictionary = Dictionary()
 		var ChangeMade: bool = false
 		for Key: Vector2i in Data.keys():
@@ -153,7 +147,6 @@ func RPCSendChangedData(Data: Dictionary) -> void:
 				ChangeMade = true
 		#SyncedData[AcceptedChanges.keys()] = AcceptedChanges.values()
 		if(ChangeMade):
-			print("af8ah0         10")
 			ServerSendChangedData.rpc(AcceptedChanges)
 
 const MaxFailedChangeCycles = 2
@@ -162,38 +155,10 @@ const MaxFailedChangeCycles = 2
 func ServerSendChangedData(Data: Dictionary) -> void:
 	if(multiplayer.is_server()):
 		return
-	Helpers.log_print("af8ah0         11")
 	for Key: Vector2i in Data.keys():
-		print("af8ah0         12")
 		SyncedData[Key] = Data[Key]
-
-		if(ChangedData.has(Key)):
-			print("af8ah0         12-")
-			#Is a changed cell
-			if(ChangedData[Key] == Data[Key]):
-				#Change accepted
-				ChangedData.erase(Key)
-				ChangedDataFailedCycles.erase(Key)
-				CurrentData[Key] = Data[Key]
-			else:
-				if(ChangedDataFailedCycles[Key] < MaxFailedChangeCycles):
-					ChangedDataFailedCycles[Key]+=1
-				else:
-					ChangedData.erase(Key)
-					ChangedDataFailedCycles.erase(Key)
-					CurrentData[Key] = Data[Key]
-					UpdateCellFromCurrent(Key)
-		else:
-			Helpers.log_print("af8ah0         13")
-			CurrentData[Key] = Data[Key]
-			UpdateCellFromCurrent(Key)
-	
-	ChangedDataBuffered = false
+		CurrentData[Key] = Data[Key]
+		UpdateCellFromCurrent(Key)
 
 func UpdateCellFromCurrent(Position):
-	Helpers.log_print(str("UpdateCellFromCurrent ", Position, " ", CurrentData, " ", CurrentData[Position]))
-	### DAD SAYS! ###
-	# THIS does not work at all, no idea what the idea was,
-	#set_cell(0,Position,CurrentData[Position])
-	# but this works:
-	SetCellData(Position, CurrentData[Position])
+	set_cell(0,Position,0,CurrentData[Position])
