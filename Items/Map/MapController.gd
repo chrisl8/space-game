@@ -162,4 +162,3 @@ func ServerSendChangedData(Data: Dictionary) -> void:
 
 func UpdateCellFromCurrent(Position):
 	set_cell(0,Position,0,CurrentData[Position])
-	
