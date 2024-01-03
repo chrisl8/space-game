@@ -24,11 +24,13 @@ Spawner="*res://spawner.gd"
 
 [debug]
 
-gdscript/warnings/untyped_declaration=1
+gdscript/warnings/unassigned_variable=0
+gdscript/warnings/unused_variable=0
 gdscript/warnings/integer_division=0
 
 [display]
 
+window/size/viewport_width=576
 window/size/always_on_top=true
 
 [editor_plugins]
