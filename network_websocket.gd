@@ -19,7 +19,6 @@ var network_connection_initiated: bool = false
 
 var player_character_template: PackedScene = preload("res://player/player.tscn")
 var level_scene: PackedScene = preload("res://spaceship/spaceship.tscn")
-var WorldMap: PackedScene = preload("res://Items/Map/Map.tscn")
 # A big open area for testing stuff.
 #var level_scene: PackedScene = preload("res://character_test_level/character_test.tscn")
 
@@ -82,7 +81,6 @@ func _ready() -> void:
 	multiplayer.connected_to_server.connect(_connected_to_server)
 	multiplayer.connection_failed.connect(_connection_failed)
 	multiplayer.server_disconnected.connect(_server_disconnected)
-	var Map: TileMap = WorldMap.instantiate()
 
 
 func load_level(scene: PackedScene) -> void:

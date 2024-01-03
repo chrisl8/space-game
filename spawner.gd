@@ -5,9 +5,14 @@ var Ball: Resource = preload("res://things/ball/ball.tscn")
 var Fish: Resource = preload("res://things/fish/fish.tscn")
 var Floater: Resource = preload("res://things/Floater/Floater.tscn")
 var PlantA: Resource = preload("res://things/plant_a/plant_a.tscn")
+var Map: Resource = preload("res://Items/Map/Map.tscn")
 var done_once: bool = false
 
 @onready var things_spawning_node: Node = get_node("../Main/Things")
+
+func _ready() -> void:
+	if(multiplayer.is_server()):
+		things()
 
 # Called by players to ask Server to place a held item.
 @rpc("any_peer", "call_remote")
@@ -33,6 +38,9 @@ func thing(thing_name: String, id: int, spawn_position: Vector3 = Vector3.ZERO) 
 				new_thing = PlantA.instantiate()
 			"Chair":
 				new_thing = Chair.instantiate()
+			"Map":
+				print("C")
+				new_thing = Map.instantiate()
 			_:
 				printerr("Invalid thing to spawn name: ", thing_name)
 				return
@@ -46,6 +54,8 @@ func thing(thing_name: String, id: int, spawn_position: Vector3 = Vector3.ZERO) 
 # This is ONLY called on the server instance
 # This is called on EVERY update in the _process() function in network_websocket.gd
 func things() -> void:
+	print("C")
+
 	# Various Things that respawn if lost
 	# The way things get lost is physics yeets them out of the rooms
 	# and then they fall past the boundary where they are deleted
@@ -73,3 +83,4 @@ func things() -> void:
 	if not done_once:
 		done_once = true
 		thing("Chair", 1, Vector3(8, 1, -8))
+		thing("Map", 1, Vector3(0,0,0))
