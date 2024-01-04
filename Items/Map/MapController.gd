@@ -3,8 +3,6 @@ extends TileMap
 var HasUpdatedCellData: bool = false
 var MapGenerated: bool = false
 
-#Can't use setget on arrays, or maybe arrays but not typed arrays. Append is not considered a 'set' command so only at index commands will be copied anyway. Might be able to work arround this but don't want to rely on artifatcs of the current mutlipayer varaible syncroniation system for something as critical as map syncing.
-
 #No longer using arrays, read/write requires an indexing system which negates the performance benefit of using array index overlap as link. Reading Positions and IDs separately may be faster if staggered separately but can be added later and merged into local dictionaries.
 
 #Last change from server, considered highest authority on accuracy
@@ -23,11 +21,11 @@ var ServerSetTileData = true
 
 var IsServer = false
 
+#Initialization
 func _ready() -> void:
 	IsServer = Globals.is_server
 
 	if(IsServer):
-		#Not sure if this is allowd
 		GenerateMap()
 		HasUpdatedCellData = true
 	else:
@@ -35,6 +33,7 @@ func _ready() -> void:
 
 	Globals.WorldMap = self
 
+#Procedural world generation
 func GenerateMap():
 	var HalfLength = 50
 	while(HalfLength>=0):
@@ -49,6 +48,7 @@ func GenerateMap():
 	SyncedData = CurrentData
 	MapGenerated = true
 
+#Gets a random valid stone tile ID from the atlas
 func GetRandomStoneTile():
 	return(Vector2i(randi_range(0,4),randi_range(0,1)))
 
@@ -60,8 +60,7 @@ func _process(delta: float) -> void:
 		if(!IsServer):
 			PushChangedData()
 		else:
-			if(len(ServerBufferedChanges.keys()) > 0):
-				ServerSendBufferedChanges()
+			ServerSendBufferedChanges()
 		CurrentCycleTime = 0.0
 
 	
@@ -75,26 +74,31 @@ func _process(delta: float) -> void:
 	if(IsServer and ServerSetTileData):
 		SetAllCellData(SyncedData,0)
 
+#Check for any buffered change data on the server (data reiceved from clients and waiting to be sent), then chunk it and send it out to clients
 func ServerSendBufferedChanges():
-	var Count = ChunkSize
-	var ChunkedData = {}
-	while Count > 0 and len(SyncedData.keys()) > 0:
-		ChunkedData[SyncedData.keys()[0]] = SyncedData[SyncedData.keys()[0]]
-		SyncedData.erase(SyncedData.keys()[0])
-		Count-=1
+	if(len(ServerBufferedChanges.keys()) > 0):
+		var Count = ChunkSize
+		var ChunkedData = {}
+		while Count > 0 and len(SyncedData.keys()) > 0:
+			ChunkedData[SyncedData.keys()[0]] = SyncedData[SyncedData.keys()[0]]
+			SyncedData.erase(SyncedData.keys()[0])
+			Count-=1
+		ServerSendChangedData(ChunkedData)
 
 
-var DebugCount = 400
 
+#Set the tile map to the given values at given cells. Clears the tile map before doing so. Meant for complete map refershes, not for incrimental changes
 func SetAllCellData(Data: Dictionary, Layer: int) -> void:
 	clear_layer(Layer)
 	for Key: Vector2i in Data.keys():
 		set_cell(Layer, Key,0,Data[Key])
 
+#Get the positions of every cell in the tile map
 func GetCellPositions(Layer: int) -> Array[Vector2i]:
 	var Positions: Array[Vector2i] = get_used_cells(Layer)
 	return(Positions)
 
+#Get the tile IDs of every cell in the tile map
 func GetCellIDs(Layer):
 	var IDs: Array[Vector2i]
 	var Positions: Array[Vector2i] = get_used_cells(Layer)
@@ -107,6 +111,7 @@ var PlayersToSendInitialState: Array[int] = []
 var InitialStatesRemainingPos = []
 var InitialStatesRemainingIDs = []
 
+#Requests a world state sync from the server, this is an inital request only sent when a client first joins
 @rpc("any_peer", "call_remote", "reliable")
 func RequestBlockState() -> void:
 	if(IsServer):
@@ -119,6 +124,8 @@ func RequestBlockState() -> void:
 		InitialStatesRemainingPos.append(SyncedData.keys())
 		InitialStatesRemainingIDs.append(Values)
 
+#Processes chunked intial states for each client that has requested a world state sync
+#CUrrently sends out chunks to every client in parralel, but should propbably send out data to one client at a time to avoid many simultaneouse RPC's if multiple clients join at the same time
 func ProcessChunkedInitialStateData():
 	var Count = len(PlayersToSendInitialState)-1
 	if(Count > -1):
@@ -162,7 +169,7 @@ func ServerCompressAndSendBlockStates(Data, Finished):
 
 	SendBlockState.rpc(CompressedData.data_array, Finished)
 '''
-
+#Send chunks of the world dat block to clients, used for initial world sync
 @rpc("authority", "call_remote", "reliable")
 func SendBlockState(Positions, IDs, Finished, Target) -> void:
 	if(!HasUpdatedCellData and Target == multiplayer.get_unique_id()):		
@@ -213,6 +220,7 @@ func SendBlockState(Positions, IDs, Finished, Target) -> void:
 		#Empty cells considered empty data, requires updating entire tile map for empty refresh (expensive?)
 		#Solution is to store remove tile changes as separate system
 
+#Modify a cell from the client, checks for finished world load and buffers changes for server accordinly
 func ModifyCell(Position: Vector2i, ID: Vector2i):
 	if(!HasUpdatedCellData):
 		#Not allowd to modify map untill first state recieved
@@ -222,23 +230,30 @@ func ModifyCell(Position: Vector2i, ID: Vector2i):
 	ChangedDataFailedCycles[Position] = 0
 	SetCellData(Position,ID)
 
+#Place air at a position : TEST TEMP
 func MineCellAtPosition(Position: Vector2):
 	ModifyCell(local_to_map(to_local(Position)),Vector2i(-1,-1))
 
+#Place a standard piece of stone at a position : TEST TEMP
 func PlaceCellAtPosition(Position: Vector2):
 	ModifyCell(local_to_map(to_local(Position)),Vector2i(1,1))
 
+#Set tbe current data of a cell to a given value
 func SetCellData(Position: Vector2i, ID: Vector2i) -> void:
 	CurrentData[Position] = ID
 	set_cell(0,Position,0,ID)
 
+#Push change data stored on the client to the server, if there is any
+#Still need to add chunking to this process right here
 func PushChangedData() -> void:
 	if(len(ChangedData.keys()) > 0): # ### DAD SAYS! ### <- These are NEVER both true, so I set it to or just to hack it into existence
 		RPCSendChangedData.rpc(ChangedData)
 		ChangedData.clear()
 
+#Changes the server has recieved and accepted, and is waiting to send back to all clients later
 var ServerBufferedChanges: Dictionary = {}
 
+#Sends changes from the client to the server to be processed
 @rpc("any_peer", "call_remote", "reliable")
 func RPCSendChangedData(Data: Dictionary) -> void:
 	if(IsServer):
@@ -252,13 +267,13 @@ func RPCSendChangedData(Data: Dictionary) -> void:
 				ServerBufferedChanges[Key] = Data[Key]
 				SyncedData[Key] = Data[Key]
 
-const MaxFailedChangeCycles = 2
-
 var BufferedChangesRecievedFromServer: Array[Dictionary] = []
 
+#Sends changes from the server to clients
 @rpc("authority", "call_remote", "reliable")
 func ServerSendChangedData(Data: Dictionary) -> void:
 	if(!HasUpdatedCellData):
+		#Store changes and process after the maps has been fully loaded
 		BufferedChangesRecievedFromServer.append(Data)
 		return
 
@@ -269,5 +284,6 @@ func ServerSendChangedData(Data: Dictionary) -> void:
 		CurrentData[Key] = Data[Key]
 		UpdateCellFromCurrent(Key)
 
+#Updates a cells tile from current data
 func UpdateCellFromCurrent(Position):
 	set_cell(0,Position,0,CurrentData[Position])
