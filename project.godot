@@ -147,10 +147,6 @@ reset_player_height={
 3d_physics/layer_4="Ball and other Things"
 3d_physics/layer_9="Buttons and Switches"
 
-[network]
-
-limits/webrtc/max_channel_in_buffer_kb=64000
-
 [rendering]
 
 renderer/rendering_method="gl_compatibility"

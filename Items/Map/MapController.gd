@@ -83,11 +83,11 @@ func ServerSendBufferedChanges():
 	if len(ServerBufferedChanges.keys()) > 0:
 		var Count = ChunkSize
 		var ChunkedData = {}
-		while Count > 0 and len(SyncedData.keys()) > 0:
-			ChunkedData[SyncedData.keys()[0]] = SyncedData[SyncedData.keys()[0]]
-			SyncedData.erase(SyncedData.keys()[0])
+		while Count > 0 and len(ServerBufferedChanges.keys()) > 0:
+			ChunkedData[ServerBufferedChanges.keys()[0]] = ServerBufferedChanges[ServerBufferedChanges.keys()[0]]
+			ServerBufferedChanges.erase(ServerBufferedChanges.keys()[0])
 			Count -= 1
-		ServerSendChangedData(ChunkedData)
+		ServerSendChangedData.rpc(ChunkedData)
 
 
 #Set the tile map to the given values at given cells. Clears the tile map before doing so. Meant for complete map refershes, not for incrimental changes
@@ -259,7 +259,7 @@ func SetCellData(Position: Vector2i, ID: Vector2i) -> void:
 #Push change data stored on the client to the server, if there is any
 #Still need to add chunking to this process right here
 func PushChangedData() -> void:
-	if len(ChangedData.keys()) > 0:  # ### DAD SAYS! ### <- These are NEVER both true, so I set it to or just to hack it into existence
+	if len(ChangedData.keys()) > 0:
 		RPCSendChangedData.rpc(ChangedData)
 		ChangedData.clear()
 
@@ -272,6 +272,10 @@ var ServerBufferedChanges: Dictionary = {}
 func RPCSendChangedData(Data: Dictionary) -> void:
 	if IsServer:
 		for Key: Vector2i in Data.keys():
+			ServerBufferedChanges[Key] = Data[Key]
+			SyncedData[Key] = Data[Key]
+
+			'''
 			if (
 				Data[Key] != Vector2i(-1, -1)
 				and (!SyncedData.has(Key) or SyncedData[Key] == Vector2i(-1, -1))
@@ -283,6 +287,7 @@ func RPCSendChangedData(Data: Dictionary) -> void:
 				#Replace with air, valid
 				ServerBufferedChanges[Key] = Data[Key]
 				SyncedData[Key] = Data[Key]
+			'''
 
 
 var BufferedChangesRecievedFromServer: Array[Dictionary] = []
@@ -290,11 +295,11 @@ var BufferedChangesRecievedFromServer: Array[Dictionary] = []
 #Sends changes from the server to clients
 @rpc("authority", "call_remote", "reliable")
 func ServerSendChangedData(Data: Dictionary) -> void:
+	
 	if !HasUpdatedCellData:
 		#Store changes and process after the maps has been fully loaded
 		BufferedChangesRecievedFromServer.append(Data)
 		return
-
 	if IsServer:
 		return
 	for Key: Vector2i in Data.keys():
