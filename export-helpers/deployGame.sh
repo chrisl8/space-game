@@ -4,7 +4,7 @@
 set -e
 
 GODOT_VERSION=""
-GAME_NAME=space-game
+GAME_NAME=2d-game
 REMOTE_HOST=""
 PROJECT_PATH=""
 CLOUD_DRIVE_PATH=""
@@ -51,7 +51,7 @@ print_usage() {
   echo "--cloud-drive-path /mnt/c/Users/me/Dropbox/SpaceGame"
   echo ""
   echo "Example Usage:"
-  echo "deploySpaceGame.sh --godot-version 4.1.2-stable --project-path /mnt/c/Dev/space-game --remote-host server.example.com"
+  echo "deployGame.sh --godot-version 4.1.2-stable --project-path /mnt/c/Dev/space-game --remote-host server.example.com"
 }
 
 if [[ $# -eq 0 ]];then
@@ -247,14 +247,14 @@ if [[ "${RAPID_DEPLOY}" == "false" ]]; then
 
   printf "\n\t${YELLOW}Linux${NC}\n"
   cd "${OUTPUT_PATH}/linux" || exit
-  tar -cvf Space-Game-Linux-Binary.tar ./*
-  gzip -9 Space-Game-Linux-Binary.tar
-  mv Space-Game-Linux-Binary.tar.gz "${OUTPUT_PATH}/web/release"
+  tar -cvf "${GAME_NAME}-Linux-Binary.tar" ./*
+  gzip -9 "${GAME_NAME}-Linux-Binary.tar"
+  mv "${GAME_NAME}-Linux-Binary.tar.gz" "${OUTPUT_PATH}/web/release"
 
   printf "\n\t${YELLOW}Windows${NC}\n"
   cd "${OUTPUT_PATH}/windows" || exit
-  zip -9 Space-Game-Windows-Binary.zip ./*
-  mv Space-Game-Windows-Binary.zip "${OUTPUT_PATH}/web/release"
+  zip -9 "${GAME_NAME}-Windows-Binary.zip" ./*
+  mv "${GAME_NAME}-Windows-Binary.zip" "${OUTPUT_PATH}/web/release"
 fi
 
 printf "\n${YELLOW}Syncing Builds to Server${NC}"
