@@ -1,7 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://cam7dfgbq1at0"]
-
-[ext_resource type="PackedScene" uid="uid://c0wsijh17j2xm" path="res://spaceship/room_ceiling/room_ceiling.glb" id="1_q0pnt"]
-
-[node name="Room Ceiling" type="Node3D"]
-
-[node name="room_ceiling" parent="." instance=ExtResource("1_q0pnt")]
