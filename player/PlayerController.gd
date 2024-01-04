@@ -23,7 +23,6 @@ var IsLocal: bool = false
 func _ready() -> void:
 	IsLocal = player == multiplayer.get_unique_id()
 
-	
 	(get_node("./Interaction Controller")).Initialize(IsLocal)
 
 	set_process(IsLocal)
@@ -34,7 +33,7 @@ func _ready() -> void:
 		camera.make_current()
 		Globals.my_camera = camera
 	else:
-		if Globals.is_server	:
+		if Globals.is_server:
 			camera.reparent(get_tree().get_root())
 			#camera.position = Vector2(99999, 99999)
 			Globals.my_camera = camera
