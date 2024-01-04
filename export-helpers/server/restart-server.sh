@@ -12,4 +12,4 @@ SCRIPT_DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
 #echo "${SCRIPT_DIR}" # For debugging
 
 cd "${SCRIPT_DIR}" || exit
-./space-game.x86_64 --headless -- client shutdown_server
+./2d-game.x86_64 --headless -- client shutdown_server
