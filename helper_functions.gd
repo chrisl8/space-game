@@ -78,9 +78,10 @@ func quit_gracefully() -> void:
 			print_rich(
 				"[color=orange]Disconnecting clients and saving data before shutting down server...[/color]"
 			)
-			var toast: Toast = Toast.new("Disconnecting clients and shutting down server...", 2.0)
-			get_node("/root").add_child(toast)
-			toast.display()
+			if Globals.my_camera:
+				var toast: Toast = Toast.new("Disconnecting clients and shutting down server...", 2.0)
+				Globals.my_camera.add_child(toast)
+				toast.display()
 			Network.shutdown_server()
 			while Network.peers.size() > 0:
 				print_rich("[color=orange]...server still clearing clients...[/color]")

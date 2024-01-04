@@ -105,13 +105,7 @@ func _animation_ended(which_animation: String) -> void:
 	if which_animation == "toast_animations/start":
 		await get_tree().create_timer(toast_duration).timeout
 		animation.play("toast_animations/end")
-	elif which_animation == "endAnimation":
-		animation.play("toast_animations/end")
-		animation.disconnect("animation_finished", _animation_ended)
-		animation.connect("animation_finished", _done)
-
-
-func _done() -> void:
-	animation.remove_animation("start")
-	queue_free()
-	emit_signal("done")
+	else:
+		animation.animation_finished.disconnect(_animation_ended)
+		queue_free()
+		emit_signal("done")

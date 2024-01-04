@@ -21,3 +21,6 @@ var release_mouse_text: String = "ESC to Release Mouse"
 var how_to_end_game_text: String = "END key to Close Game"
 var exit_click_mode_text: String = "Press q to exit 'Click Mode' and control camera again."
 var WorldMap: Node
+
+var my_camera: Camera2D
+var last_toast: String = ""

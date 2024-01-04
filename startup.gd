@@ -253,3 +253,23 @@ func force_close_popup() -> void:
 func _on_players_spawner_spawned(node: Node) -> void:
 	Helpers.log_print(str("_on_players_spawner_spawned ", node.name), "green")
 	node.set_multiplayer_authority(str(node.name).to_int())
+
+
+# Called when an InputEvent has not been consumed by _input() or any GUI item
+func _unhandled_input(event: InputEvent) -> void:
+	if (
+		event is InputEventMouseButton
+		and event.button_index == MOUSE_BUTTON_LEFT
+		and event.pressed
+		and Globals.my_camera
+	):
+		var text_to_toast: String = Globals.how_to_end_game_text
+		var text_duration: float = 2.0
+		if Globals.is_server:
+			text_duration = 10.0
+		if text_to_toast != "" and text_to_toast != Globals.last_toast:
+			# Set it to an empty string to signal that we don't want to display anything this time.
+			Globals.last_toast = text_to_toast
+			var toast: Toast = Toast.new(text_to_toast, text_duration)
+			Globals.my_camera.add_child(toast)
+			toast.display()
