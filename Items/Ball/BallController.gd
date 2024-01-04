@@ -6,6 +6,8 @@ extends RigidBody2D
 
 var player_focused: String
 
+
+
 func _ready() -> void:
 	set_physics_process(get_multiplayer_authority() == multiplayer.get_unique_id())
 	if Globals.is_server and spawn_position:

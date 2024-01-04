@@ -23,6 +23,9 @@ var IsLocal: bool = false
 func _ready() -> void:
 	IsLocal = player == multiplayer.get_unique_id()
 
+	
+	(get_node("./Interaction Controller")).Initialize(IsLocal)
+
 	set_process(IsLocal)
 	set_physics_process(IsLocal)
 	set_process_input(IsLocal)
@@ -30,13 +33,12 @@ func _ready() -> void:
 	if IsLocal:
 		camera.make_current()
 	else:
-		if multiplayer.is_server():
+		if Globals.is_server	:
 			camera.reparent(get_tree().get_root())
 			camera.position = Vector2(99999, 99999)
 		else:
 			camera.queue_free()
 		gravity_scale = 0.0
-		#freeze = true
 
 
 func _process(_delta: float) -> void:

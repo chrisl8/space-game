@@ -32,6 +32,7 @@ gdscript/warnings/integer_division=0
 
 window/size/viewport_width=576
 window/size/always_on_top=true
+mouse_cursor/custom_image="res://Items/Mouse Cursor.png"
 
 [editor_plugins]
 
@@ -145,6 +146,10 @@ reset_player_height={
 3d_physics/layer_2="Players"
 3d_physics/layer_4="Ball and other Things"
 3d_physics/layer_9="Buttons and Switches"
+
+[network]
+
+limits/webrtc/max_channel_in_buffer_kb=64000
 
 [rendering]
 

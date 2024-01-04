@@ -10,10 +10,6 @@ var done_once: bool = false
 
 @onready var things_spawning_node: Node = get_node("../Main/Things")
 
-func _ready() -> void:
-	if(multiplayer.is_server()):
-		things()
-
 # Called by players to ask Server to place a held item.
 @rpc("any_peer", "call_remote")
 func place_thing(node_name: String, placement_position: Vector3 = Vector3.ZERO) -> void:
@@ -39,7 +35,7 @@ func thing(thing_name: String, id: int, spawn_position: Vector3 = Vector3.ZERO) 
 			"Chair":
 				new_thing = Chair.instantiate()
 			"Map":
-				print("C")
+				Helpers.log_print("Spawning Map")
 				new_thing = Map.instantiate()
 			_:
 				printerr("Invalid thing to spawn name: ", thing_name)
@@ -54,8 +50,6 @@ func thing(thing_name: String, id: int, spawn_position: Vector3 = Vector3.ZERO) 
 # This is ONLY called on the server instance
 # This is called on EVERY update in the _process() function in network_websocket.gd
 func things() -> void:
-	print("C")
-
 	# Various Things that respawn if lost
 	# The way things get lost is physics yeets them out of the rooms
 	# and then they fall past the boundary where they are deleted
