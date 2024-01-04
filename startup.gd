@@ -2,7 +2,7 @@ extends Node
 
 @export var run_server_in_debug: bool = true
 @export var debug_server_url: String = "ws://127.0.0.1:9091"
-@export var production_server_url: String = "wss://voidshipephemeral.space/server/"
+@export var production_server_url: String = "wss://2d.voidshipephemeral.space/server/"
 
 @export var capture_mouse_on_startup: bool = false  # This is actually annoying so I never turn it on.
 
