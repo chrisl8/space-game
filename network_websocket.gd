@@ -18,9 +18,7 @@ var game_scene_initialized: bool = false
 var network_connection_initiated: bool = false
 
 var player_character_template: PackedScene = preload("res://player/player.tscn")
-var level_scene: PackedScene = preload("res://spaceship/spaceship.tscn")
-# A big open area for testing stuff.
-#var level_scene: PackedScene = preload("res://character_test_level/character_test.tscn")
+var map: PackedScene = preload("res://Items/Map/Map.tscn")
 
 var websocket_multiplayer_peer: WebSocketMultiplayerPeer
 var uuid_util: Resource = preload("res://addons/uuid/uuid.gd")
@@ -61,18 +59,19 @@ func _process(_delta: float) -> void:
 		)
 		Helpers.quit_gracefully()
 
-	# Initialize the Level if it isn't yet
+	# Initialize the Map if it isn't yet
 	if not game_scene_initialized:
 		if not game_scene_initialize_in_progress:
 			# Helpers.log_print("Load level", "cyan")
 			game_scene_initialize_in_progress = true
-			load_level.call_deferred(level_scene)
-		elif get_node_or_null("../Main/Level/game_scene"):
+			load_level.call_deferred(map)
+		elif get_node_or_null("../Main/Map/game_scene"):
 			game_scene_initialized = true
 			close_popup.emit()
 		return
 
 	Spawner.things()
+
 
 func _ready() -> void:
 	multiplayer.peer_connected.connect(_peer_connected)
@@ -84,7 +83,7 @@ func _ready() -> void:
 
 func load_level(scene: PackedScene) -> void:
 	# Helpers.log_print("Loading Scene", "cyan")
-	var level_parent: Node = get_tree().get_root().get_node("Main/Level")
+	var level_parent: Node = get_tree().get_root().get_node("Main/Map")
 	for c in level_parent.get_children():
 		level_parent.remove_child(c)
 		c.queue_free()
@@ -367,7 +366,7 @@ func player_joined(id: int, data: String) -> void:
 		# 	#const SPAWN_RANDOM: float = 2.0
 		# 	character.position = Vector2((randf() - 0.5) * 600.0, randf() * 100.0)
 
-		character.position = Vector2((randf() - 0.5) * 2.0 * 400.0, 10+ randf() * 1000.0)
+		character.position = Vector2((randf() - 0.5) * 2.0 * 400.0, 10 + randf() * 1000.0)
 
 		# Use saved player rotation if it exists
 		if Globals.player_save_data[player_uuid].has("rotation"):

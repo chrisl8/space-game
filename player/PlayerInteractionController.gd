@@ -6,7 +6,7 @@ var IsLocal: bool = false
 func Initialize(Local: bool):
 	IsLocal = Local
 	set_process(IsLocal)
-	
+
 	#
 	set_process(IsLocal)
 	set_process_input(IsLocal)
@@ -34,7 +34,7 @@ func _input(event):
 			mouse_left_down = false
 		elif event.button_index == 2 and event.is_pressed():
 			RightMouseClicked()
-	
+
 	if (event is InputEventMouseMotion):
 		MousePosition = event.position
 

@@ -1,6 +1,5 @@
 extends Node
 
-var Map: Resource = preload("res://Items/Map/Map.tscn")
 var done_once: bool = false
 
 @onready var things_spawning_node: Node = get_node("../Main/Things")
@@ -19,9 +18,9 @@ func thing(thing_name: String, id: int, spawn_position: Vector3 = Vector3.ZERO) 
 	if not existing_thing:
 		var new_thing: Node
 		match thing_name:
-			"Map":
-				Helpers.log_print("Spawning Map")
-				new_thing = Map.instantiate()
+			"Whatever":
+				Helpers.log_print("Spawning Whatever")
+				#new_thing = Whatever.instantiate()
 			_:
 				printerr("Invalid thing to spawn name: ", thing_name)
 				return
@@ -48,4 +47,4 @@ func things() -> void:
 	# so they must not respawn then.
 	if not done_once:
 		done_once = true
-		thing("Map", 1, Vector3(0, 0, 0))
+		#thing("Whatever", 1, Vector3(0, 0, 0))

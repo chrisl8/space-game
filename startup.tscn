@@ -5,11 +5,11 @@
 [node name="Main" type="Node"]
 script = ExtResource("1_0mo3b")
 
-[node name="Level" type="Node" parent="."]
+[node name="Map" type="Node" parent="."]
 
-[node name="LevelSpawner" type="MultiplayerSpawner" parent="."]
-_spawnable_scenes = PackedStringArray("res://spaceship/spaceship.tscn")
-spawn_path = NodePath("../Level")
+[node name="MapSpawner" type="MultiplayerSpawner" parent="."]
+_spawnable_scenes = PackedStringArray("res://Items/Map/Map.tscn")
+spawn_path = NodePath("../Map")
 
 [node name="Players" type="Node" parent="."]
 
@@ -20,7 +20,6 @@ spawn_path = NodePath("../Players")
 [node name="Things" type="Node" parent="."]
 
 [node name="ThingSpawner" type="MultiplayerSpawner" parent="."]
-_spawnable_scenes = PackedStringArray("res://Items/Map/Map.tscn")
 spawn_path = NodePath("../Things")
 
 [connection signal="spawned" from="PlayersSpawner" to="." method="_on_players_spawner_spawned"]
