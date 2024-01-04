@@ -143,7 +143,7 @@ server {
     }
 
     location /server/ {
-        proxy_pass http://localhost:9090;
+        proxy_pass http://localhost:9091;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "upgrade";
@@ -163,10 +163,10 @@ server {
 }
 ```
 
-Note that the game itself, the server instance, must be running on the same server as Nginx and listening on port 9090 (which is also hard coded in the code at the moment).
+Note that the game itself, the server instance, must be running on the same server as Nginx and listening on port 9091 (which is also hard coded in the code at the moment).
 
 Notice that it is serving a list of file types directly if you ask for them, so it will respond to requests for the files users need.  
-Then notice that if someone goes to /server/ it proxies their connection to the local 9090 port that your Godot game instance runs on.  
+Then notice that if someone goes to /server/ it proxies their connection to the local 9091 port that your Godot game instance runs on.  
 
 The primary reason for proxying instead of just opening a direct port is that Nginx can now provide a secure SSL connection for Websocket using the same certificate as the rest of the site. Web browsers get cranky if you do not use SSL or if you try to connect to a non-SSL Websocket from an HTTPS loaded site. 
 
