@@ -1,6 +1,6 @@
 extends TileMap
 
-var HasUpdatedCellData: bool = false
+var HasFinishedLoadingMap: bool = false
 var MapGenerated: bool = false
 
 #No longer using arrays, read/write requires an indexing system which negates the performance benefit of using array index overlap as link. Reading Positions and IDs separately may be faster if staggered separately but can be added later and merged into local dictionaries.
@@ -17,10 +17,9 @@ var ChangedDataFailedCycles: Dictionary = {}
 
 const ChunkSize = 200
 
-var ServerSetTileData = true
-
 var IsServer = false
 
+var ServerDataChanged = false
 
 #Initialization
 func _ready() -> void:
@@ -28,7 +27,7 @@ func _ready() -> void:
 
 	if IsServer:
 		GenerateMap()
-		HasUpdatedCellData = true
+		HasFinishedLoadingMap = true
 	else:
 		RequestBlockState.rpc()
 
@@ -74,7 +73,8 @@ func _process(delta: float) -> void:
 		if Count > -1:
 			ProcessChunkedInitialStateData()
 
-	if IsServer and ServerSetTileData:
+	if IsServer and ServerDataChanged:
+		ServerDataChanged = false
 		SetAllCellData(SyncedData, 0)
 
 
@@ -180,7 +180,7 @@ func ServerCompressAndSendBlockStates(Data, Finished):
 #Send chunks of the world dat block to clients, used for initial world sync
 @rpc("authority", "call_remote", "reliable")
 func SendBlockState(Positions, IDs, Finished, Target) -> void:
-	if !HasUpdatedCellData and Target == multiplayer.get_unique_id():
+	if !HasFinishedLoadingMap and Target == multiplayer.get_unique_id():
 		#Compression system, removed for now because didn't give significant performance improvement
 		'''
 		var Positions = []
@@ -212,7 +212,7 @@ func SendBlockState(Positions, IDs, Finished, Target) -> void:
 
 		SetAllCellData(CurrentData, 0)
 
-		HasUpdatedCellData = Finished
+		HasFinishedLoadingMap = Finished
 
 
 #Architecture plan:
@@ -231,7 +231,7 @@ func SendBlockState(Positions, IDs, Finished, Target) -> void:
 
 #Modify a cell from the client, checks for finished world load and buffers changes for server accordinly
 func ModifyCell(Position: Vector2i, ID: Vector2i):
-	if !HasUpdatedCellData:
+	if !HasFinishedLoadingMap:
 		#Not allowd to modify map untill first state recieved
 		#Because current map is not trustworthy, not cleared on start so player doesn't fall through world immediately.
 		return
@@ -274,7 +274,8 @@ func RPCSendChangedData(Data: Dictionary) -> void:
 		for Key: Vector2i in Data.keys():
 			ServerBufferedChanges[Key] = Data[Key]
 			SyncedData[Key] = Data[Key]
-
+			
+		ServerDataChanged = true
 			'''
 			if (
 				Data[Key] != Vector2i(-1, -1)
@@ -296,7 +297,7 @@ var BufferedChangesRecievedFromServer: Array[Dictionary] = []
 @rpc("authority", "call_remote", "reliable")
 func ServerSendChangedData(Data: Dictionary) -> void:
 	
-	if !HasUpdatedCellData:
+	if !HasFinishedLoadingMap:
 		#Store changes and process after the maps has been fully loaded
 		BufferedChangesRecievedFromServer.append(Data)
 		return
