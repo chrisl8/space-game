@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://6wqwkhadrpp"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_lq37e"]
+
+[node name="DebugObject" type="Node2D"]
+
+[node name="MeshInstance2D" type="MeshInstance2D" parent="."]
+scale = Vector2(10, 10)
+mesh = SubResource("QuadMesh_lq37e")

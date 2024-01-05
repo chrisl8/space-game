@@ -247,7 +247,7 @@ func MineCellAtPosition(Position: Vector2):
 
 #Place a standard piece of stone at a position : TEST TEMP
 func PlaceCellAtPosition(Position: Vector2):
-	ModifyCell(local_to_map(to_local(Position)), Vector2i(1, 1))
+	ModifyCell(local_to_map(to_local(Position)), GetRandomStoneTile())
 
 
 #Set tbe current data of a cell to a given value

@@ -8,6 +8,10 @@ var IsLocal: bool = false
 
 var CurrentTool: int = 1
 
+const InteractRange: float = 200.0
+
+@export var DebugObject: Resource = preload("res://player/Debug Object.tscn")
+
 func Initialize(Local: bool):
 	IsLocal = Local
 	#set_process(IsLocal)
@@ -21,6 +25,8 @@ func Initialize(Local: bool):
 	set_physics_process_internal(IsLocal)
 	#
 
+	DebugObject.instantiate()
+
 func _process(_delta: float) -> void:
 	#Need to confirm this works across computers
 	if(IsLocal):
@@ -31,6 +37,11 @@ func _process(_delta: float) -> void:
 			)
 		Arm.look_at(MousePosition)
 		ArmRotation = Arm.rotation
+		ArmDirection = Vector2(0, 1).rotated(Arm.global_rotation)
+		#print(ArmDirection)
+		CurrentMiningTime = clamp(CurrentMiningTime+_delta, 0.0, 100.0)
+		if(mouse_left_down):
+			MineRaycast()
 	else:
 		Arm.rotation = ArmRotation
 
@@ -55,14 +66,37 @@ func _input(event):
 
 var mouse_left_down: bool
 var MousePosition: Vector2
+var MineCast: RayCast2D
+var ArmDirection: Vector2
 
+var MiningSpeed: float = 0.1
+var CurrentMiningTime = 100
 
 func LeftMouseClicked():
 	if(CurrentTool == 1):
-		
-		Globals.WorldMap.MineCellAtPosition(get_global_mouse_position())
+		pass
 	pass
 
+func MineRaycast():
+	if(CurrentMiningTime > MiningSpeed):
+		CurrentMiningTime = 0.0
+		var space_state = get_world_2d().direct_space_state
+		
+		
+		#var Object = DebugObject.instantiate()
+		#get_node("/root").add_child(Object)
+		#Object.global_position = Arm.global_position
+
+
+		
+
+
+		var query = PhysicsRayQueryParameters2D.create(Arm.global_position, Arm.global_position + Arm.global_transform.x*InteractRange)
+		query.exclude = [self]
+		var result = space_state.intersect_ray(query)
+		if(len(result) > 0):
+			if(result["collider"] is TileMap):
+				Globals.WorldMap.MineCellAtPosition(result["position"] - result["normal"]*0.001)
 
 func RightMouseClicked():
 	Globals.WorldMap.PlaceCellAtPosition(get_global_mouse_position())
