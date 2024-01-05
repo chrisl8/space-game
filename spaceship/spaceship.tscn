@@ -1,6 +1,7 @@
-[gd_scene load_steps=17 format=3 uid="uid://cbs4s4ea2n473"]
+[gd_scene load_steps=21 format=3 uid="uid://cbs4s4ea2n473"]
 
 [ext_resource type="Script" path="res://spaceship/spaceship.gd" id="1_e1est"]
+[ext_resource type="Texture2D" uid="uid://clv3j1xfrwyhb" path="res://spaceship/panorama_image.png" id="2_6hknh"]
 [ext_resource type="PackedScene" uid="uid://bywfoekpnmak5" path="res://spaceship/room_02/room_02.tscn" id="2_xjddl"]
 [ext_resource type="PackedScene" uid="uid://c4lai1ecyvqnu" path="res://posters/data_flow_poster/data_flow_poster.tscn" id="3_5q6ig"]
 [ext_resource type="PackedScene" uid="uid://c7pr28bafmjk2" path="res://spaceship/room_02_lower/room_02_lower.tscn" id="3_alk47"]
@@ -16,11 +17,24 @@
 [ext_resource type="PackedScene" uid="uid://def5ymn6ttvbo" path="res://spaceship/ramp_hallway_steep/ramp_hallway_steep.tscn" id="11_tf63n"]
 [ext_resource type="PackedScene" uid="uid://4ntboh2ersm8" path="res://spaceship/door/door.tscn" id="12_6i0k6"]
 
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_gvyju"]
+panorama = ExtResource("2_6hknh")
+
+[sub_resource type="Sky" id="Sky_w2886"]
+sky_material = SubResource("PanoramaSkyMaterial_gvyju")
+
+[sub_resource type="Environment" id="Environment_sa0an"]
+background_mode = 2
+sky = SubResource("Sky_w2886")
+
 [sub_resource type="BoxShape3D" id="BoxShape3D_neoav"]
 size = Vector3(1, 1.01678, 1)
 
 [node name="Spaceship" type="Node3D"]
 script = ExtResource("1_e1est")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_sa0an")
 
 [node name="Room 01" parent="." instance=ExtResource("2_xjddl")]
 
