@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://cnckqfxi8eyk8"]
+[gd_scene load_steps=10 format=3 uid="uid://cnckqfxi8eyk8"]
 
 [ext_resource type="Script" path="res://player/PlayerController.gd" id="1_ntq5g"]
 [ext_resource type="Texture2D" uid="uid://rtlda15irjtr" path="res://Items/PlayerBox.png" id="3_8dug6"]
@@ -21,21 +21,20 @@ properties/0/replication_mode = 2
 properties/1/path = NodePath(".:angular_velocity")
 properties/1/spawn = true
 properties/1/replication_mode = 2
-properties/2/path = NodePath(".:rotation")
-properties/2/spawn = false
+properties/2/path = NodePath(".:player")
+properties/2/spawn = true
 properties/2/replication_mode = 0
-properties/3/path = NodePath(".:position")
-properties/3/spawn = false
-properties/3/replication_mode = 0
-properties/4/path = NodePath(".:player")
+properties/3/path = NodePath(".:SyncedPosition")
+properties/3/spawn = true
+properties/3/replication_mode = 1
+properties/4/path = NodePath(".:SyncedRotation")
 properties/4/spawn = true
-properties/4/replication_mode = 0
-properties/5/path = NodePath(".:SyncedPosition")
+properties/4/replication_mode = 1
+properties/5/path = NodePath("Interaction Controller:ArmRotation")
 properties/5/spawn = true
-properties/5/replication_mode = 1
-properties/6/path = NodePath(".:SyncedRotation")
-properties/6/spawn = true
-properties/6/replication_mode = 1
+properties/5/replication_mode = 2
+
+[sub_resource type="QuadMesh" id="QuadMesh_37pga"]
 
 [node name="Player" type="RigidBody2D" groups=["players"]]
 collision_layer = 2
@@ -72,5 +71,14 @@ position = Vector2(0, -50)
 scale = Vector2(0.25, 0.25)
 texture = ExtResource("3_h2rqs")
 
-[node name="Interaction Controller" type="Node2D" parent="."]
+[node name="Interaction Controller" type="Node2D" parent="." node_paths=PackedStringArray("Arm")]
 script = ExtResource("4_rfuvf")
+Arm = NodePath("../Node2D")
+
+[node name="Node2D" type="Node2D" parent="."]
+position = Vector2(-26, -39)
+
+[node name="MeshInstance2D" type="MeshInstance2D" parent="Node2D"]
+position = Vector2(15, 0)
+scale = Vector2(30, 10)
+mesh = SubResource("QuadMesh_37pga")
