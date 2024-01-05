@@ -4,7 +4,6 @@
 set -e
 
 GODOT_VERSION=""
-GAME_NAME=space-game
 REMOTE_HOST=""
 PROJECT_PATH=""
 CLOUD_DRIVE_PATH=""
@@ -36,7 +35,10 @@ print_usage() {
   echo "Be sure to include the -stable or -beta1 or -rc1 on the end just like the release name."
   echo ""
   echo "The folder where your Godot code project is at:"
-  echo "--project-path /mnt/c/Dev/space-game"
+  echo "--project-path /mnt/c/Dev/game"
+  echo ""
+  echo "The game name, which must match your folders."
+  echo "--game-name game"
   echo ""
   echo "The remote host to deploy your code to:"
   echo "--remote-host server.example.com"
@@ -44,14 +46,11 @@ print_usage() {
   echo ""
   echo ""
   echo "You MAY also include the following options:"
-  echo "The default game name is space-game but you can use your own, but your must set up folders and such with that name."
-  echo "--game-name space-game"
-  echo ""
   echo "You an also supply a 'local' path to drop Linux and Windows binaries into. I use this to share them with friends. It is not required."
   echo "--cloud-drive-path /mnt/c/Users/me/Dropbox/SpaceGame"
   echo ""
   echo "Example Usage:"
-  echo "deploySpaceGame.sh --godot-version 4.1.2-stable --project-path /mnt/c/Dev/space-game --remote-host server.example.com"
+  echo "deployGame.sh --godot-version 4.1.2-stable --project-path /mnt/c/Dev/game --remote-host server.example.com --game-name game"
 }
 
 if [[ $# -eq 0 ]];then
@@ -247,14 +246,14 @@ if [[ "${RAPID_DEPLOY}" == "false" ]]; then
 
   printf "\n\t${YELLOW}Linux${NC}\n"
   cd "${OUTPUT_PATH}/linux" || exit
-  tar -cvf Space-Game-Linux-Binary.tar ./*
-  gzip -9 Space-Game-Linux-Binary.tar
-  mv Space-Game-Linux-Binary.tar.gz "${OUTPUT_PATH}/web/release"
+  tar -cvf "${GAME_NAME}-Linux-Binary.tar" ./*
+  gzip -9 "${GAME_NAME}-Linux-Binary.tar"
+  mv "${GAME_NAME}-Linux-Binary.tar.gz" "${OUTPUT_PATH}/web/release"
 
   printf "\n\t${YELLOW}Windows${NC}\n"
   cd "${OUTPUT_PATH}/windows" || exit
-  zip -9 Space-Game-Windows-Binary.zip ./*
-  mv Space-Game-Windows-Binary.zip "${OUTPUT_PATH}/web/release"
+  zip -9 "${GAME_NAME}-Windows-Binary.zip" ./*
+  mv "${GAME_NAME}-Windows-Binary.zip" "${OUTPUT_PATH}/web/release"
 fi
 
 printf "\n${YELLOW}Syncing Builds to Server${NC}"
@@ -279,7 +278,7 @@ unison "${UNISON_ARGUMENTS[@]}"
 
 printf "\n${YELLOW}Restarting Server${NC}\n"
 # shellcheck disable=SC2029
-ssh.exe "${USER}@${REMOTE_HOST}" "cd ${OUTPUT_PATH}/linux;./restart-server.sh"
+ssh.exe "${USER}@${REMOTE_HOST}" "cd ${OUTPUT_PATH}/linux;./restart-server.sh --game-name ${GAME_NAME}"
 
 if [[ "${RAPID_DEPLOY}" == "false" ]] && ! [[ "${CLOUD_DRIVE_PATH}" == "" ]] && [[ -d ${CLOUD_DRIVE_PATH} ]]; then
   printf "\n${YELLOW}Syncing Cloud Copy${NC}\n"

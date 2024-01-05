@@ -16,9 +16,9 @@ This is the preferred method to play the game.
 ## Binary Releases
 There is no reason to use these, as the website above is the primary target release and should always work, but if you want to download the game and run it locally, you can:
 
-[Download the latest Windows Binary Release Here](https://voidshipephemeral.space/release/Space-Game-Windows-Binary.zip)  
+[Download the latest Windows Binary Release Here](https://voidshipephemeral.space/release/space-game-Windows-Binary.zip)  
 or  
-[Download the latest Linux Binary Release Here](https://voidshipephemeral.space/release/Space-Game-Linux-Binary.tar.gz)  
+[Download the latest Linux Binary Release Here](https://voidshipephemeral.space/release/space-game-Linux-Binary.tar.gz)  
 
 You will probably have to tell Windows to allow the binary to run as it is unsigned.  
 Use Alt+F4 to close the game if it seems like it won't let you out.  
@@ -181,7 +181,7 @@ https://www.nginx.com/blog/using-free-ssltls-certificates-from-lets-encrypt-with
 
 ### My Deploy Script
 
-Under `export-helpers` there is a script called `deploySpaceGame.sh` which I use for deploying this game to my server.  
+Under `export-helpers` there is a script called `deployGame.sh` which I use for deploying this game to my server.  
 I've included it in this repository in case it may be useful as an example to others for how to run Godot to build games from a script and various tidbits on how to package up games for deploying on the web.  
 It is necessarily somewhat custom to my use case, but it does use command line parameters for all of the personal settings, so anyone can use it.  
 Run the script with no parameters, or look at the top of it to see how to use it.  
