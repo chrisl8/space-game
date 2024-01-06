@@ -23,6 +23,7 @@ var map: PackedScene = preload("res://Items/Map/Map.tscn")
 var websocket_multiplayer_peer: WebSocketMultiplayerPeer
 var uuid_util: Resource = preload("res://addons/uuid/uuid.gd")
 
+var ServerCamera: PackedScene = preload("res://Server Camera/Server Camera.tscn")
 
 func _process(_delta: float) -> void:
 	if not ready_to_connect:
@@ -90,6 +91,7 @@ func load_level(scene: PackedScene) -> void:
 	var game_scene: Node = scene.instantiate()
 	game_scene.name = "game_scene"
 	level_parent.add_child(game_scene)
+	level_parent.add_child(ServerCamera.instantiate())
 
 
 func generate_jwt(secret: String, player_uuid: String) -> String:

@@ -1,0 +1,30 @@
+[gd_scene load_steps=2 format=3 uid="uid://d2xfjuc84u0r5"]
+
+[ext_resource type="Script" path="res://Server Camera/ServerCameraController.gd" id="1_knfvd"]
+
+[node name="ServerCamera" type="Node2D"]
+script = ExtResource("1_knfvd")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Control" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -40.0
+offset_bottom = 40.0
+grow_horizontal = 0
+
+[node name="Label" type="Label" parent="CanvasLayer/Control"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -55.0
+offset_right = -5.0
+offset_bottom = 23.0
+grow_horizontal = 0
+text = "Server"

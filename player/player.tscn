@@ -122,11 +122,12 @@ position = Vector2(0, -50)
 scale = Vector2(0.25, 0.25)
 texture = ExtResource("3_h2rqs")
 
-[node name="Interaction Controller" type="Node2D" parent="." node_paths=PackedStringArray("Arm", "MiningParticles", "HeadTarget")]
+[node name="Interaction Controller" type="Node2D" parent="." node_paths=PackedStringArray("Arm", "MiningParticles", "HeadTarget", "TestArmIKTargetDeleteLater")]
 script = ExtResource("4_rfuvf")
 Arm = NodePath("../Arm")
 MiningParticles = NodePath("../Skeleton2D/Torso/Upper Arm/Lower Arm/Lower Left Arm/GPUParticles2D")
 HeadTarget = NodePath("../Skeleton2D/Head Target")
+TestArmIKTargetDeleteLater = NodePath("../Arm/Left Hand Target")
 
 [node name="Arm" type="Node2D" parent="."]
 position = Vector2(0, -39)
@@ -138,7 +139,7 @@ scale = Vector2(30, 10)
 mesh = SubResource("QuadMesh_37pga")
 
 [node name="Left Hand Target" type="Node2D" parent="Arm"]
-position = Vector2(24, 0)
+position = Vector2(23, -2)
 
 [node name="Skeleton2D" type="Skeleton2D" parent="."]
 modification_stack = SubResource("SkeletonModificationStack2D_tbk5s")
@@ -152,16 +153,16 @@ bone_angle = -90.0
 
 [node name="Upper Arm" type="Bone2D" parent="Skeleton2D/Torso"]
 position = Vector2(-2, -18)
-rotation = 1.5708
+rotation = 0.643471
 scale = Vector2(0.999984, 0.999984)
-rest = Transform2D(0.800033, 0.599867, -0.599867, 0.800033, -2, -18)
+rest = Transform2D(0.800005, 0.599967, -0.599967, 0.800005, -2, -18)
 metadata/_local_pose_override_enabled_ = true
 
 [node name="Lower Arm" type="Bone2D" parent="Skeleton2D/Torso/Upper Arm"]
 position = Vector2(15.0002, -6.55681e-07)
-rotation = -1.5708
+rotation = -2.85776
 scale = Vector2(0.999988, 0.999988)
-rest = Transform2D(-0.95989, -0.280173, 0.280173, -0.95989, 15.0002, -6.55681e-07)
+rest = Transform2D(-0.959977, -0.280036, 0.280036, -0.959977, 15.0002, -6.55681e-07)
 auto_calculate_length_and_angle = false
 length = 15.0
 bone_angle = 90.0
@@ -207,12 +208,12 @@ uv = PackedVector2Array(6, 14, 15, 14, 15, 18, 26, 18, 29, 21, 29, 30, 26, 40, 1
 [node name="Neck" type="Bone2D" parent="Skeleton2D/Torso"]
 position = Vector2(0, -21)
 rotation = -1.5708
-rest = Transform2D(-4.37114e-08, -1, 1, -4.37114e-08, 0, -21)
+rest = Transform2D(-3.61999e-06, -1, 1, -3.61999e-06, 0, -21)
 
 [node name="Head" type="Bone2D" parent="Skeleton2D/Torso/Neck"]
-rotation = 1.13839
+rotation = 1.5708
 scale = Vector2(0.99995, 0.99995)
-rest = Transform2D(-4.3709e-08, 0.999945, -0.999945, -4.3709e-08, 0, 0)
+rest = Transform2D(-3.50061e-06, 0.99995, -0.99995, -3.50061e-06, 0, 0)
 auto_calculate_length_and_angle = false
 length = 4.0
 bone_angle = 0.0

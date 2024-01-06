@@ -19,6 +19,8 @@ const InteractRange: float = 200.0
 		MiningDistance = new_value
 		UpdateMiningParticleLength()
 
+var SpawnedDebugObject: Node2D
+
 func UpdateMiningParticleLength():
 	var Extents: Vector3 = MiningParticles.process_material.get("emission_box_extents")
 	Extents.x = MiningDistance
@@ -42,7 +44,11 @@ func Initialize(Local: bool):
 	set_physics_process_internal(IsLocal)
 	#
 
-	DebugObject.instantiate()
+
+
+	SpawnedDebugObject = DebugObject.instantiate()
+	get_node("/root").add_child(SpawnedDebugObject)
+	
 
 func _process(_delta: float) -> void:
 
@@ -56,7 +62,7 @@ func _process(_delta: float) -> void:
 		
 		Arm.look_at(MousePosition)
 		ArmDirection = Vector2(0, 1).rotated(Arm.global_rotation)
-		#print(ArmDirection)
+
 		CurrentMiningTime = clamp(CurrentMiningTime+_delta, 0.0, 100.0)
 		if(mouse_left_down):
 			MineRaycast()
@@ -64,10 +70,22 @@ func _process(_delta: float) -> void:
 	else:
 		#Yes need this twice till refactor
 		Arm.look_at(MousePosition)
+		if!Globals.is_server:
+			print(MousePosition)
+			#Arm.global_position = MousePosition
+			SpawnedDebugObject.global_position = MousePosition
+
+	if(IsMining):
+		MiningParticles.look_at(MousePosition)
+		
 
 	#HeadTarget.global_position = MousePosition
 	MiningParticles.emitting = IsMining
 
+	TestArmIKTargetDeleteLater.global_position = MousePosition
+	SpawnedDebugObject.global_position = MousePosition
+
+@export var TestArmIKTargetDeleteLater: Node2D
 
 const mouse_sensitivity = 10
 
@@ -82,9 +100,6 @@ func _input(event):
 			mouse_left_down = false
 		elif event.button_index == 2 and event.is_pressed():
 			RightMouseClicked()
-
-	if event is InputEventMouseMotion:
-		MousePosition = event.position
 
 
 var mouse_left_down: bool
@@ -109,9 +124,9 @@ func MineRaycast():
 		var space_state = get_world_2d().direct_space_state
 		
 		
-		#var Object = DebugObject.instantiate()
-		#get_node("/root").add_child(Object)
-		#Object.global_position = Arm.global_position
+		#var SpawnedDebugObject = DebugObject.instantiate()
+		#get_node("/root").add_child(SpawnedDebugObject)
+		#SpawnedDebugObject.global_position = Arm.global_position
 
 
 		
@@ -122,10 +137,10 @@ func MineRaycast():
 		var result = space_state.intersect_ray(query)
 		if(len(result) > 0):
 			
+			var HitPoint = result["position"]
 			if(result["collider"] is TileMap):
-				var HitPoint = result["position"]
-				Globals.WorldMap.MineCellAtPosition(result["position"] - result["normal"]*0.001)
-				MiningParticleDistance = MiningParticles.global_position.distance_to(HitPoint)/2.0
+				Globals.WorldMap.MineCellAtPosition(HitPoint - result["normal"]*0.001)
+			MiningParticleDistance = MiningParticles.global_position.distance_to(HitPoint)/2.0
 
 		MiningDistance = MiningParticleDistance
 
