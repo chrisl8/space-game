@@ -38,10 +38,18 @@ func _ready() -> void:
 func GenerateMap():
 	var HalfLength = 50
 	while HalfLength >= 0:
-		var Height = 10
+		var Height = randi_range(0, 3)+50
+		var End = randi_range(0,1)
 		while Height >= 0:
-			CurrentData[Vector2i(HalfLength, Height)] = GetRandomStoneTile()
-			CurrentData[Vector2i(HalfLength * -1, Height)] = GetRandomStoneTile()
+			if(randf() > 0.98):
+				CurrentData[Vector2i(HalfLength, 5+Height)] = GetRandomOreTile()
+			else:
+				CurrentData[Vector2i(HalfLength, 5+Height)] = GetRandomStoneTile()
+
+			if(randf() > 0.98):
+				CurrentData[Vector2i(HalfLength*-1, 5+Height)] = GetRandomOreTile()
+			else:
+				CurrentData[Vector2i(HalfLength*-1, 5+Height)] = GetRandomStoneTile()
 			Height -= 1
 		HalfLength -= 1
 
@@ -52,7 +60,10 @@ func GenerateMap():
 
 #Gets a random valid stone tile ID from the atlas
 func GetRandomStoneTile():
-	return Vector2i(randi_range(0, 4), randi_range(0, 1))
+	return Vector2i(randi_range(0, 9), 0)
+
+func GetRandomOreTile():
+	return Vector2i(randi_range(0, 9), 1)
 
 
 var CurrentCycleTime: float = 0.0

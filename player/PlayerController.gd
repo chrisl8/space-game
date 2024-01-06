@@ -35,12 +35,7 @@ func _ready() -> void:
 		camera.make_current()
 		Globals.my_camera = camera
 	else:
-		if Globals.is_server:
-			camera.reparent(get_tree().get_root())
-			#camera.position = Vector2(99999, 99999)
-			Globals.my_camera = camera
-		else:
-			camera.queue_free()
+		camera.queue_free()
 		gravity_scale = 0.0
 
 
