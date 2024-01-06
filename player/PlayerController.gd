@@ -15,7 +15,9 @@ var UpdateSyncedPosition: bool = false
 		UpdateSyncedRotation = !IsLocal
 var UpdateSyncedRotation: bool = false
 
-@onready var camera: Node = get_node("./Camera2D")  # Camera3D node
+@export var camera: Node
+
+@export var InteractionController: Node2D
 
 var IsLocal: bool = false
 
@@ -23,7 +25,7 @@ var IsLocal: bool = false
 func _ready() -> void:
 	IsLocal = player == multiplayer.get_unique_id()
 
-	(get_node("./Interaction Controller")).Initialize(IsLocal)
+	InteractionController.Initialize(IsLocal)
 
 	set_process(IsLocal)
 	set_physics_process(IsLocal)

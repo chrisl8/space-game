@@ -276,19 +276,19 @@ func RPCSendChangedData(Data: Dictionary) -> void:
 			SyncedData[Key] = Data[Key]
 			
 		ServerDataChanged = true
-			'''
-			if (
-				Data[Key] != Vector2i(-1, -1)
-				and (!SyncedData.has(Key) or SyncedData[Key] == Vector2i(-1, -1))
-			):
-				#Replace air with Cell, valid
-				ServerBufferedChanges[Key] = Data[Key]
-				SyncedData[Key] = Data[Key]
-			elif Data[Key] == Vector2i(-1, -1):
-				#Replace with air, valid
-				ServerBufferedChanges[Key] = Data[Key]
-				SyncedData[Key] = Data[Key]
-			'''
+		'''
+		if (
+			Data[Key] != Vector2i(-1, -1)
+			and (!SyncedData.has(Key) or SyncedData[Key] == Vector2i(-1, -1))
+		):
+			#Replace air with Cell, valid
+			ServerBufferedChanges[Key] = Data[Key]
+			SyncedData[Key] = Data[Key]
+		elif Data[Key] == Vector2i(-1, -1):
+			#Replace with air, valid
+			ServerBufferedChanges[Key] = Data[Key]
+			SyncedData[Key] = Data[Key]
+		'''
 
 
 var BufferedChangesRecievedFromServer: Array[Dictionary] = []

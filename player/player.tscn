@@ -1,9 +1,10 @@
-[gd_scene load_steps=11 format=3 uid="uid://cnckqfxi8eyk8"]
+[gd_scene load_steps=17 format=3 uid="uid://cnckqfxi8eyk8"]
 
 [ext_resource type="Script" path="res://player/PlayerController.gd" id="1_ntq5g"]
 [ext_resource type="Texture2D" uid="uid://rtlda15irjtr" path="res://Items/PlayerBox.png" id="3_8dug6"]
 [ext_resource type="Texture2D" uid="uid://bwi88dcimnyfh" path="res://Items/Box.png" id="3_h2rqs"]
 [ext_resource type="Script" path="res://player/PlayerInteractionController.gd" id="4_rfuvf"]
+[ext_resource type="Texture2D" uid="uid://cgoy7vka18x5b" path="res://player/Player Atlas.png" id="5_e4w6p"]
 
 [sub_resource type="GDScript" id="1"]
 
@@ -12,7 +13,7 @@ friction = 0.0
 script = SubResource("1")
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_4uxh2"]
-size = Vector2(32, 64)
+size = Vector2(27, 49)
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_ir062"]
 properties/0/path = NodePath(".:linear_velocity")
@@ -30,22 +31,58 @@ properties/3/replication_mode = 1
 properties/4/path = NodePath(".:SyncedRotation")
 properties/4/spawn = true
 properties/4/replication_mode = 1
-properties/5/path = NodePath("Interaction Controller:ArmRotation")
+properties/5/path = NodePath("Interaction Controller:MousePosition")
 properties/5/spawn = true
 properties/5/replication_mode = 2
+properties/6/path = NodePath("Interaction Controller:IsMining")
+properties/6/spawn = true
+properties/6/replication_mode = 2
+properties/7/path = NodePath("Interaction Controller:MiningDistance")
+properties/7/spawn = true
+properties/7/replication_mode = 2
 
 [sub_resource type="QuadMesh" id="QuadMesh_37pga"]
+
+[sub_resource type="SkeletonModification2DTwoBoneIK" id="SkeletonModification2DTwoBoneIK_ag147"]
+target_nodepath = NodePath("../Arm/Left Hand Target")
+flip_bend_direction = true
+joint_one_bone_idx = 1
+joint_one_bone2d_node = NodePath("Torso/Upper Arm")
+joint_two_bone_idx = 2
+joint_two_bone2d_node = NodePath("Torso/Upper Arm/Lower Arm")
+
+[sub_resource type="SkeletonModification2DLookAt" id="SkeletonModification2DLookAt_nqnbf"]
+bone_index = 4
+bone2d_node = NodePath("Torso/Neck/Head")
+target_nodepath = NodePath("Head Target")
+
+[sub_resource type="SkeletonModificationStack2D" id="SkeletonModificationStack2D_tbk5s"]
+enabled = true
+modification_count = 2
+modifications/0 = SubResource("SkeletonModification2DTwoBoneIK_ag147")
+modifications/1 = SubResource("SkeletonModification2DLookAt_nqnbf")
+
+[sub_resource type="Curve" id="Curve_tmffk"]
+_data = [Vector2(0.455729, 0.856713), 0.0, 0.0, 0, 0, Vector2(0.669271, 0.0490983), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_qpmck"]
+curve = SubResource("Curve_tmffk")
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_vd1d2"]
 particle_flag_align_y = true
 particle_flag_rotate_y = true
 particle_flag_disable_z = true
-emission_shape_offset = Vector3(100, 0, 0)
+emission_shape_offset = Vector3(50, 0, 0)
 emission_shape = 3
-emission_box_extents = Vector3(100, 10, 1)
+emission_box_extents = Vector3(50, 10, 1)
 gravity = Vector3(0, 0, 0)
+color = Color(0.129412, 0.686275, 0.698039, 1)
+emission_curve = SubResource("CurveTexture_qpmck")
+hue_variation_min = -0.13
+hue_variation_max = 0.1
 
-[node name="Player" type="RigidBody2D" groups=["players"]]
+[node name="Player" type="RigidBody2D" node_paths=PackedStringArray("camera", "InteractionController") groups=["players"]]
 collision_layer = 2
 collision_mask = 11
 physics_material_override = SubResource("PhysicsMaterial_qk016")
@@ -59,9 +96,11 @@ linear_damp = 0.1
 angular_damp = 0.5
 script = ExtResource("1_ntq5g")
 player_spawn_point = Vector2(0, 0)
+camera = NodePath("Camera2D")
+InteractionController = NodePath("Interaction Controller")
 
 [node name="Collision" type="CollisionShape2D" parent="."]
-position = Vector2(0, -32)
+position = Vector2(3.5, -24.5)
 shape = SubResource("RectangleShape2D_4uxh2")
 
 [node name="PlayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
@@ -69,8 +108,11 @@ replication_config = SubResource("SceneReplicationConfig_ir062")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(0, -31.37)
+zoom = Vector2(2, 2)
+position_smoothing_enabled = true
 
 [node name="Box" type="Sprite2D" parent="."]
+visible = false
 position = Vector2(0, -32)
 texture = ExtResource("3_8dug6")
 
@@ -80,23 +122,129 @@ position = Vector2(0, -50)
 scale = Vector2(0.25, 0.25)
 texture = ExtResource("3_h2rqs")
 
-[node name="Interaction Controller" type="Node2D" parent="." node_paths=PackedStringArray("Arm")]
+[node name="Interaction Controller" type="Node2D" parent="." node_paths=PackedStringArray("Arm", "MiningParticles", "HeadTarget")]
 script = ExtResource("4_rfuvf")
 Arm = NodePath("../Arm")
+MiningParticles = NodePath("../Skeleton2D/Torso/Upper Arm/Lower Arm/Lower Left Arm/GPUParticles2D")
+HeadTarget = NodePath("../Skeleton2D/Head Target")
 
 [node name="Arm" type="Node2D" parent="."]
-position = Vector2(-26, -39)
+position = Vector2(0, -39)
 
 [node name="MeshInstance2D" type="MeshInstance2D" parent="Arm"]
+visible = false
 position = Vector2(15, 0)
 scale = Vector2(30, 10)
 mesh = SubResource("QuadMesh_37pga")
 
-[node name="GPUParticles2D" type="GPUParticles2D" parent="Arm"]
-position = Vector2(-82, -76)
-rotation = 2.55051
-emitting = false
+[node name="Left Hand Target" type="Node2D" parent="Arm"]
+position = Vector2(24, 0)
+
+[node name="Skeleton2D" type="Skeleton2D" parent="."]
+modification_stack = SubResource("SkeletonModificationStack2D_tbk5s")
+
+[node name="Torso" type="Bone2D" parent="Skeleton2D"]
+position = Vector2(2, -21)
+rest = Transform2D(1, 0, 0, 1, 2, -21)
+auto_calculate_length_and_angle = false
+length = 17.0
+bone_angle = -90.0
+
+[node name="Upper Arm" type="Bone2D" parent="Skeleton2D/Torso"]
+position = Vector2(-2, -18)
+rotation = 1.5708
+scale = Vector2(0.999984, 0.999984)
+rest = Transform2D(0.800033, 0.599867, -0.599867, 0.800033, -2, -18)
+metadata/_local_pose_override_enabled_ = true
+
+[node name="Lower Arm" type="Bone2D" parent="Skeleton2D/Torso/Upper Arm"]
+position = Vector2(15.0002, -6.55681e-07)
+rotation = -1.5708
+scale = Vector2(0.999988, 0.999988)
+rest = Transform2D(-0.95989, -0.280173, 0.280173, -0.95989, 15.0002, -6.55681e-07)
+auto_calculate_length_and_angle = false
+length = 15.0
+bone_angle = 90.0
+metadata/_local_pose_override_enabled_ = true
+
+[node name="Lower Left Arm" type="Polygon2D" parent="Skeleton2D/Torso/Upper Arm/Lower Arm"]
+z_index = 1
+texture_filter = 1
+position = Vector2(-52.0015, -6.00017)
+texture = ExtResource("5_e4w6p")
+skeleton = NodePath("../../../..")
+polygon = PackedVector2Array(49, 6, 55, 6, 55, 21, 49, 21)
+uv = PackedVector2Array(49, 6, 55, 6, 55, 21, 49, 21)
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="Skeleton2D/Torso/Upper Arm/Lower Arm/Lower Left Arm"]
+position = Vector2(52.0015, 21.0002)
+rotation = 1.20897
+scale = Vector2(1.00011, 1.00011)
 amount = 100
 process_material = SubResource("ParticleProcessMaterial_vd1d2")
 lifetime = 0.5
 collision_base_size = 0.0
+visibility_rect = Rect2(0, -15, 1000, 30)
+
+[node name="Upper Left Arm" type="Polygon2D" parent="Skeleton2D/Torso/Upper Arm"]
+z_index = 2
+texture_filter = 1
+position = Vector2(-6.00028, 40.0019)
+rotation = -1.5708
+texture = ExtResource("5_e4w6p")
+skeleton = NodePath("../../..")
+polygon = PackedVector2Array(37, 6, 43, 6, 43, 21, 37, 21)
+uv = PackedVector2Array(37, 6, 43, 6, 43, 21, 37, 21)
+
+[node name="Body" type="Polygon2D" parent="Skeleton2D/Torso"]
+texture_filter = 1
+position = Vector2(-21, -39)
+texture = ExtResource("5_e4w6p")
+skeleton = NodePath("../..")
+polygon = PackedVector2Array(6, 14, 15, 14, 18, 16, 24, 16, 29, 21, 29, 30, 26, 40, 15, 40, 14, 38, 6, 38)
+uv = PackedVector2Array(6, 14, 15, 14, 15, 18, 26, 18, 29, 21, 29, 30, 26, 40, 15, 40, 14, 38, 6, 38)
+
+[node name="Neck" type="Bone2D" parent="Skeleton2D/Torso"]
+position = Vector2(0, -21)
+rotation = -1.5708
+rest = Transform2D(-4.37114e-08, -1, 1, -4.37114e-08, 0, -21)
+
+[node name="Head" type="Bone2D" parent="Skeleton2D/Torso/Neck"]
+rotation = 1.13839
+scale = Vector2(0.99995, 0.99995)
+rest = Transform2D(-4.3709e-08, 0.999945, -0.999945, -4.3709e-08, 0, 0)
+auto_calculate_length_and_angle = false
+length = 4.0
+bone_angle = 0.0
+metadata/_local_pose_override_enabled_ = true
+
+[node name="Head2" type="Polygon2D" parent="Skeleton2D/Torso/Neck/Head"]
+texture_filter = 1
+position = Vector2(-21.0011, -12.0006)
+texture = ExtResource("5_e4w6p")
+skeleton = NodePath("../../../..")
+polygon = PackedVector2Array(15, 0, 15, 12, 27, 12, 27, 0)
+uv = PackedVector2Array(15, 0, 15, 12, 27, 12, 27, -7.45058e-09)
+
+[node name="Head Target" type="Node2D" parent="Skeleton2D"]
+position = Vector2(20, -42)
+
+[node name="Player" type="Node2D" parent="."]
+
+[node name="Upper Left Leg" type="Polygon2D" parent="Player"]
+visible = false
+texture_filter = 1
+position = Vector2(-10, -59)
+texture = ExtResource("5_e4w6p")
+skeleton = NodePath("../../Skeleton2D")
+polygon = PackedVector2Array(7.07904, 50.4467, 15.1203, 50.1718, 14.9141, 68.3849, 7.42268, 68.4536)
+uv = PackedVector2Array(7.07904, 50.4467, 15.1203, 50.1718, 14.9141, 68.3849, 7.42268, 68.4536)
+
+[node name="Lower Left Leg" type="Polygon2D" parent="Player"]
+visible = false
+texture_filter = 1
+position = Vector2(-10, -68)
+texture = ExtResource("5_e4w6p")
+skeleton = NodePath("../../Skeleton2D")
+polygon = PackedVector2Array(7.40402, 76.234, 14.6252, 76.1426, 14.9909, 94.9726, 6.94699, 94.7898)
+uv = PackedVector2Array(7.40402, 76.234, 14.6252, 76.1426, 14.9909, 94.9726, 6.94699, 94.7898)
