@@ -25,6 +25,7 @@ var uuid_util: Resource = preload("res://addons/uuid/uuid.gd")
 
 var ServerCamera: PackedScene = preload("res://Server Camera/Server Camera.tscn")
 
+
 func _process(_delta: float) -> void:
 	if not ready_to_connect:
 		return
@@ -371,14 +372,14 @@ func player_joined(id: int, data: String) -> void:
 		character.position = Vector2((randf() - 0.5) * 2.0 * 400.0, 10 + randf() * 1000.0)
 
 		# Use saved player rotation if it exists
-		if Globals.player_save_data[player_uuid].has("rotation"):
-			# TODO: Reimplement this.
-			Helpers.log_print(str("Rotation: ", Globals.player_save_data[player_uuid]["rotation"]))
-			# character.rotation = Vector3(
-			# 	Globals.player_save_data[player_uuid]["rotation"]["x"],
-			# 	Globals.player_save_data[player_uuid]["rotation"]["y"],
-			# 	Globals.player_save_data[player_uuid]["rotation"]["z"]
-			# )
+		#if Globals.player_save_data[player_uuid].has("rotation"):
+		# TODO: Reimplement this.
+		#Helpers.log_print(str("Rotation: ", Globals.player_save_data[player_uuid]["rotation"]))
+		# character.rotation = Vector3(
+		# 	Globals.player_save_data[player_uuid]["rotation"]["x"],
+		# 	Globals.player_save_data[player_uuid]["rotation"]["y"],
+		# 	Globals.player_save_data[player_uuid]["rotation"]["z"]
+		# )
 		character.name = str(id)
 		get_node("../Main/Players").add_child(character, true)
 		character.set_multiplayer_authority(character.player)
