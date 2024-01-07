@@ -177,6 +177,10 @@ func _ready() -> void:
 			Globals.how_to_end_game_text = "This is the server window. You cannot interact with it.\nYou must run at least 2 game instances to play.\nPress ESC to close Server and all Clients."
 		else:
 			Globals.how_to_end_game_text = "ESC to Close this Client"
+	elif OS.get_name() != "Web":
+		# No need to ever display this in web, as people just close the tab to end the game,
+		# and nothing we do can change that.
+		Globals.how_to_end_game_text = ""
 
 	start_connection()
 
