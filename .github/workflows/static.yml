@@ -42,7 +42,7 @@ jobs:
       shell: bash
     
     - id: run-gdformat
-      run: gdformat --check $(find . -name '*.gd' -not -path "./addons/*")
+      run: find . -name '*.gd' -not -path "./addons/*" -print0 | xargs  -0 gdformat --check
     
     - id: run-gdlint
       run: gdlint .
