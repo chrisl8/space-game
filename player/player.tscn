@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://cnckqfxi8eyk8"]
+[gd_scene load_steps=17 format=3 uid="uid://cnckqfxi8eyk8"]
 
 [ext_resource type="Script" path="res://player/PlayerController.gd" id="1_ntq5g"]
 [ext_resource type="Texture2D" uid="uid://rtlda15irjtr" path="res://Items/PlayerBox.png" id="3_8dug6"]
@@ -12,9 +12,6 @@
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_qk016"]
 friction = 0.0
 script = SubResource("1")
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_4uxh2"]
-size = Vector2(27, 49)
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_ir062"]
 properties/0/path = NodePath(".:linear_velocity")
@@ -102,10 +99,6 @@ script = ExtResource("1_ntq5g")
 player_spawn_point = Vector2(0, 0)
 camera = NodePath("Camera2D")
 InteractionController = NodePath("Interaction Controller")
-
-[node name="Collision" type="CollisionShape2D" parent="."]
-position = Vector2(3.5, -24.5)
-shape = SubResource("RectangleShape2D_4uxh2")
 
 [node name="PlayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_ir062")
@@ -255,3 +248,7 @@ texture = ExtResource("5_e4w6p")
 skeleton = NodePath("../../Skeleton2D")
 polygon = PackedVector2Array(7.40402, 76.234, 14.6252, 76.1426, 14.9909, 94.9726, 6.94699, 94.7898)
 uv = PackedVector2Array(7.40402, 76.234, 14.6252, 76.1426, 14.9909, 94.9726, 6.94699, 94.7898)
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+position = Vector2(4, -25)
+polygon = PackedVector2Array(5.1, -17, -14, -17, -3.5, 5)
