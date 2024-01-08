@@ -2,9 +2,9 @@ extends Node2D
 
 const MovementSpeed: float = 4.0
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
 
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(_delta):
 	var move: Vector2 = Vector2()
 
 	var input: Vector3 = Vector3()
@@ -16,4 +16,4 @@ func _process(delta):
 	move.x = input.x
 	move.y = -input.z
 
-	global_position+=move*MovementSpeed
+	global_position += move * MovementSpeed
