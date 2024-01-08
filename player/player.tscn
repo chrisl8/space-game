@@ -1,10 +1,11 @@
-[gd_scene load_steps=17 format=3 uid="uid://cnckqfxi8eyk8"]
+[gd_scene load_steps=18 format=3 uid="uid://cnckqfxi8eyk8"]
 
 [ext_resource type="Script" path="res://player/PlayerController.gd" id="1_ntq5g"]
 [ext_resource type="Texture2D" uid="uid://rtlda15irjtr" path="res://Items/PlayerBox.png" id="3_8dug6"]
 [ext_resource type="Texture2D" uid="uid://bwi88dcimnyfh" path="res://Items/Box.png" id="3_h2rqs"]
 [ext_resource type="Script" path="res://player/PlayerInteractionController.gd" id="4_rfuvf"]
 [ext_resource type="Texture2D" uid="uid://cgoy7vka18x5b" path="res://player/Player Atlas.png" id="5_e4w6p"]
+[ext_resource type="Script" path="res://player/skeleton_fixer.gd" id="5_yow5u"]
 
 [sub_resource type="GDScript" id="1"]
 
@@ -44,6 +45,7 @@ properties/7/replication_mode = 2
 [sub_resource type="QuadMesh" id="QuadMesh_37pga"]
 
 [sub_resource type="SkeletonModification2DTwoBoneIK" id="SkeletonModification2DTwoBoneIK_ag147"]
+resource_local_to_scene = true
 target_nodepath = NodePath("../Arm/Left Hand Target")
 flip_bend_direction = true
 joint_one_bone_idx = 1
@@ -52,11 +54,13 @@ joint_two_bone_idx = 2
 joint_two_bone2d_node = NodePath("Torso/Upper Arm/Lower Arm")
 
 [sub_resource type="SkeletonModification2DLookAt" id="SkeletonModification2DLookAt_nqnbf"]
+resource_local_to_scene = true
 bone_index = 4
 bone2d_node = NodePath("Torso/Neck/Head")
 target_nodepath = NodePath("Head Target")
 
 [sub_resource type="SkeletonModificationStack2D" id="SkeletonModificationStack2D_tbk5s"]
+resource_local_to_scene = true
 enabled = true
 modification_count = 2
 modifications/0 = SubResource("SkeletonModification2DTwoBoneIK_ag147")
@@ -143,6 +147,8 @@ position = Vector2(23, -2)
 
 [node name="Skeleton2D" type="Skeleton2D" parent="."]
 modification_stack = SubResource("SkeletonModificationStack2D_tbk5s")
+script = ExtResource("5_yow5u")
+apply_all_local = true
 
 [node name="Torso" type="Bone2D" parent="Skeleton2D"]
 position = Vector2(2, -21)
