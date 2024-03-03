@@ -26,14 +26,6 @@ print_usage() {
   echo ""
   echo "Usage:"
   echo "You MUST provide the following arguments on the command line:"
-  echo "The Godot version to use, in this exact format:"
-  echo "--godot-version 4.1.2-stable"
-  echo "or"
-  echo "--godot-version 4.2-beta1"
-  echo "or"
-  echo "--godot-version 4.2-rc1"
-  echo "Be sure to include the -stable or -beta1 or -rc1 on the end just like the release name."
-  echo ""
   echo "The folder where your Godot code project is at:"
   echo "--project-path /mnt/c/Dev/game"
   echo ""
@@ -46,8 +38,17 @@ print_usage() {
   echo ""
   echo ""
   echo "You MAY also include the following options:"
+  echo "The Godot version to use, in this exact format:"
+  echo "--godot-version 4.1.2-stable"
+  echo "or"
+  echo "--godot-version 4.2-beta1"
+  echo "or"
+  echo "--godot-version 4.2-rc1"
+  echo "Be sure to include the -stable or -beta1 or -rc1 on the end just like the release name."
+  echo "If you do not provide a version, the script will assume godot is in your path adn the export templates exist where they need to be."
+  echo ""
   echo "You an also supply a 'local' path to drop Linux and Windows binaries into. I use this to share them with friends. It is not required."
-  echo "--cloud-drive-path /mnt/c/Users/me/Dropbox/SpaceGame"
+  echo "--cloud-drive-path /mnt/c/Users/me/Dropbox/Game"
   echo ""
   echo "Example Usage:"
   echo "deployGame.sh --godot-version 4.1.2-stable --project-path /mnt/c/Dev/game --remote-host server.example.com --game-name game"
@@ -96,7 +97,13 @@ do
         shift
 done
 
-if [[ ${GAME_NAME} == "" ]] || [[ ${REMOTE_HOST} == "" ]] || [[ ${PROJECT_PATH} == "" ]] || [[ ${GODOT_VERSION} == "" ]];then
+if [[ ${GAME_NAME} == "" ]] || [[ ${REMOTE_HOST} == "" ]] || [[ ${PROJECT_PATH} == "" ]];then
+  print_usage
+  exit
+fi
+
+if [[ ${GODOT_VERSION} == "" ]] && ! (command -v godot >/dev/null); then
+  echo "You must provide a Godot version if Godot is not in your path."
   print_usage
   exit
 fi
@@ -106,7 +113,7 @@ fi
 # instead of
 # https://github.com/godotengine/godot/releases/download/
 DOWNLOAD_FOLDER_SUFFIX=""
-if [[ ${GODOT_VERSION} == *"beta"* || ${GODOT_VERSION} == *"rc"* ]];then
+if [[ ${GODOT_VERSION} == *"beta"* || ${GODOT_VERSION} == *"rc"* || ${GODOT_VERSION} == *"dev"* ]];then
   DOWNLOAD_FOLDER_SUFFIX="-builds"
 fi
 
@@ -127,37 +134,42 @@ if ! (command -v zip >/dev/null) || ! (command -v unison >/dev/null); then
   type -p unison >/dev/null || (sudo apt update && sudo apt install unison -y)
 fi
 
-if ! (command -v godot >/dev/null) || ! (godot --version | grep "${GODOT_VERSION_DOT}" >/dev/null); then
-  cd "${HOME}/bin" || exit
-  if ! [[ -f "Godot_v${GODOT_VERSION}_linux.x86_64" ]]; then
-    printf "\n${YELLOW}Downloading Godot ${GODOT_VERSION}${NC}\n"
-    wget "https://github.com/godotengine/godot${DOWNLOAD_FOLDER_SUFFIX}/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_linux.x86_64.zip"
-    unzip "Godot_v${GODOT_VERSION}_linux.x86_64.zip"
-    rm "Godot_v${GODOT_VERSION}_linux.x86_64.zip"
-    chmod +x "Godot_v${GODOT_VERSION}_linux.x86_64"
-  else
-    printf "\n${YELLOW}Swapping to Godot ${GODOT_VERSION}${NC}\n"
+if  [[ ${GODOT_VERSION} != "" ]];then
+  printf "\n${YELLOW}Requested Godot version${GODOT_VERSION}${NC}\n"
+  if ! (command -v godot >/dev/null) || ! (godot --version | grep "${GODOT_VERSION_DOT}" >/dev/null); then
+    cd "${HOME}/bin" || exit
+    if ! [[ -f "Godot_v${GODOT_VERSION}_linux.x86_64" ]]; then
+      printf "${YELLOW}Downloading Godot ${GODOT_VERSION}${NC}\n"
+      wget "https://github.com/godotengine/godot${DOWNLOAD_FOLDER_SUFFIX}/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_linux.x86_64.zip"
+      unzip "Godot_v${GODOT_VERSION}_linux.x86_64.zip"
+      rm "Godot_v${GODOT_VERSION}_linux.x86_64.zip"
+      chmod +x "Godot_v${GODOT_VERSION}_linux.x86_64"
+    else
+      printf "${YELLOW}Swapping to Godot ${GODOT_VERSION}${NC}\n"
+    fi
+    if [[ -e godot ]]; then
+      rm godot
+    fi
+    ln -s "Godot_v${GODOT_VERSION}_linux.x86_64" godot
   fi
-  if [[ -e godot ]]; then
-    rm godot
-  fi
-  ln -s "Godot_v${GODOT_VERSION}_linux.x86_64" godot
-fi
 
-if ! (command -v godot >/dev/null); then
-  PATH="${HOME}/bin":${PATH}
-fi
-
-if ! [[ -e ${HOME}/.local/share/godot/export_templates/${GODOT_VERSION_DOT} ]]; then
-  printf "\n${YELLOW}Downloading Godot ${GODOT_VERSION} Export Templates${NC}\n"
-  if ! [[ -e ${HOME}/.local/share/godot/export_templates ]]; then
-    mkdir -p "${HOME}/.local/share/godot/export_templates"
+  if ! (command -v godot >/dev/null); then
+    PATH="${HOME}/bin":${PATH}
   fi
-  cd "${HOME}/.local/share/godot/export_templates" || exit
-  wget "https://github.com/godotengine/godot${DOWNLOAD_FOLDER_SUFFIX}/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_export_templates.tpz"
-  unzip "Godot_v${GODOT_VERSION}_export_templates.tpz"
-  rm "Godot_v${GODOT_VERSION}_export_templates.tpz"
-  mv templates "${GODOT_VERSION_DOT}"
+
+  if ! [[ -e ${HOME}/.local/share/godot/export_templates/${GODOT_VERSION_DOT} ]]; then
+    printf "\n${YELLOW}Downloading Godot ${GODOT_VERSION} Export Templates${NC}\n"
+    if ! [[ -e ${HOME}/.local/share/godot/export_templates ]]; then
+      mkdir -p "${HOME}/.local/share/godot/export_templates"
+    fi
+    cd "${HOME}/.local/share/godot/export_templates" || exit
+    wget "https://github.com/godotengine/godot${DOWNLOAD_FOLDER_SUFFIX}/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_export_templates.tpz"
+    unzip "Godot_v${GODOT_VERSION}_export_templates.tpz"
+    rm "Godot_v${GODOT_VERSION}_export_templates.tpz"
+    mv templates "${GODOT_VERSION_DOT}"
+  fi
+else
+  printf "\n${YELLOW}Using Godot in Path: version $(godot --version)${NC}\n"
 fi
 
 printf "\n${YELLOW}Building Godot Release Bundles${NC}"
@@ -167,18 +179,18 @@ mkdir -p "${OUTPUT_PATH}/web"
 godot --headless --quiet --path "${PROJECT_PATH}" --export-release 'Web' "${OUTPUT_PATH}/web/${GAME_NAME}.html"
 printf "\n\t${YELLOW}Linux${NC}\n"
 mkdir -p "${OUTPUT_PATH}/linux"
-godot  --headless --quiet --path "${PROJECT_PATH}" --export-release 'Linux' "${OUTPUT_PATH}/linux/${GAME_NAME}.x86_64"
+godot --headless --quiet --path "${PROJECT_PATH}" --export-release 'Linux' "${OUTPUT_PATH}/linux/${GAME_NAME}.x86_64"
 if [[ "${RAPID_DEPLOY}" == "false" ]]; then
   printf "\n\t${YELLOW}Windows${NC}\n"
   # This is not required, as the server is Linux and the clients are intended to be web based,
   # but the game works fine as a Windows client also which I often run and share with friends
   mkdir -p "${OUTPUT_PATH}/windows"
-  godot  --headless --quiet --path "${PROJECT_PATH}" --export-release 'Win' "${OUTPUT_PATH}/windows/${GAME_NAME}.exe"
+  godot --headless --quiet --path "${PROJECT_PATH}" --export-release 'Win' "${OUTPUT_PATH}/windows/${GAME_NAME}.exe"
 fi
 if [[ "${BUILD_XR}" == "true" ]]; then
   printf "\n\t${YELLOW}XR${NC}\n"
   mkdir -p "${OUTPUT_PATH}/xr"
-  godot  --headless --quiet --path "${PROJECT_PATH}-xr" --export-release 'Win' "${OUTPUT_PATH}/xr/${GAME_NAME}.exe"
+  godot --headless --quiet --path "${PROJECT_PATH}-xr" --export-release 'Win' "${OUTPUT_PATH}/xr/${GAME_NAME}.exe"
 fi
 
 printf "\n${YELLOW}Cache Busting${NC}\n"
