@@ -1,24 +1,19 @@
 [![Static Code Checks](https://github.com/chrisl8/space-game/actions/workflows/static.yml/badge.svg)](https://github.com/chrisl8/space-game/actions/workflows/static.yml)
 
-You can play the game right now at [https://voidshipephemeral.space](https://voidshipephemeral.space)
-
 # Space Game - A 3D Online Space
 
 It is closer to a "doll house" than a game at the moment.  
 There isn't really much here yet, but you can see it all live.  I will continue to deploy my work as I expand it.  
 All the source is MIT licensed, so you can use this to help make your own game and copy code as much as you like.
 
-# Play the Game Now!
+# Play the Game Now?
 
-Go to [https://voidshipephemeral.space](https://voidshipephemeral.space) where the game is up and running live now!  
-This is the preferred method to play the game.
+*Sorry, I am no longer hosting this game live. If you want me to do so again open an issue and I can.*
 
 ## Binary Releases
 There is no reason to use these, as the website above is the primary target release and should always work, but if you want to download the game and run it locally, you can:
 
-[Download the latest Windows Binary Release Here](https://voidshipephemeral.space/release/space-game-Windows-Binary.zip)  
-or  
-[Download the latest Linux Binary Release Here](https://voidshipephemeral.space/release/space-game-Linux-Binary.tar.gz)  
+*Sorry, I am no longer hosting the binaries. If you want me to do so again open an issue and I can.*
 
 You will probably have to tell Windows to allow the binary to run as it is unsigned.  
 Use Alt+F4 to close the game if it seems like it won't let you out.  
@@ -130,7 +125,7 @@ You also need to open up the server's websocket listener to the network.
 
 I typically do both of these with Nginx on a Digital Ocean droplet.  
 
-Here is my nginx config:
+Here is my old nginx config:
 ```
 server {
     root /home/chrisl8/space-game/web;
