@@ -2,9 +2,9 @@ extends Node
 
 @export var run_server_in_debug: bool = true
 @export var debug_server_url: String = "ws://127.0.0.1:9090"
-@export var production_server_url: String = "wss://voidshipephemeral.space/server/"
+@export var production_server_url: String = "wss://server.voidshipephemeral.space"
 
-@export var capture_mouse_on_startup: bool = false  # This is actually annoying so I never turn it on.
+@export var capture_mouse_on_startup: bool = false # This is actually annoying so I never turn it on.
 
 var pop_up_template: Resource = preload("res://menus/pop_up/pop_up.tscn")
 
@@ -23,7 +23,7 @@ func _init() -> void:
 		# It also provides us with a unique "instance number" for each debug instance of the game run by the editor
 		# https://gist.github.com/CrankyBunny/71316e7af809d7d4cf5ec6e2369a30b9
 		_instance_socket = TCPServer.new()
-		for n in range(0, 4):  # Godot Editor only creates up to 4 instances maximum.
+		for n in range(0, 4): # Godot Editor only creates up to 4 instances maximum.
 			if _instance_socket.listen(5000 + n) == OK:
 				Globals.local_debug_instance_number = n
 				break
@@ -86,7 +86,7 @@ func parse_server_config_file_data(server_config_file_data: String) -> Dictionar
 			" at line ",
 			json.get_error_line()
 		)
-		get_tree().quit()  # Quits the game due to bad server config data
+		get_tree().quit() # Quits the game due to bad server config data
 
 	server_config = json.data
 	if (
@@ -159,11 +159,11 @@ func _ready() -> void:
 					" at line ",
 					json.get_error_line()
 				)
-				get_tree().quit()  # Quits the game due to bad server config data
+				get_tree().quit() # Quits the game due to bad server config data
 			player_save_data = json.data
 			if typeof(player_save_data) != TYPE_DICTIONARY:
 				printerr("Data error in: ", server_config)
-				get_tree().quit()  # Quits the game due to bad server config data
+				get_tree().quit() # Quits the game due to bad server config data
 		Globals.player_save_data = player_save_data
 		# Save config back out to file, even if we imported it from the file.
 		Helpers.save_server_player_save_data_to_file()
@@ -229,7 +229,7 @@ func _input(event: InputEvent) -> void:
 			# ESC key closes game in debug mode
 			Helpers.log_print("Closing due to ESC key.", "green")
 			Helpers.quit_gracefully()
-		else:  # Releases mouse in normal build
+		else: # Releases mouse in normal build
 			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 
 	if event.is_action_pressed(&"ui_end"):
