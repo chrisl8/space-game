@@ -198,9 +198,6 @@ printf "\n${YELLOW}Cache Busting${NC}\n"
 # This both ensures updated files do not cache,
 # and allows for highly aggressive caching to be used to save bandwidth for you and your users.
 cd "${OUTPUT_PATH}/web" || exit
-# The .png file is not used by default
-# See: https://docs.godotengine.org/en/stable/tutorials/export/exporting_for_web.html
-rm "${GAME_NAME}.png"
 # The game index file can use the default web server index name,
 # as it is never internally referenced.
 # See: https://docs.godotengine.org/en/stable/tutorials/export/exporting_for_web.html
@@ -218,8 +215,8 @@ WASM_FILE_CHECK_SUM=$(sha224sum "${GAME_NAME}.wasm" | awk '{ print $1 }')
 # https://stackoverflow.com/a/7450854/4982408
 for file in "${GAME_NAME}".*
 do
-  if ! [[ ${file} == index.html ]];then
-    if [[ ${file} == ${GAME_NAME}.wasm ]] || [[ ${file} == ${GAME_NAME}.worker.js ]] || [[ ${file} == ${GAME_NAME}.audio.worklet.js ]];then
+  if ! [[ ${file} == index.html ]] && ! [[ ${file} == ${GAME_NAME}.png ]];then
+    if [[ ${file} == ${GAME_NAME}.wasm ]] || [[ ${file} == ${GAME_NAME}.worker.js ]] || [[ ${file} == ${GAME_NAME}.audio.worklet.js ]] || [[ ${file} == ${GAME_NAME}.audio.position.worklet.js ]];then
       # Based on experimentation the .worker.js file MUST use the same name as the .wasm file.
       # I have no idea what the .audio.worklet.js does, but added it here just in case.
       #     As far as I can tell, my deploy never uses .audio.worklet.js
@@ -270,11 +267,14 @@ fi
 
 printf "\n${YELLOW}Syncing Builds to Server${NC}"
 printf "\n\t${YELLOW}Syncing Web Content${NC}\n"
+
 UNISON_ARGUMENTS=()
-UNISON_ARGUMENTS+=("${OUTPUT_PATH}")
-UNISON_ARGUMENTS+=("ssh://${USER}@${REMOTE_HOST}//home/${USER}/${GAME_NAME}")
+UNISON_ARGUMENTS+=("${OUTPUT_PATH}/web")
+UNISON_ARGUMENTS+=("ssh://${USER}@${REMOTE_HOST}//mnt/2000/container-mounts/caddy/site/${GAME_NAME}")
 UNISON_ARGUMENTS+=(-force "${OUTPUT_PATH}")
-UNISON_ARGUMENTS+=(-path web)
+UNISON_ARGUMENTS+=(-perms)
+UNISON_ARGUMENTS+=(0)
+UNISON_ARGUMENTS+=(-dontchmod)
 UNISON_ARGUMENTS+=(-auto)
 UNISON_ARGUMENTS+=(-batch)
 UNISON_ARGUMENTS+=(-sshcmd "ssh.exe")
@@ -285,24 +285,20 @@ printf "\n\t${YELLOW}Syncing Linux Binary (for Server)${NC}\n"
 cp "${PROJECT_PATH}/export-helpers/server/run-server.sh" "${OUTPUT_PATH}/linux"
 cp "${PROJECT_PATH}/export-helpers/server/restart-server.sh" "${OUTPUT_PATH}/linux"
 
-UNISON_ARGUMENTS+=(-path linux)
+#UNISON_ARGUMENTS+=(-path linux)
+UNISON_ARGUMENTS=()
+UNISON_ARGUMENTS+=("${OUTPUT_PATH}/linux")
+UNISON_ARGUMENTS+=("ssh://${USER}@${REMOTE_HOST}//mnt/2000/container-mounts/caddy/${GAME_NAME}")
+UNISON_ARGUMENTS+=(-force "${OUTPUT_PATH}")
+UNISON_ARGUMENTS+=(-perms)
+UNISON_ARGUMENTS+=(0)
+UNISON_ARGUMENTS+=(-dontchmod)
+UNISON_ARGUMENTS+=(-ignore "Name .local")
+UNISON_ARGUMENTS+=(-auto)
+UNISON_ARGUMENTS+=(-batch)
+UNISON_ARGUMENTS+=(-sshcmd "ssh.exe")
 unison "${UNISON_ARGUMENTS[@]}"
 
 printf "\n${YELLOW}Restarting Server${NC}\n"
 # shellcheck disable=SC2029
-ssh.exe "${USER}@${REMOTE_HOST}" "cd ${OUTPUT_PATH}/linux;./restart-server.sh --game-name ${GAME_NAME}"
-
-if [[ "${RAPID_DEPLOY}" == "false" ]] && ! [[ "${CLOUD_DRIVE_PATH}" == "" ]] && [[ -d ${CLOUD_DRIVE_PATH} ]]; then
-  printf "\n${YELLOW}Syncing Cloud Copy${NC}\n"
-  UNISON_ARGUMENTS=()
-  UNISON_ARGUMENTS+=("${OUTPUT_PATH}")
-  UNISON_ARGUMENTS+=("${CLOUD_DRIVE_PATH}")
-  UNISON_ARGUMENTS+=(-force "${OUTPUT_PATH}")
-  UNISON_ARGUMENTS+=(-perms 0)
-  UNISON_ARGUMENTS+=(-dontchmod)
-  UNISON_ARGUMENTS+=(-rsrc false)
-  UNISON_ARGUMENTS+=(-links ignore)
-  UNISON_ARGUMENTS+=(-auto)
-  UNISON_ARGUMENTS+=(-batch)
-  unison "${UNISON_ARGUMENTS[@]}" # -batch
-fi
+ssh.exe "${USER}@${REMOTE_HOST}" "sudo /usr/bin/chown -R caddy-docker:caddy-docker /mnt/2000/container-mounts/caddy/*;cd /home/${USER}/containers/caddy;docker compose up --detach --build ${GAME_NAME}"
