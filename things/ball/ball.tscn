@@ -1,6 +1,6 @@
 [gd_scene load_steps=8 format=3 uid="uid://ceod3svxuy34r"]
 
-[ext_resource type="Script" path="res://things/ball/ball.gd" id="1_gl64x"]
+[ext_resource type="Script" uid="uid://cqdsw240w41il" path="res://things/ball/ball.gd" id="1_gl64x"]
 [ext_resource type="AudioStream" uid="uid://cj3o8fhjd1mb6" path="res://things/ball/ball_bounce.ogg" id="2_876ia"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_ehc2e"]

@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://dbeusiomibr8a"]
 
 [ext_resource type="PackedScene" uid="uid://b8y1hf2weaohr" path="res://things/fish/fish.glb" id="1_ar78f"]
-[ext_resource type="Script" path="res://things/fish/fish.gd" id="2_c43hs"]
+[ext_resource type="Script" uid="uid://q1ng2otihq50" path="res://things/fish/fish.gd" id="2_c43hs"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_yi6w8"]
 size = Vector3(1, 0.183929, 0.594604)

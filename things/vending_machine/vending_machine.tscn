@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://pdx1ljphijan"]
 
-[ext_resource type="Script" path="res://things/vending_machine/vending_machine.gd" id="1_vexae"]
+[ext_resource type="Script" uid="uid://6q6xlj7netq6" path="res://things/vending_machine/vending_machine.gd" id="1_vexae"]
 [ext_resource type="PackedScene" uid="uid://371hq3o4dml7" path="res://things/vending_machine/vending_machine.gltf" id="2_kn6e2"]
 [ext_resource type="PackedScene" uid="uid://ci5gjbo1gcs1k" path="res://things/vending_machine/vending_machine_chute.glb" id="3_ch053"]
 

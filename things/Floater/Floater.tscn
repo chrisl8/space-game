@@ -1,6 +1,6 @@
 [gd_scene load_steps=9 format=3 uid="uid://c6cch0gwb0s8b"]
 
-[ext_resource type="Script" path="res://things/Floater/FloaterController.gd" id="1_f5aan"]
+[ext_resource type="Script" uid="uid://b4a8yytweevdo" path="res://things/Floater/FloaterController.gd" id="1_f5aan"]
 [ext_resource type="ArrayMesh" uid="uid://mejsea0kdkvb" path="res://things/Floater/SG Floater.obj" id="2_c7hbd"]
 [ext_resource type="PackedScene" uid="uid://b4qlphbtsblby" path="res://things/Floater/Arm.tscn" id="3_4ij4q"]
 [ext_resource type="Material" uid="uid://bjend7ys5muxd" path="res://things/Floater/Floater 1.tres" id="3_pg8al"]

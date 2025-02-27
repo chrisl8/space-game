@@ -1,6 +1,6 @@
 [gd_scene load_steps=21 format=3 uid="uid://cbs4s4ea2n473"]
 
-[ext_resource type="Script" path="res://spaceship/spaceship.gd" id="1_e1est"]
+[ext_resource type="Script" uid="uid://b034sx68l8ust" path="res://spaceship/spaceship.gd" id="1_e1est"]
 [ext_resource type="Texture2D" uid="uid://clv3j1xfrwyhb" path="res://spaceship/panorama_image.png" id="2_6hknh"]
 [ext_resource type="PackedScene" uid="uid://bywfoekpnmak5" path="res://spaceship/room_02/room_02.tscn" id="2_xjddl"]
 [ext_resource type="PackedScene" uid="uid://c4lai1ecyvqnu" path="res://posters/data_flow_poster/data_flow_poster.tscn" id="3_5q6ig"]
@@ -13,7 +13,7 @@
 [ext_resource type="PackedScene" uid="uid://viddguc81rrv" path="res://spaceship/room_03/room_03.tscn" id="6_u88hu"]
 [ext_resource type="PackedScene" uid="uid://1ct1i8smg5ki" path="res://spaceship/hallway_-1/Hallway_-1.tscn" id="7_4y50c"]
 [ext_resource type="PackedScene" uid="uid://cm2b8wui16i" path="res://posters/purple_running_runes/purple_running_runes_poster.tscn" id="8_qy7mq"]
-[ext_resource type="Script" path="res://addons/Mirror/Mirror/Mirror.gd" id="9_ruxjs"]
+[ext_resource type="Script" uid="uid://c0c1f5rs728xl" path="res://addons/Mirror/Mirror/Mirror.gd" id="9_ruxjs"]
 [ext_resource type="PackedScene" uid="uid://def5ymn6ttvbo" path="res://spaceship/ramp_hallway_steep/ramp_hallway_steep.tscn" id="11_tf63n"]
 [ext_resource type="PackedScene" uid="uid://4ntboh2ersm8" path="res://spaceship/door/door.tscn" id="12_6i0k6"]
 

@@ -1,13 +1,13 @@
 [gd_resource type="Resource" script_class="ToastStyle" load_steps=2 format=3 uid="uid://cddscgdyqna1t"]
 
-[ext_resource type="Script" path="res://toast/style_resource/toast_style.gd" id="1"]
+[ext_resource type="Script" uid="uid://icfmd8rihgyx" path="res://toast/style_resource/toast_style.gd" id="1"]
 
 [resource]
 script = ExtResource("1")
 position = 1
 toast_type = 0
 background_color = Color(0, 1, 1, 0.8)
-fontColor = Color(0, 0, 0, 1)
+font_color = Color(0.01, 0.01, 0.01, 1)
 corner_radius = 20
 content_margin_left = 20.0
 content_margin_right = 20.0

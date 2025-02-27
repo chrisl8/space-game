@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://bemt6dotly4k3"]
 
-[ext_resource type="Script" path="res://startup.gd" id="1_0mo3b"]
+[ext_resource type="Script" uid="uid://cl5pl5twu0fdb" path="res://startup.gd" id="1_0mo3b"]
 
 [node name="Main" type="Node"]
 script = ExtResource("1_0mo3b")
@@ -8,19 +8,19 @@ script = ExtResource("1_0mo3b")
 [node name="Level" type="Node" parent="."]
 
 [node name="LevelSpawner" type="MultiplayerSpawner" parent="."]
-_spawnable_scenes = PackedStringArray("res://spaceship/spaceship.tscn")
+_spawnable_scenes = PackedStringArray("uid://cbs4s4ea2n473")
 spawn_path = NodePath("../Level")
 
 [node name="Players" type="Node" parent="."]
 
 [node name="PlayersSpawner" type="MultiplayerSpawner" parent="."]
-_spawnable_scenes = PackedStringArray("res://player/player.tscn")
+_spawnable_scenes = PackedStringArray("uid://cnckqfxi8eyk8")
 spawn_path = NodePath("../Players")
 
 [node name="Things" type="Node" parent="."]
 
 [node name="ThingSpawner" type="MultiplayerSpawner" parent="."]
-_spawnable_scenes = PackedStringArray("res://things/ball/ball.tscn", "res://things/chair/chair.tscn", "res://things/plant_a/plant_a.tscn", "res://things/Floater/Floater.tscn", "res://things/fish/fish.tscn")
+_spawnable_scenes = PackedStringArray("uid://ceod3svxuy34r", "uid://dgumnayv4d40c", "uid://oipytcn335v3", "uid://c6cch0gwb0s8b", "uid://dbeusiomibr8a")
 spawn_path = NodePath("../Things")
 
 [connection signal="spawned" from="PlayersSpawner" to="." method="_on_players_spawner_spawned"]
