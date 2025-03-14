@@ -2833,11 +2833,13 @@ data = PackedVector3Array(9.5, 3, 3.8, 9.5, 3.5, 4.3, 9.5, 1, 4.3, 9.5, 3, 3.8, 
 
 [node name="OmniLight3D" type="OmniLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.0423, 3.19803, -5.23849)
+shadow_enabled = true
 omni_range = 14.425
 omni_attenuation = 0.019915
 
 [node name="OmniLight3D2" type="OmniLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.042, 3.198, -14.762)
+shadow_enabled = true
 omni_range = 14.425
 omni_attenuation = 0.019915
 

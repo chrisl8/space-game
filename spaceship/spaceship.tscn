@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://cbs4s4ea2n473"]
+[gd_scene load_steps=19 format=3 uid="uid://cbs4s4ea2n473"]
 
 [ext_resource type="Script" uid="uid://b034sx68l8ust" path="res://spaceship/spaceship.gd" id="1_e1est"]
 [ext_resource type="Texture2D" uid="uid://clv3j1xfrwyhb" path="res://spaceship/panorama_image.png" id="2_6hknh"]
@@ -11,11 +11,10 @@
 [ext_resource type="PackedScene" uid="uid://pdx1ljphijan" path="res://things/vending_machine/vending_machine.tscn" id="5_7bub8"]
 [ext_resource type="PackedScene" uid="uid://cam7dfgbq1at0" path="res://spaceship/room_ceiling/room_ceiling.tscn" id="5_a4ruq"]
 [ext_resource type="PackedScene" uid="uid://viddguc81rrv" path="res://spaceship/room_03/room_03.tscn" id="6_u88hu"]
-[ext_resource type="PackedScene" uid="uid://1ct1i8smg5ki" path="res://spaceship/hallway_-1/Hallway_-1.tscn" id="7_4y50c"]
-[ext_resource type="PackedScene" uid="uid://cm2b8wui16i" path="res://posters/purple_running_runes/purple_running_runes_poster.tscn" id="8_qy7mq"]
 [ext_resource type="Script" uid="uid://c0c1f5rs728xl" path="res://addons/Mirror/Mirror/Mirror.gd" id="9_ruxjs"]
 [ext_resource type="PackedScene" uid="uid://def5ymn6ttvbo" path="res://spaceship/ramp_hallway_steep/ramp_hallway_steep.tscn" id="11_tf63n"]
 [ext_resource type="PackedScene" uid="uid://4ntboh2ersm8" path="res://spaceship/door/door.tscn" id="12_6i0k6"]
+[ext_resource type="PackedScene" uid="uid://cy80oocdb7uka" path="res://spaceship/endless_bridge/endless_bridge.tscn" id="17_fiqkm"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_gvyju"]
 panorama = ExtResource("2_6hknh")
@@ -26,9 +25,6 @@ sky_material = SubResource("PanoramaSkyMaterial_gvyju")
 [sub_resource type="Environment" id="Environment_sa0an"]
 background_mode = 2
 sky = SubResource("Sky_w2886")
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_neoav"]
-size = Vector3(1, 1.01678, 1)
 
 [node name="Spaceship" type="Node3D"]
 script = ExtResource("1_e1est")
@@ -82,29 +78,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -5.5, 0)
 
 [node name="Door2" parent="." instance=ExtResource("12_6i0k6")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, -5.5, 0)
-
-[node name="Door3" parent="." instance=ExtResource("12_6i0k6")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.021, -5.5, 10)
-
-[node name="Hallway_-1" parent="." instance=ExtResource("7_4y50c")]
-transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 20, 0, -10)
-
-[node name="OmniLight3D" type="OmniLight3D" parent="Hallway_-1"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18.8825, 1.71338, -5.01311)
-omni_range = 2.908
-omni_attenuation = 2.82842
-
-[node name="Window Poster 1" parent="." instance=ExtResource("8_qy7mq")]
-transform = Transform3D(-2, 0, -1.74846e-07, 0, 2, 0, 1.74846e-07, 0, -2, 25, 3, 9.691)
-
-[node name="StaticBody3D" type="StaticBody3D" parent="Window Poster 1"]
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Window Poster 1/StaticBody3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, -0.5)
-shape = SubResource("BoxShape3D_neoav")
-
-[node name="Window Poster 2" parent="." instance=ExtResource("8_qy7mq")]
-transform = Transform3D(-2, 0, -1.74846e-07, 0, 2, 0, 1.74846e-07, 0, -2, 25, 1, 9.691)
 
 [node name="Writing On The Wall" type="Label3D" parent="."]
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0.500121, 2.25442, -3.07948)
@@ -163,3 +136,6 @@ ResolutionPerUnit = 1000
 
 [node name="Dining Hall" parent="." instance=ExtResource("6_u88hu")]
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 30, -5.5, 0)
+
+[node name="Endless Bridge" parent="." instance=ExtResource("17_fiqkm")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.4118, -5.66144, 50.0072)
