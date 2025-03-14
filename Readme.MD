@@ -17,6 +17,8 @@ There is no reason to use these, as the website above is the primary target rele
 [Download the latest Windows Binary Release Here](https://voidshipephemeral.space/release/space-game-Windows-Binary.zip)  
 or  
 [Download the latest Linux Binary Release Here](https://voidshipephemeral.space/release/space-game-Linux-Binary.tar.gz)  
+or  
+[Download the latest MacOS Binary Release Here](https://voidshipephemeral.space/release/space-game-MacOS-Binary.dmg)  
 
 You will probably have to tell Windows to allow the binary to run as it is unsigned.  
 Use Alt+F4 to close the game if it seems like it won't let you out.  
