@@ -12,7 +12,7 @@ Go to [https://voidshipephemeral.space](https://voidshipephemeral.space) where t
 This is the preferred method to play the game.
 
 ## Binary Releases
-There is no reason to use these, as the website above is the primary target release and should always work, but if you want to download the game and run it locally, you can:
+The website above is the primary target release and should always work, but these local binary builds will provide higher quality rendering and a better input experience if you want to try them:
 
 [Download the latest Windows Binary Release Here](https://voidshipephemeral.space/release/space-game-Windows-Binary.zip)  
 or  
@@ -21,7 +21,10 @@ or
 [Download the latest MacOS Binary Release Here](https://voidshipephemeral.space/release/space-game-MacOS-Binary.dmg)  
 
 You will probably have to tell Windows to allow the binary to run as it is unsigned.  
-Use Alt+F4 to close the game if it seems like it won't let you out.  
+
+Press the "Esc" key to free your mouse from the window.
+
+In Windows use Alt+F4 to close the game if it seems like it won't let you out.  
 
 These releases still connect to and depend on the server. You will be part of the same multiplayer game as web connected clients, but with the "benefit" of running a native client on your computer instead of running it inside of a browser.
 
