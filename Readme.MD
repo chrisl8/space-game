@@ -12,21 +12,26 @@ Go to [https://voidshipephemeral.space](https://voidshipephemeral.space) where t
 This is the preferred method to play the game.
 
 ## Binary Releases
-The website above is the primary target release and should always work, but these local binary builds will provide higher quality rendering and a better input experience if you want to try them:
+The website above is the primary target release and should always work, but these local binary builds will provide higher quality rendering and a better input experience if you want to try them.
 
-[Download the latest Windows Binary Release Here](https://voidshipephemeral.space/release/space-game-Windows-Binary.zip)  
-or  
-[Download the latest Linux Binary Release Here](https://voidshipephemeral.space/release/space-game-Linux-Binary.tar.gz)  
-or  
-[Download the latest MacOS Binary Release Here](https://voidshipephemeral.space/release/space-game-MacOS-Binary.dmg)  
-
-You will probably have to tell Windows to allow the binary to run as it is unsigned.  
+These builds still connect to and depend on my server. You will be part of the same multiplayer game as web connected clients, but with the "benefit" of running a native client on your computer instead of running it inside of a browser.
 
 Press the "Esc" key to free your mouse from the window.
 
+### Windows
+[Download the latest Windows Binary Release Here](https://voidshipephemeral.space/release/space-game-Windows-Binary.zip)  
+
+### Linux
+[Download the latest Linux Binary Release Here](https://voidshipephemeral.space/release/space-game-Linux-Binary.tar.gz)  
+
+You will probably have to tell Windows to allow the binary to run as it is unsigned.  
+
 In Windows use Alt+F4 to close the game if it seems like it won't let you out.  
 
-These releases still connect to and depend on the server. You will be part of the same multiplayer game as web connected clients, but with the "benefit" of running a native client on your computer instead of running it inside of a browser.
+### MacOS
+[Download the latest MacOS Binary Release Here](https://voidshipephemeral.space/release/space-game-MacOS-Binary.dmg)  
+
+When MacOS blocks you from running this, click the small question mark in the upper right corner of the dialogue and your computer should provide instructions on how to override the block for this application.
 
 # About the Code
 
