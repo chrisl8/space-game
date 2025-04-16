@@ -356,5 +356,5 @@ if [[ "${REMOTE_HOST}" != "" ]]; then
 
   printf "\n${YELLOW}Restarting Server${NC}\n"
   # shellcheck disable=SC2029
-  ssh.exe "${USER}@${REMOTE_HOST}" "sudo /usr/bin/chown -R caddy-docker:caddy-docker /mnt/2000/container-mounts/caddy/*;cd /home/${USER}/containers/caddy;docker compose up --detach --build ${GAME_NAME}"
+  ssh.exe "${USER}@${REMOTE_HOST}" "sudo /usr/bin/chown -R caddy-docker:caddy-docker /mnt/2000/container-mounts/caddy/*;sudo chmod +x /mnt/2000/container-mounts/caddy/space-game/space-game.x86_64;cd /home/${USER}/containers/caddy;docker compose up --detach --build ${GAME_NAME}"
 fi
