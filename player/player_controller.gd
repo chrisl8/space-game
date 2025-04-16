@@ -2,40 +2,40 @@ extends RigidBody3D
 
 # The entire Rigidbody based Character Controller here is based on code found at https://github.com/FreeFlyFall/RigidBodyController
 
-enum { TIPTOEING, WALKING, SPRINTING }  # Possible values for posture
+enum {TIPTOEING, WALKING, SPRINTING} # Possible values for posture
 
 # Set the player ID, which is only used in _ready(),
 # and perhaps by others via the MultiplayerSynchronizer, but I'm not sure on that.
 @export var player: int = -1
-@export var accel: int  # Player acceleration force
-@export var jump: int  # Jump force multiplier
-@export var air_control: int  # Air control multiplier
-@export var turning_scale: float  # How quickly to scale movement towards a turning direction. Lower is more. # (float, 15, 120, 1)
-@export var mouse_sensitivity: float = 0.05  # 0.05
-@export var walkable_normal: float  # 0.35 # Walkable slope. Lower is steeper # (float, 0, 1, 0.01)
+@export var accel: int # Player acceleration force
+@export var jump: int # Jump force multiplier
+@export var air_control: int # Air control multiplier
+@export var turning_scale: float # How quickly to scale movement towards a turning direction. Lower is more. # (float, 15, 120, 1)
+@export var mouse_sensitivity: float = 0.05 # 0.05
+@export var walkable_normal: float # 0.35 # Walkable slope. Lower is steeper # (float, 0, 1, 0.01)
 @export var height_adjust_speed: float
-@export var speed_limit: float  # 8 # Default speed limit of the player
-@export var sprinting_speed_limit: float  # 12 # Speed to move at while sprinting
-@export var danger_speed_limit: float  # Maximum speed limit
-@export var friction_divider: int = 6  # Amount to divide the friction by when not grounded (prevents sticking to walls from air control)
-@export var jump_throttle: float = 0.1  # 0.1 # Stores preference for time before the player can jump again # (float,0.01,1,0.01)
-@export var landing_assist: float  # 1.5 # Downward force to apply when letting go of space while jumping
-@export var anti_slide_force: float  # 3 # Amount of force to stop sliding with # (float,0.1,100,0.1)
+@export var speed_limit: float # 8 # Default speed limit of the player
+@export var sprinting_speed_limit: float # 12 # Speed to move at while sprinting
+@export var danger_speed_limit: float # Maximum speed limit
+@export var friction_divider: int = 6 # Amount to divide the friction by when not grounded (prevents sticking to walls from air control)
+@export var jump_throttle: float = 0.1 # 0.1 # Stores preference for time before the player can jump again # (float,0.01,1,0.01)
+@export var landing_assist: float # 1.5 # Downward force to apply when letting go of space while jumping
+@export var anti_slide_force: float # 3 # Amount of force to stop sliding with # (float,0.1,100,0.1)
 @export var player_spawn_point: Vector3 = Vector3(4, 1.5, -4)
 @export var bounds_distance: int = 100
 
 var Chair: Resource = preload("res://things/held/chair/chair.tscn")
 
-var is_grounded: bool  # Whether the player is considered to be touching a walkable slope
+var is_grounded: bool # Whether the player is considered to be touching a walkable slope
 
-var upper_slope_normal: Vector3  # Stores the lowest (steepest) slope normal
-var lower_slope_normal: Vector3  # Stores the highest (flattest) slope normal
-var slope_normal: Vector3  # Stores normals of contact points for iteration
-var contacted_body: RigidBody3D  # Rigid body the player is currently contacting, if there is one
+var upper_slope_normal: Vector3 # Stores the lowest (steepest) slope normal
+var lower_slope_normal: Vector3 # Stores the highest (flattest) slope normal
+var slope_normal: Vector3 # Stores normals of contact points for iteration
+var contacted_body: RigidBody3D # Rigid body the player is currently contacting, if there is one
 var player_physics_material: Resource = load("res://Physics/player.tres")
-var is_landing: bool = true  # Whether the player has jumped and let go of jump
-var is_jumping: bool = false  # Whether the player has jumped
-var current_jump_throttle: float  # Variable used with jump throttling calculations
+var is_landing: bool = true # Whether the player has jumped and let go of jump
+var is_jumping: bool = false # Whether the player has jumped
+var current_jump_throttle: float # Variable used with jump throttling calculations
 
 ### Physics process vars
 var original_player_collider_height: float
@@ -44,7 +44,7 @@ var original_foot_position_y: float
 var minimum_player_collider_height: float = 1.0
 var maximum_player_collider_height: float = 3.0
 var current_speed_limit: float
-var posture: int  # Current posture state
+var posture: int # Current posture state
 
 ## Object Interaction vars
 var is_interacting: bool = false
@@ -53,12 +53,12 @@ var character_trimmed: bool = false
 var selected_node: Node3D
 var held_item: Node
 
-@onready var player_collider: Shape3D = $Collision.shape  # Capsule collision shape of the player
-@onready var head: Node3D = $Head  # y-axis rotation node (look left and right)
-@onready var camera: Node = get_node("Head/Camera3D")  # Camera3D node
-@onready var head_mesh: Node = get_node("Head/HeadMesh")  # x-axis rotation node (look up and down)
+@onready var player_collider: Shape3D = $Collision.shape # Capsule collision shape of the player
+@onready var head: Node3D = $Head # y-axis rotation node (look left and right)
+@onready var camera: Node = get_node("Head/Camera3D") # Camera3D node
+@onready var head_mesh: Node = get_node("Head/HeadMesh") # x-axis rotation node (look up and down)
 @onready var character_meshes: Node3D = $Character
-@onready var original_friction: float = player_physics_material.friction  # Editor friction value
+@onready var original_friction: float = player_physics_material.friction # Editor friction value
 @onready var original_linear_damp: float = linear_damp
 @onready var original_accel: int = accel
 @onready var holding_things_joint: Node = get_node("./Joint")
@@ -70,7 +70,6 @@ func _ready() -> void:
 	# This means that you cannot rely on get_multiplayer_authority() yet!
 	# Otherwise, this might be the ONLY place that we need to use the player variable, although this also allows
 	# us to pass it to other players via MultiplayerSynchronizer although I also don't know if that is required?
-
 	set_process(player == multiplayer.get_unique_id())
 	set_physics_process(player == multiplayer.get_unique_id())
 	set_process_input(player == multiplayer.get_unique_id())
@@ -120,10 +119,10 @@ func _process(_delta: float) -> void:
 		# Hide player head and body from player's own camera by setting their layer mask locally
 		var head_mesh_root: Node3D = head_mesh.get_node("root")
 		head_mesh_root.set_layer_mask_value(1, false)
-		head_mesh_root.set_layer_mask_value(2, true)  # Player camera is set to not display layer 2
+		head_mesh_root.set_layer_mask_value(2, true) # Player camera is set to not display layer 2
 		var character_body_mesh_root: Node3D = character_meshes.get_node("Body/root")
 		character_body_mesh_root.set_layer_mask_value(1, false)
-		character_body_mesh_root.set_layer_mask_value(2, true)  # Player camera is set to not display layer 2
+		character_body_mesh_root.set_layer_mask_value(2, true) # Player camera is set to not display layer 2
 
 	if (
 		get_multiplayer_authority() == multiplayer.get_unique_id()
@@ -148,11 +147,11 @@ func _physics_process(delta: float) -> void:
 
 	### Groundedness raycasts
 	# Define raycast info used with detecting groundedness
-	var raycast_list: Array = Array()  # List of raycasts used with detecting groundedness
-	var bottom: float = 0.1  # Distance down from start to fire the raycast to
-	var start: float = (player_collider.height / 2 + player_collider.radius) - 0.05  # Start point down from the center of the player to start the raycast
-	var cv_dist: float = player_collider.radius - 0.1  # Cardinal vector distance.
-	var ov_dist: float = cv_dist / sqrt(2)  # Ordinal vector distance. Added to 2 cardinal vectors to result in a diagonal with the same magnitude of the cardinal vectors
+	var raycast_list: Array = Array() # List of raycasts used with detecting groundedness
+	var bottom: float = 0.1 # Distance down from start to fire the raycast to
+	var start: float = (player_collider.height / 2 + player_collider.radius) - 0.05 # Start point down from the center of the player to start the raycast
+	var cv_dist: float = player_collider.radius - 0.1 # Cardinal vector distance.
+	var ov_dist: float = cv_dist / sqrt(2) # Ordinal vector distance. Added to 2 cardinal vectors to result in a diagonal with the same magnitude of the cardinal vectors
 	# Get world state for collisions
 	var direct_state: PhysicsDirectSpaceState3D = get_world_3d().direct_space_state
 	raycast_list.clear()
@@ -170,25 +169,25 @@ func _physics_process(delta: float) -> void:
 		match i:
 			# Cardinal vectors
 			0:
-				loc.z -= cv_dist  # N
+				loc.z -= cv_dist # N
 			1:
-				loc.z += cv_dist  # S
+				loc.z += cv_dist # S
 			2:
-				loc.x += cv_dist  # E
+				loc.x += cv_dist # E
 			3:
-				loc.x -= cv_dist  # W
+				loc.x -= cv_dist # W
 			# Ordinal vectors
 			4:
-				loc.z -= ov_dist  # NE
+				loc.z -= ov_dist # NE
 				loc.x += ov_dist
 			5:
-				loc.z += ov_dist  # SE
+				loc.z += ov_dist # SE
 				loc.x += ov_dist
 			6:
-				loc.z -= ov_dist  # NW
+				loc.z -= ov_dist # NW
 				loc.x -= ov_dist
 			7:
-				loc.z += ov_dist  # SW
+				loc.z += ov_dist # SW
 				loc.x -= ov_dist
 		# Copy the current location below the capsule and subtract from it
 		var loc2: Vector3 = loc
@@ -266,7 +265,7 @@ func _integrate_forces(state: PhysicsDirectBodyState3D) -> void:
 
 		upper_slope_normal = Vector3(0, 1, 0)
 		lower_slope_normal = Vector3(0, -1, 0)
-		contacted_body = null  # Rigidbody
+		contacted_body = null # Rigidbody
 		# Velocity of the Rigidbody the player is contacting
 		var contacted_body_vel_at_point: Vector3 = Vector3()
 
@@ -277,7 +276,7 @@ func _integrate_forces(state: PhysicsDirectBodyState3D) -> void:
 			# Iterate over the capsule contact points and get the steepest/shallowest slopes
 			for i in state.get_contact_count():
 				slope_normal = state.get_contact_local_normal(i)
-				if slope_normal.y < upper_slope_normal.y:  # Lower normal means steeper slope
+				if slope_normal.y < upper_slope_normal.y: # Lower normal means steeper slope
 					upper_slope_normal = slope_normal
 				if slope_normal.y > lower_slope_normal.y:
 					lower_slope_normal = slope_normal
@@ -287,7 +286,7 @@ func _integrate_forces(state: PhysicsDirectBodyState3D) -> void:
 				is_grounded = true
 				# If the shallowest contact index exists, get the velocity of the body at the contacted point
 				if shallowest_contact_index >= 0:
-					var contact_position: Vector3 = state.get_contact_collider_position(0)  # coords of the contact point from center of contacted body
+					var contact_position: Vector3 = state.get_contact_collider_position(0) # coords of the contact point from center of contacted body
 					var collisions: Array[Node3D] = get_colliding_bodies()
 					if collisions.size() > 0 and collisions[0].get_class() == "RigidBody3D":
 						contacted_body = collisions[0]
@@ -302,7 +301,7 @@ func _integrate_forces(state: PhysicsDirectBodyState3D) -> void:
 		### Jumping: Should allow the player to jump, and hold jump to jump again if they become grounded after a throttling period
 		var has_walkable_contact: bool = (
 			state.get_contact_count() > 0 and is_walkable(lower_slope_normal.y)
-		)  # Different from is_grounded
+		) # Different from is_grounded
 		# If the player is trying to jump, the throttle expired, the player is grounded, and they're not already jumping, jump
 		# Check for is_jumping is because contact still exists at the beginning of a jump for more than one physics frame
 		if (
@@ -316,7 +315,7 @@ func _integrate_forces(state: PhysicsDirectBodyState3D) -> void:
 			is_landing = false
 		# Apply a downward force once if the player lets go of jump to assist with landing
 		if Input.is_action_just_released("jump"):
-			if is_landing == false:  # Only apply the landing assist force once
+			if is_landing == false: # Only apply the landing assist force once
 				is_landing = true
 				if not has_walkable_contact:
 					state.apply_central_impulse(Vector3(0, -1, 0) * landing_assist)
@@ -325,8 +324,8 @@ func _integrate_forces(state: PhysicsDirectBodyState3D) -> void:
 			is_jumping = false
 
 		### Movement
-		var move: Vector3 = relative_input()  # Get movement vector relative to player orientation
-		var move2: Vector2 = Vector2(move.x, move.z)  # Convert movement for Vector2 methods
+		var move: Vector3 = relative_input() # Get movement vector relative to player orientation
+		var move2: Vector2 = Vector2(move.x, move.z) # Convert movement for Vector2 methods
 
 		# set_friction(move)
 
@@ -345,7 +344,7 @@ func _integrate_forces(state: PhysicsDirectBodyState3D) -> void:
 			vel -= Vector3(contacted_body_vel_at_point.x, 0, contacted_body_vel_at_point.z)
 		# Get a normalized player velocity
 		var nvel: Vector3 = vel.normalized()
-		var nvel2: Vector2 = Vector2(nvel.x, nvel.z)  # 2D velocity vector to use with angle_to and dot methods
+		var nvel2: Vector2 = Vector2(nvel.x, nvel.z) # 2D velocity vector to use with angle_to and dot methods
 
 		## If below the speed limit, or above the limit but facing away from the velocity,
 		## move the player, adding an assisting force if turning. If above the speed limit,
@@ -354,25 +353,25 @@ func _integrate_forces(state: PhysicsDirectBodyState3D) -> void:
 		##
 		# Get the angle between the velocity and current movement vector and convert it to degrees
 		var angle: float = nvel2.angle_to(move2)
-		var theta: float = rad_to_deg(angle)  # Angle between 2D look and velocity vectors
+		var theta: float = rad_to_deg(angle) # Angle between 2D look and velocity vectors
 		var is_below_speed_limit: bool = is_player_below_speed_limit(nvel, vel)
 		var is_below_danger_speed_limit: bool = is_player_below_danger_speed_limit(vel)
 		if is_below_danger_speed_limit:
 			var is_facing_velocity: bool = nvel2.dot(move2) >= 0
-			var direction: Vector3  # vector to be set 90 degrees either to the left or right of the velocity
-			var move_scale: float  # Scaled from 0 to 1. Used for both turn assist interpolation and vector scaling
+			var direction: Vector3 # vector to be set 90 degrees either to the left or right of the velocity
+			var move_scale: float # Scaled from 0 to 1. Used for both turn assist interpolation and vector scaling
 			# If the angle is to the right of the velocity
 			if theta > 0 and theta < 90:
-				direction = nvel.cross(transform.basis.y)  # Vecor 90 degrees to the right of velocity
-				move_scale = clamp(theta / turning_scale, 0, 1)  # Turn assist scale
+				direction = nvel.cross(transform.basis.y) # Vecor 90 degrees to the right of velocity
+				move_scale = clamp(theta / turning_scale, 0, 1) # Turn assist scale
 			# If the angle is to the left of the velocity
 			elif theta < 0 and theta > -90:
-				direction = transform.basis.y.cross(nvel)  # Vecor 90 degrees to the left of velocity
+				direction = transform.basis.y.cross(nvel) # Vecor 90 degrees to the left of velocity
 				move_scale = clamp(-theta / turning_scale, 0, 1)
 			# Prevent continuous sliding down steep walkable slopes when the player isn't moving. Could be made better with
 			# debouncing because too high of a force also affects stopping distance noticeably when not on a slope.
 			if move == Vector3(0, 0, 0) and is_grounded:
-				move = -vel / (mass * 100 / anti_slide_force)
+				move = - vel / (mass * 100 / anti_slide_force)
 				move_player(move, state)
 			# If not pushing into an unwalkable slope
 			elif upper_slope_normal.y > walkable_normal:
@@ -382,8 +381,8 @@ func _integrate_forces(state: PhysicsDirectBodyState3D) -> void:
 					move = move.lerp(direction, move_scale)
 				# If the player is above the speed limit, and looking within 90 degrees of the velocity
 				else:
-					move = direction  # Set the move vector 90 to the right or left of the velocity vector
-					move *= move_scale  # Scale the vector. 0 if looking at velocity, up to full magnitude if looking 90 degrees to the side.
+					move = direction # Set the move vector 90 to the right or left of the velocity vector
+					move *= move_scale # Scale the vector. 0 if looking at velocity, up to full magnitude if looking 90 degrees to the side.
 				move_player(move, state)
 			# If pushing into an unwalkable slope, move with unscaled movement vector. Prevents turn assist from pushing the player into the wall.
 			elif is_below_speed_limit:
@@ -392,7 +391,7 @@ func _integrate_forces(state: PhysicsDirectBodyState3D) -> void:
 
 			# Shotgun jump test
 			if Input.is_action_just_pressed("fire"):
-				var dir: Vector3 = camera.global_transform.basis.z  # Opposite of look direction
+				var dir: Vector3 = camera.global_transform.basis.z # Opposite of look direction
 				state.apply_central_force(dir * 2700)
 
 
@@ -420,7 +419,7 @@ func cross4(a: Vector3, b: Vector3) -> Vector3:
 
 # Whether a slope is walkable
 func is_walkable(normal: float) -> bool:
-	return normal >= walkable_normal  # Lower normal means steeper slope
+	return normal >= walkable_normal # Lower normal means steeper slope
 
 
 # Whether the player is below the speed limit in the direction they're traveling
@@ -471,7 +470,7 @@ func move_player(move: Vector3, state: PhysicsDirectBodyState3D) -> void:
 		else:
 			use_normal = lower_slope_normal
 
-		move = cross4(move, use_normal)  # Get slope to move along based on contact
+		move = cross4(move, use_normal) # Get slope to move along based on contact
 		state.apply_central_force(move * accel)
 		# Account for equal and opposite reaction when accelerating on ground
 		if contacted_body != null:
@@ -514,7 +513,7 @@ func update_player_collider_height(height: float) -> void:
 
 func adjust_player_height(delta: float) -> void:
 	if get_multiplayer_authority() == multiplayer.get_unique_id():
-		var height_scale: float = delta * height_adjust_speed  # Amount to change capsule height up or down
+		var height_scale: float = delta * height_adjust_speed # Amount to change capsule height up or down
 		if Input.is_action_pressed("grow"):
 			#Helpers.log_print("GROW")
 			# TODO: Account for local ceiling height and do not allow growing into it
