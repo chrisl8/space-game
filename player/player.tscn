@@ -46,8 +46,8 @@ axis_lock_angular_z = true
 physics_material_override = ExtResource("1_2we4p")
 can_sleep = false
 continuous_cd = true
-max_contacts_reported = 5
 contact_monitor = true
+max_contacts_reported = 5
 linear_damp = 1.0
 angular_damp = 10.0
 script = ExtResource("1_5i51a")
@@ -74,7 +74,7 @@ cull_mask = 1048573
 [node name="HeadMesh" parent="Head" instance=ExtResource("3_ofsyb")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
 
-[node name="Collision" type="CollisionShape3D" parent="."]
+[node name="BodyCollider" type="CollisionShape3D" parent="."]
 shape = SubResource("CylinderShape3D_0konm")
 
 [node name="Character" type="Node3D" parent="."]

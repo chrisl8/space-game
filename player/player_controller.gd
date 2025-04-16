@@ -53,7 +53,7 @@ var character_trimmed: bool = false
 var selected_node: Node3D
 var held_item: Node
 
-@onready var player_collider: Shape3D = $Collision.shape # Capsule collision shape of the player
+@onready var player_collider: Shape3D = $BodyCollider.shape # Capsule collision shape of the player
 @onready var head: Node3D = $Head # y-axis rotation node (look left and right)
 @onready var camera: Node = get_node("Head/Camera3D") # Camera3D node
 @onready var head_mesh: Node = get_node("Head/HeadMesh") # x-axis rotation node (look up and down)
@@ -254,9 +254,9 @@ func _integrate_forces(state: PhysicsDirectBodyState3D) -> void:
 			or abs(position.z) > bounds_distance
 		):
 			# Just in case player was shrinking or growing
-			$Collision.shape.height = original_player_collider_height
+			$BodyCollider.shape.height = original_player_collider_height
 			head.position.y = original_head_position_y
-			update_player_collider_height.rpc($Collision.shape.height)
+			update_player_collider_height.rpc($BodyCollider.shape.height)
 
 			# state.transform.origin appears to be the correct way
 			# to teleport a rigidbody in _integrate_forces()
@@ -508,7 +508,7 @@ func relative_input() -> Vector3:
 @rpc()
 func update_player_collider_height(height: float) -> void:
 	if get_multiplayer_authority() == multiplayer.get_remote_sender_id():
-		$Collision.shape.height = height
+		$BodyCollider.shape.height = height
 
 
 func adjust_player_height(delta: float) -> void:
@@ -518,28 +518,28 @@ func adjust_player_height(delta: float) -> void:
 			#Helpers.log_print("GROW")
 			# TODO: Account for local ceiling height and do not allow growing into it
 			if player_collider.height < maximum_player_collider_height:
-				$Collision.shape.height += height_scale
+				$BodyCollider.shape.height += height_scale
 				# Head moves half the rate of the total growth,
 				# because growth happens at both ends.
 				head.position.y += height_scale / 2
 				$Character.get_node("Foot").position.y -= height_scale / 2
-				update_player_collider_height.rpc($Collision.shape.height)
+				update_player_collider_height.rpc($BodyCollider.shape.height)
 		elif Input.is_action_pressed("shrink"):
 			#Helpers.log_print("SHRINK")
 			if player_collider.height > minimum_player_collider_height:
-				$Collision.shape.height -= height_scale
+				$BodyCollider.shape.height -= height_scale
 				# Head moves half the rate of the total growth,
 				# because growth happens at both ends.
 				head.position.y -= height_scale / 2
 				$Character.get_node("Foot").position.y += height_scale / 2
-				update_player_collider_height.rpc($Collision.shape.height)
+				update_player_collider_height.rpc($BodyCollider.shape.height)
 		elif Input.is_action_just_pressed("reset_player_height"):
 			if player_collider.height != original_player_collider_height:
 				#player_collider.height = original_player_collider_height
-				$Collision.shape.height = original_player_collider_height
+				$BodyCollider.shape.height = original_player_collider_height
 				head.position.y = original_head_position_y
 				$Character.get_node("Foot").position.y = original_foot_position_y
-				update_player_collider_height.rpc($Collision.shape.height)
+				update_player_collider_height.rpc($BodyCollider.shape.height)
 
 
 func _on_personal_space_body_entered(body: Node3D) -> void:
