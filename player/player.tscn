@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://cnckqfxi8eyk8"]
+[gd_scene load_steps=10 format=3 uid="uid://cnckqfxi8eyk8"]
 
 [ext_resource type="PhysicsMaterial" uid="uid://u55tuef0hp46" path="res://Physics/player.tres" id="1_2we4p"]
 [ext_resource type="Script" uid="uid://ps4t32li2njc" path="res://player/player_controller.gd" id="1_5i51a"]
@@ -8,6 +8,10 @@
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_0konm"]
 resource_local_to_scene = true
+height = 1.6
+
+[sub_resource type="SeparationRayShape3D" id="SeparationRayShape3D_qjkh3"]
+slide_on_slope = true
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_sd7go"]
 radius = 1.0
@@ -75,7 +79,12 @@ cull_mask = 1048573
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
 
 [node name="BodyCollider" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0)
 shape = SubResource("CylinderShape3D_0konm")
+
+[node name="FootCollider" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
+shape = SubResource("SeparationRayShape3D_qjkh3")
 
 [node name="Character" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
@@ -83,8 +92,12 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
 [node name="Body" parent="Character" instance=ExtResource("6_40ddh")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 
+[node name="SpotLight3D" type="SpotLight3D" parent="Character/Body"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
+
 [node name="Foot" parent="Character" instance=ExtResource("6_30yss")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.04, 0)
+visible = false
 
 [node name="PersonalSpace" type="Area3D" parent="."]
 collision_layer = 2
