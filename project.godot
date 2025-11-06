@@ -35,10 +35,6 @@ window/size/always_on_top=true
 
 enabled=PackedStringArray("res://addons/Mirror/plugin.cfg", "res://addons/jwt/plugin.cfg")
 
-[filesystem]
-
-import/blender/enabled=false
-
 [input]
 
 move_forward={
