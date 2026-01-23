@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://cfw5t2lyoy2ai"
-path="res://.godot/imported/Material Library.blend-b7390cdcfdaa38a3442210fe15695a82.scn"
+uid="uid://wnms4njf52oh"
+path="res://.godot/imported/Plant A.blend-c6a03275a2eb9d01ede3d5c980b5cf17.scn"
 
 [deps]
 
-source_file="res://Blender Stuff/Material Library.blend"
-dest_files=["res://.godot/imported/Material Library.blend-b7390cdcfdaa38a3442210fe15695a82.scn"]
+source_file="res://things/plant_a/Plant A.blend"
+dest_files=["res://.godot/imported/Plant A.blend-c6a03275a2eb9d01ede3d5c980b5cf17.scn"]
 
 [params]
 
@@ -56,4 +56,4 @@ blender/materials/export_materials=1
 blender/animation/limit_playback=true
 blender/animation/always_sample=true
 blender/animation/group_tracks=true
-gltf/naming_version=0
+gltf/naming_version=2
