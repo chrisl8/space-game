@@ -1,0 +1,55 @@
+[gd_scene load_steps=5 format=3 uid="uid://b387lj78onkgr"]
+
+[ext_resource type="Script" uid="uid://clhf8gqiswq4v" path="res://screens/panel_testing/rich_text_label.gd" id="1_oteu0"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_2eg4q"]
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_2eg4q"]
+viewport_path = NodePath("SubViewport")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2eg4q"]
+resource_local_to_scene = true
+albedo_texture = SubResource("ViewportTexture_2eg4q")
+
+[node name="PanelTestingScreen" type="Node3D"]
+
+[node name="SubViewport" type="SubViewport" parent="."]
+gui_embed_subwindows = true
+size = Vector2i(512, 256)
+render_target_update_mode = 4
+
+[node name="Control" type="Control" parent="SubViewport"]
+layout_mode = 3
+anchors_preset = 0
+
+[node name="Label" type="Label" parent="SubViewport/Control"]
+visible = false
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+text = "The quick brown fox jumps over the lazy dog.
+
+The quick brown fox jumps over the lazy dog.
+
+The quick brown fox jumps over the lazy dog.
+
+"
+autowrap_mode = 3
+
+[node name="RichTextLabel" type="RichTextLabel" parent="SubViewport/Control"]
+layout_mode = 0
+offset_right = 512.0
+offset_bottom = 256.0
+text = "The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog.
+
+The quick brown fox jumps over the lazy dog.
+
+The quick brown fox jumps over the lazy dog.
+
+"
+script = ExtResource("1_oteu0")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.195, 0, 0, 0, 0.195, 0, 0, 0, 0.195, 0, 0, 0)
+mesh = SubResource("QuadMesh_2eg4q")
+surface_material_override/0 = SubResource("StandardMaterial3D_2eg4q")

@@ -3,7 +3,7 @@ extends Node
 signal reset
 signal close_popup
 
-enum Message { PLAYER_JOINED, PLAYER_TOKEN, SHUTDOWN_SERVER }
+enum Message {PLAYER_JOINED, PLAYER_TOKEN, SHUTDOWN_SERVER}
 
 @export var player_spawn_point: Vector3 = Vector3(4, 1, -4)
 
@@ -48,7 +48,7 @@ func _process(_delta: float) -> void:
 		# adding and removing objects, etc.
 		return
 
-	# In Debug mode, exit server if everyone disconnects in order to speed up debugging sessions (less windows to close)
+	# In Debug mode, exit server if everyone disconnects in order to speed up debugging sessions (fewer windows to close)
 	if (
 		OS.is_debug_build()
 		and peers_have_connected
@@ -98,11 +98,11 @@ func generate_jwt(secret: String, player_uuid: String) -> String:
 	var jwt_algorithm: JWTAlgorithm = JWTAlgorithm.HS256.new(secret)
 	var jwt_builder: JWTBuilder = (
 		JWT
-		. create()
-		. with_issued_at(int(Time.get_unix_time_from_system()))
-		. with_expires_at(int(Time.get_unix_time_from_system()) + 60 * 60 * 24 * 365)
-		. with_issuer("Space Game")
-		. with_payload({"uuid": player_uuid})
+		.create()
+		.with_issued_at(int(Time.get_unix_time_from_system()))
+		.with_expires_at(int(Time.get_unix_time_from_system()) + 60 * 60 * 24 * 365)
+		.with_issuer("Space Game")
+		.with_payload({"uuid": player_uuid})
 	)
 	var jwt: String = jwt_builder.sign(jwt_algorithm)
 	return jwt
@@ -225,7 +225,7 @@ func init_network() -> void:
 	if Globals.is_server:
 		websocket_multiplayer_peer.create_server(9090)
 	else:
-		var error: int = websocket_multiplayer_peer.create_client(Globals.url)  # WebSocket
+		var error: int = websocket_multiplayer_peer.create_client(Globals.url) # WebSocket
 		if error:
 			Helpers.log_print(str("Websocket Error: ", error), "cyan")
 	get_tree().get_multiplayer().multiplayer_peer = websocket_multiplayer_peer
@@ -235,7 +235,7 @@ func init_network() -> void:
 func send_data_to(id: int, msg_type: Message, data: String) -> void:
 	var send_data: String = (
 		JSON
-		. stringify(
+		.stringify(
 			{
 				"type": msg_type,
 				"data": data,
@@ -296,7 +296,7 @@ func data_received(data: String) -> void:
 
 
 func player_joined(id: int, data: String) -> void:
-	if Globals.is_server and id > 1:  # I'm not sure this check is necessary
+	if Globals.is_server and id > 1: # I'm not sure this check is necessary
 		var player_uuid: String = ""
 		if data != "":
 			# Validate token and data within
@@ -344,7 +344,7 @@ func player_joined(id: int, data: String) -> void:
 		peers[id]["uuid"] = player_uuid
 
 		var character: Node = player_character_template.instantiate()
-		character.player = id  # Set player id.
+		character.player = id # Set player id.
 
 		# Use saved player position or randomize it around the spawn area
 		if (
@@ -391,3 +391,9 @@ func player_joined(id: int, data: String) -> void:
 		var new_player_jwt: String = generate_jwt(Globals.server_config["jwt_secret"], player_uuid)
 		var data_for_player: Dictionary = {"jwt": new_player_jwt}
 		send_data_to(id, Message.PLAYER_TOKEN, JSON.stringify(data_for_player))
+
+		var wall_display_test: Node = get_node("/root/Main/Level/game_scene/Remote Data Test")
+		if is_instance_valid(wall_display_test):
+			wall_display_test.send_remote_admin_wall_text.rpc(Globals.remote_admin_wall_text)
+		else:
+			Helpers.log_print("Server: Wall display test node not found", "red")

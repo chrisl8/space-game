@@ -1,0 +1,26 @@
+[gd_scene load_steps=5 format=3 uid="uid://sonbuqglke1s"]
+
+[ext_resource type="Script" uid="uid://8453fcmsrnho" path="res://things/panel_testing/panel_testing.gd" id="1_3g3cd"]
+[ext_resource type="PackedScene" uid="uid://ya64dy4m5no8" path="res://things/panel_testing/panel_testing.glb" id="1_4alxw"]
+[ext_resource type="PackedScene" uid="uid://b387lj78onkgr" path="res://screens/panel_testing/panel_testing_screen.tscn" id="2_1mql2"]
+[ext_resource type="Script" uid="uid://ddxho22d26vgl" path="res://things/panel_testing/screen_label.gd" id="3_1mql2"]
+
+[node name="PanelTesting" type="Node3D"]
+script = ExtResource("1_3g3cd")
+
+[node name="PanelTestingScreen" parent="." instance=ExtResource("2_1mql2")]
+transform = Transform3D(-6.83209e-07, -3.3035, 0.849571, 0, 5.72183, 0.4905, -15.63, 1.44401e-07, -3.71359e-08, -1.00452, 0.619759, -0.132202)
+
+[node name="Screen Label" type="Label3D" parent="."]
+transform = Transform3D(-3.78552e-08, -0.5, 0.866025, -2.18557e-08, 0.866025, 0.5, -1, 0, -4.37114e-08, -1.4214, 1.32747, 1.36668)
+pixel_size = 0.001
+modulate = Color(0, 0, 1, 1)
+text = " - - - OFFLINE - - -"
+font_size = 37
+outline_size = 0
+horizontal_alignment = 0
+vertical_alignment = 0
+line_spacing = -6.0
+script = ExtResource("3_1mql2")
+
+[node name="mesh" parent="." instance=ExtResource("1_4alxw")]

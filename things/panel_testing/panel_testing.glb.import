@@ -1,0 +1,248 @@
+[remap]
+
+importer="scene"
+importer_version=1
+type="PackedScene"
+uid="uid://ya64dy4m5no8"
+path="res://.godot/imported/panel_testing.glb-3c8b4e851b6f9d8d403ba49bf8c7aa76.scn"
+
+[deps]
+
+source_file="res://things/panel_testing/panel_testing.glb"
+dest_files=["res://.godot/imported/panel_testing.glb-3c8b4e851b6f9d8d403ba49bf8c7aa76.scn"]
+
+[params]
+
+nodes/root_type=""
+nodes/root_name=""
+nodes/apply_root_scale=true
+nodes/root_scale=1.0
+nodes/import_as_skeleton_bones=false
+nodes/use_node_type_suffixes=true
+meshes/ensure_tangents=true
+meshes/generate_lods=true
+meshes/create_shadow_meshes=true
+meshes/light_baking=1
+meshes/lightmap_texel_size=0.2
+meshes/force_disable_compression=false
+skins/use_named_skins=true
+animation/import=true
+animation/fps=30
+animation/trimming=false
+animation/remove_immutable_tracks=true
+animation/import_rest_as_RESET=false
+import_script/path=""
+_subresources={
+"nodes": {
+"PATH:Scene Collection/Collection/Keys/Key_000": {
+"generate/physics": true,
+"physics/shape_type": 0
+},
+"PATH:Scene Collection/Collection/Keys/Key_001": {
+"generate/physics": true,
+"physics/shape_type": 0
+},
+"PATH:Scene Collection/Collection/Keys/Key_002": {
+"generate/physics": true,
+"physics/shape_type": 0
+},
+"PATH:Scene Collection/Collection/Keys/Key_003": {
+"generate/physics": true,
+"physics/shape_type": 0
+},
+"PATH:Scene Collection/Collection/Keys/Key_004": {
+"generate/physics": true,
+"physics/shape_type": 0
+},
+"PATH:Scene Collection/Collection/Keys/Key_005": {
+"generate/physics": true,
+"physics/shape_type": 0
+},
+"PATH:Scene Collection/Collection/Keys/Key_006": {
+"generate/physics": true,
+"physics/shape_type": 0
+},
+"PATH:Scene Collection/Collection/Keys/Key_007": {
+"generate/physics": true,
+"physics/shape_type": 0
+},
+"PATH:Scene Collection/Collection/Keys/Key_008": {
+"generate/physics": true,
+"physics/shape_type": 0
+},
+"PATH:Scene Collection/Collection/Keys/Key_009": {
+"generate/physics": true,
+"physics/shape_type": 0
+},
+"PATH:Scene Collection/Collection/Keys/Key_010": {
+"generate/physics": true,
+"physics/shape_type": 0
+},
+"PATH:Scene Collection/Collection/Keys/Key_011": {
+"generate/physics": true,
+"physics/shape_type": 0
+},
+"PATH:Scene Collection/Collection/Keys/Key_012": {
+"generate/physics": true,
+"physics/shape_type": 0
+},
+"PATH:Scene Collection/Collection/Keys/Key_013": {
+"generate/physics": true,
+"physics/shape_type": 0
+},
+"PATH:Scene Collection/Collection/Keys/Key_014": {
+"generate/physics": true,
+"physics/shape_type": 0
+},
+"PATH:Scene Collection/Collection/Keys/Key_015": {
+"generate/physics": true,
+"physics/shape_type": 0
+},
+"PATH:Scene Collection/Collection/Keys/Key_016": {
+"generate/physics": true,
+"physics/shape_type": 0
+},
+"PATH:Scene Collection/Collection/Keys/Key_017": {
+"generate/physics": true,
+"physics/shape_type": 0
+},
+"PATH:Scene Collection/Collection/Keys/Key_018": {
+"generate/physics": true,
+"physics/shape_type": 0
+},
+"PATH:Scene Collection/Collection/Keys/Key_019": {
+"generate/physics": true,
+"physics/shape_type": 0
+},
+"PATH:Scene Collection/Collection/Keys/Key_020": {
+"generate/physics": true,
+"physics/shape_type": 0
+},
+"PATH:Scene Collection/Collection/Keys/Key_021": {
+"generate/physics": true,
+"physics/shape_type": 0
+},
+"PATH:Scene Collection/Collection/Keys/Key_022": {
+"generate/physics": true,
+"physics/shape_type": 0
+},
+"PATH:Scene Collection/Collection/Keys/Key_023": {
+"generate/physics": true,
+"physics/shape_type": 0
+},
+"PATH:Scene Collection/Collection/Keys/Key_024": {
+"generate/physics": true,
+"physics/shape_type": 0
+},
+"PATH:Scene Collection/Collection/Keys/Key_025": {
+"generate/physics": true,
+"physics/shape_type": 0
+},
+"PATH:Scene Collection/Collection/Keys/Key_026": {
+"generate/physics": true,
+"physics/shape_type": 0
+},
+"PATH:Scene Collection/Collection/Keys/Key_027": {
+"generate/physics": true,
+"physics/shape_type": 0
+},
+"PATH:Scene Collection/Collection/Keys/Key_028": {
+"generate/physics": true,
+"physics/shape_type": 0
+},
+"PATH:Scene Collection/Collection/Keys/Key_029": {
+"generate/physics": true,
+"physics/shape_type": 0
+},
+"PATH:Scene Collection/Collection/Keys/Key_030": {
+"generate/physics": true,
+"physics/shape_type": 0
+},
+"PATH:Scene Collection/Collection/Keys/Key_031": {
+"generate/physics": true,
+"physics/shape_type": 0
+},
+"PATH:Scene Collection/Collection/Keys/Key_032": {
+"generate/physics": true,
+"physics/shape_type": 0
+},
+"PATH:Scene Collection/Collection/Keys/Key_033": {
+"generate/physics": true,
+"physics/shape_type": 0
+},
+"PATH:Scene Collection/Collection/Keys/Key_034": {
+"generate/physics": true,
+"physics/shape_type": 0
+},
+"PATH:Scene Collection/Collection/Keys/Key_035": {
+"generate/physics": true,
+"physics/shape_type": 0
+},
+"PATH:Scene Collection/Collection/Keys/Key_036": {
+"generate/physics": true,
+"physics/shape_type": 0
+},
+"PATH:Scene Collection/Collection/Keys/Key_037": {
+"generate/physics": true,
+"physics/shape_type": 0
+},
+"PATH:Scene Collection/Collection/Keys/Key_038": {
+"generate/physics": true,
+"physics/shape_type": 0
+},
+"PATH:Scene Collection/Collection/Keys/Key_039": {
+"generate/physics": true,
+"physics/shape_type": 0
+},
+"PATH:Scene Collection/Collection/Keys/Key_040": {
+"generate/physics": true,
+"physics/shape_type": 0
+},
+"PATH:Scene Collection/Collection/Keys/Key_041": {
+"generate/physics": true,
+"physics/shape_type": 0
+},
+"PATH:Scene Collection/Collection/Keys/Key_042": {
+"generate/physics": true,
+"physics/shape_type": 0
+},
+"PATH:Scene Collection/Collection/Keys/Key_043": {
+"generate/physics": true,
+"physics/shape_type": 0
+},
+"PATH:Scene Collection/Collection/Keys/Key_044": {
+"generate/physics": true,
+"physics/shape_type": 0
+},
+"PATH:Scene Collection/Collection/Keys/Key_045": {
+"generate/physics": true,
+"physics/shape_type": 0
+},
+"PATH:Scene Collection/Collection/Keys/Key_046": {
+"generate/physics": true,
+"physics/shape_type": 0
+},
+"PATH:Scene Collection/Collection/Keys/Key_047": {
+"generate/physics": true,
+"physics/shape_type": 0
+},
+"PATH:Scene Collection/Collection/Keys/Key_048": {
+"generate/physics": true,
+"physics/shape_type": 0
+},
+"PATH:Scene Collection/Collection/Keys/Key_049": {
+"generate/physics": true,
+"physics/shape_type": 0
+},
+"PATH:Scene Collection/Collection/Keys/Key_050": {
+"generate/physics": true,
+"physics/shape_type": 0
+},
+"PATH:Scene Collection/Collection/Keys/Key_051": {
+"generate/physics": true,
+"physics/shape_type": 0
+}
+}
+}
+gltf/naming_version=1
+gltf/embedded_image_handling=1

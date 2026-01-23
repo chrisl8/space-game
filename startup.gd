@@ -6,16 +6,19 @@ extends Node
 
 @export var capture_mouse_on_startup: bool = false # This is actually annoying so I never turn it on.
 
+@onready var remote_admin: RemoteAdmin = $RemoteAdmin
+
 var pop_up_template: Resource = preload("res://menus/pop_up/pop_up.tscn")
 
 var pop_up: Node
 
 var server_config_file_name: String = "user://server_config.dat"
 
+var remote_admin_server: String
+
 # This has to be here so that it isn't removed after _init() runs,
 # which will cause all instances to look like 0.
 var _instance_socket: TCPServer
-
 
 func _init() -> void:
 	if OS.is_debug_build():
@@ -191,6 +194,11 @@ func start_connection() -> void:
 			await get_tree().create_timer(1).timeout
 	pop_up.set_msg("Connecting...")
 	Network.ready_to_connect = true
+	if Globals.is_server and remote_admin_server:
+		var url: String = "ws://" + remote_admin_server + "/"
+		remote_admin.connect_to_url(url)
+	else:
+		remote_admin.disable_permanently()
 
 
 func connection_reset(delay: int) -> void:

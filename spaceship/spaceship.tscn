@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://cbs4s4ea2n473"]
+[gd_scene load_steps=21 format=3 uid="uid://cbs4s4ea2n473"]
 
 [ext_resource type="Script" uid="uid://b034sx68l8ust" path="res://spaceship/spaceship.gd" id="1_e1est"]
 [ext_resource type="Texture2D" uid="uid://clv3j1xfrwyhb" path="res://spaceship/panorama_image.png" id="2_6hknh"]
@@ -14,6 +14,8 @@
 [ext_resource type="Script" uid="uid://c0c1f5rs728xl" path="res://addons/Mirror/Mirror/Mirror.gd" id="9_ruxjs"]
 [ext_resource type="PackedScene" uid="uid://def5ymn6ttvbo" path="res://spaceship/ramp_hallway_steep/ramp_hallway_steep.tscn" id="11_tf63n"]
 [ext_resource type="PackedScene" uid="uid://4ntboh2ersm8" path="res://spaceship/door/door.tscn" id="12_6i0k6"]
+[ext_resource type="Script" uid="uid://b3yrpv7w022hc" path="res://spaceship/remote_data_wall_display_test.gd" id="14_eugey"]
+[ext_resource type="PackedScene" uid="uid://sonbuqglke1s" path="res://things/panel_testing/panel_testing.tscn" id="17_41hay"]
 [ext_resource type="PackedScene" uid="uid://cy80oocdb7uka" path="res://spaceship/endless_bridge/endless_bridge.tscn" id="17_fiqkm"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_gvyju"]
@@ -129,6 +131,15 @@ GUARD: You're mad. Move.
 font_size = 25
 outline_size = 0
 
+[node name="Remote Data Test" type="Label3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0.500121, 2.25442, -7.15535)
+pixel_size = 0.001
+text = "Please stand by..."
+font_size = 25
+outline_size = 0
+autowrap_mode = 3
+script = ExtResource("14_eugey")
+
 [node name="Mirror" type="Node3D" parent="."]
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 9.49, 2.334, -2.28)
 script = ExtResource("9_ruxjs")
@@ -139,3 +150,6 @@ transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 30, -5
 
 [node name="Endless Bridge" parent="." instance=ExtResource("17_fiqkm")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.4118, -5.66144, 50.0072)
+
+[node name="PanelTesting" parent="." instance=ExtResource("17_41hay")]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 18.0319, 1.48206, -16.4994)

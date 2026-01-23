@@ -20,3 +20,12 @@ var connection_failed_message: String = "Connection Failed!"
 var release_mouse_text: String = "ESC to Release Mouse"
 var how_to_end_game_text: String = "END key to Close Game"
 var exit_click_mode_text: String = "Press q to exit 'Click Mode' and control camera again."
+
+var remote_admin_wall_text: String = "One moment while we connect to the server..."
+
+var remote_admin_screen_strings: Dictionary = {
+	"panel_testing": {
+		"title": "Stand By for Telemetry",
+		"screen_text": "Awaiting telemetry from server...",
+	}
+}
