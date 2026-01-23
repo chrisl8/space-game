@@ -6,7 +6,6 @@ set -e
 GODOT_VERSION=""
 REMOTE_HOST=""
 PROJECT_PATH=""
-CLOUD_DRIVE_PATH=""
 MAC_HOST=""
 MAC_LOCAL_PATH=""
 
@@ -48,9 +47,6 @@ print_usage() {
   echo "--remote-host server.example.com"
   echo "An IP address also works. It is not required if you do not want to deploy to a remote host."
   echo ""
-  echo "You an also supply a 'local' path to drop Linux and Windows binaries into. I use this to share them with friends. It is not required."
-  echo "--cloud-drive-path /mnt/c/Users/me/Dropbox/Game"
-  echo ""
   echo "I use a separate MacOS computer to build binaries for MacOS. I provide the host name of this device to make that happen. It is not required."
   echo "--mac-host my-mac-mini.local"
   echo ""
@@ -90,10 +86,6 @@ do
           --project-path)
             shift
             PROJECT_PATH="$1"
-            ;;
-          --cloud-drive-path)
-            shift
-            CLOUD_DRIVE_PATH="$1"
             ;;
           --mac-host)
             shift
