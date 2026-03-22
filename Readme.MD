@@ -1,4 +1,4 @@
-You can play the game right now at [https://voidshipephemeral.space](https://voidshipephemeral.space)
+You can play the game right now at [https://space-game.ekpyroticfrood.net](https://space-game.ekpyroticfrood.net)
 
 # Space Game - A 3D Online Space
 
@@ -8,7 +8,7 @@ All the source is MIT licensed, so you can use this to help make your own game a
 
 # Play the Game Now!
 
-Go to [https://voidshipephemeral.space](https://voidshipephemeral.space) where the game is up and running live now!  
+Go to [https://space-game.ekpyroticfrood.net](https://space-game.ekpyroticfrood.net) where the game is up and running live now!  
 This is the preferred method to play the game.
 
 ## Binary Releases
@@ -21,11 +21,11 @@ Press the "Esc" key to free your mouse from the window.
 
 ### Windows
 
-[Download the latest Windows Binary Release Here](https://voidshipephemeral.space/release/space-game-Windows-Binary.zip)
+[Download the latest Windows Binary Release Here](https://space-game.ekpyroticfrood.net/release/space-game-Windows-Binary.zip)
 
 ### Linux
 
-[Download the latest Linux Binary Release Here](https://voidshipephemeral.space/release/space-game-Linux-Binary.tar.gz)
+[Download the latest Linux Binary Release Here](https://space-game.ekpyroticfrood.net/release/space-game-Linux-Binary.tar.gz)
 
 You will probably have to tell Windows to allow the binary to run as it is unsigned.
 
@@ -33,7 +33,7 @@ In Windows use Alt+F4 to close the game if it seems like it won't let you out.
 
 ### MacOS
 
-[Download the latest MacOS Binary Release Here](https://voidshipephemeral.space/release/space-game-MacOS-Binary.dmg)
+[Download the latest MacOS Binary Release Here](https://space-game.ekpyroticfrood.net/release/space-game-MacOS-Binary.dmg)
 
 When MacOS blocks you from running this, click the small question mark in the upper right corner of the dialogue and your computer should provide instructions on how to override the block for this application.
 
